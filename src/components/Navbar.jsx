@@ -7,7 +7,7 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row items-center justify-between py-2 px-5 mx-10">
+      <div className="flex flex-col md:flex-row items-center justify-between py-2 px-10 mx-15">
         {/* Left Section: Social Icons & Phone */}
       <div className="flex flex-col sm:flex-row items-center gap-4">
           {/* Social Icons */}
@@ -37,7 +37,7 @@ const Navbar = () => {
 
       {/* Right Section: CTA + City Selector */}
       <div className="flex items-center gap-4 mt-4 md:mt-0">
-        <button className="bg-[#dc2626] text-white text-[0.8rem] font-medium px-5 py-2.5 rounded hover:bg-red-700 cursor-pointer transition duration-200">
+        <button className="bg-[#dc2626] text-white text-[0.8rem] font-medium px-5 py-2.5 rounded hover:bg-red-700 cursor-pointer transition duration-200 whitespace-nowrap">
           Get a Quote
         </button>
         <select
@@ -54,6 +54,7 @@ const Navbar = () => {
       
     </div>
       <HeroSection/>
+
     </div>
   );
 };

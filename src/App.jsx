@@ -7,6 +7,7 @@ import WhyUs from './pages/WhyUs'
 import Blog from './pages/Blog'
 import ContactUs from './pages/ContactUs'
 import Home from './pages/Home'
+import Footer from './components/Footer'
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path='/contact' element={<ContactUs/>}/>
           </Routes> 
       </BrowserRouter>
+        <Footer/>
     </>
   )
 }
