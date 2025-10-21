@@ -5,7 +5,7 @@ import { RiInstagramLine } from "react-icons/ri";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#f8f8f8] py-12 px-8 text-black font-medium">
+    <footer className="bg-[#f8f8f8] pt-12 pb-5 px-8 text-black font-medium">
       {/* Top Section */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
 
@@ -52,7 +52,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-gray-300 mt-12 pt-6 flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto text-base">
+      <div className=" bg-border-t border-gray-300 mt-12 pt-6 flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto text-base">
         <h1>© 2025 Book My Banquets</h1>
         <div className="flex items-center gap-4 mt-3 md:mt-0">
           <a href="#" aria-label="Facebook"><IoLogoFacebook className="text-red-600 text-2xl hover:text-black transition duration-200" /></a>
