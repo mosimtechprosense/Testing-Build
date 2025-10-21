@@ -4,9 +4,17 @@ import priya from "../assets/customerReview/priya.png"
 import rajiv from "../assets/customerReview/rajiv.png"
 import rohan from "../assets/customerReview/rohan.png"
 import aditya from "../assets/customerReview/aditya.png"
+import caterers from "../assets/categories/Caterers.jpg"
+import decor from "../assets/categories/decor.avif"
+import makeup from "../assets/categories/makeup.avif"
+import mehendi from "../assets/categories/mehendi.avif"
+import photographers from "../assets/categories/photographers.avif"
+import venues from "../assets/categories/venues.avif"
+
+
 
 
 
 export {
-    aarav, aditya, manish, priya, rajiv, rohan
+    aarav, aditya, manish, priya, rajiv, rohan, caterers, decor, makeup, mehendi, photographers, venues
 }

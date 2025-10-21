@@ -4,6 +4,7 @@ import { IoIosSearch } from "react-icons/io";
 import homeWalpaper from "../assets/homeWalpaper.jpg";
 import CustomerReview from "../components/CustomerReview";
 import HowItWorks from "../components/HowItWorks";
+import Categories from "../components/Categories";
 
 const Home = () => {
   const whyUsContent = [
@@ -25,7 +26,7 @@ const Home = () => {
           <h1
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-4xl mx-auto leading-snug"
             style={{
-              textShadow: "2px 2px 10px rgba(0,0,0,0.6)",
+              textShadow: "2px 2px 10px rgba(0,0,0,0.8)",
             }}
           >
             Your Dream Wedding Starts Here — Explore Venues, Decor & More!
@@ -82,6 +83,9 @@ const Home = () => {
           </div>
         ))}
       </section>
+
+      {/* 💬 Category section */}
+      <Categories/>
 
       {/* 💬 Customer Review Section */}
       <CustomerReview />
