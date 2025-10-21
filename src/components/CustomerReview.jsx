@@ -46,7 +46,7 @@ const CustomerReview = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center py-10 bg-gray-50 overflow-hidden">
-      <h3 className="text-2xl font-semibold mb-8 text-gray-800">
+      <h3 className="text-2xl sm:text-3xl font-semibold mb-8 text-gray-800 w-full text-left sm:text-center sm: px-4">
         What Our Customers Are Saying
       </h3>
 
