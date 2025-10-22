@@ -13,9 +13,9 @@ const About = () => {
     <div className="w-full bg-[#ffffff] py-10 px-6 md:px-16 lg:px-24">
 
       {/* first About Section */}
-      <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10 mt-4">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-10 mt-4">
         {/* first Left Text Section */}
-        <div className="md:w-1/2 text-center md:text-left">
+        <div className="md:w-1/2 text-center md:text-left order-1">
           <h3 className="text-3xl md:text-4xl font-bold text-[#09122C] mb-4">
             About Us
           </h3>
@@ -26,7 +26,7 @@ const About = () => {
         </div>
 
         {/* first Right Image Section */}
-        <div className="md:w-1/2 flex justify-center">
+        <div className="md:w-1/2 flex justify-center order-2">
           <img
             src={about1img}
             alt="About Us"
@@ -36,9 +36,9 @@ const About = () => {
       </div>
 
        {/* Second About Section */}
-      <div className="flex flex-col md:flex-row-reverse items-center justify-between gap-10 my-25">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-10 my-25">
         {/* Second Left Image Section */}
-        <div className="md:w-1/2 flex justify-center">
+        <div className="md:w-1/2 flex justify-center order-2 md:order-1">
           <img
             src={about2img}
             alt="About Us"
@@ -47,7 +47,7 @@ const About = () => {
         </div>
 
        {/* Second Right Text Section */}
-        <div className="md:w-1/2 text-center md:text-left">
+        <div className="md:w-1/2 text-center md:text-left order-1 md:order-2">
           <h3 className="text-3xl md:text-4xl font-bold text-[#09122C] mb-4">
             Discover and Book the Ideal Venue for Every Occasion
           </h3>
@@ -58,9 +58,9 @@ const About = () => {
       </div>
 
         {/* Third About Section */}
-        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
         {/* Third Left Text Section */}
-        <div className="md:w-1/2 text-center md:text-left">
+        <div className="md:w-1/2 text-center md:text-left order-1">
           <h3 className="text-3xl md:text-4xl font-bold text-[#09122C] mb-4">
             Your Hassle-Free Partner for Memorable Celebrations
           </h3>
@@ -70,7 +70,7 @@ const About = () => {
         </div>
 
         {/* Third Right Image Section */}
-        <div className="md:w-1/2 flex justify-center">
+        <div className="md:w-1/2 flex justify-center order-2">
           <img
             src={about3img}
             alt="About Us"
@@ -111,3 +111,4 @@ const About = () => {
 };
 
 export default About;
+
