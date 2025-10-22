@@ -34,7 +34,7 @@ const Home = () => {
         </div>
 
         {/* 🔍 Search Bar */}
-        <div className="flex items-center justify-center w-full px-10">
+        <div className="flex items-center justify-center w-full px-6">
           <div className="flex flex-col sm:flex-row  bg-white border border-[#b4b4be] rounded-md shadow-md overflow-hidden w-[98%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-[1100px]">
             
             {/* 🏛 Venues & Services Input */}

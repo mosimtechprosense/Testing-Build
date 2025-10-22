@@ -10,11 +10,16 @@ import makeup from "../assets/categories/makeup.avif"
 import mehendi from "../assets/categories/mehendi.avif"
 import photographers from "../assets/categories/photographers.avif"
 import venues from "../assets/categories/venues.avif"
+import about1img from "../assets/aboutUs/first.jpg"
+import about2img from "../assets/aboutUs/second.jpg"
+import about3img from "../assets/aboutUs/third.webp"
+
 
 
 
 
 
 export {
-    aarav, aditya, manish, priya, rajiv, rohan, caterers, decor, makeup, mehendi, photographers, venues
+    aarav, aditya, manish, priya, rajiv, rohan, caterers, decor, makeup, mehendi, photographers, venues,
+    about1img, about2img, about3img
 }
