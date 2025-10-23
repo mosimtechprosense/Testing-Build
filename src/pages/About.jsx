@@ -1,6 +1,9 @@
 import { about1img, about2img, about3img } from "../assets/index";
+import { useNavigate } from "react-router-dom";
 
 const About = () => {
+
+    const navigate = useNavigate();
 
   const founders = [
     {name :'Sanjay Pathak', img:"/temp.png", exp :'8 years+ experience in wedding management', title :'Founder'},
@@ -9,8 +12,17 @@ const About = () => {
   ]
 
 
+
+
   return (
-    <div className="w-full bg-[#ffffff] py-10 px-6 md:px-16 lg:px-24">
+    <div className="w-full bg-[#ffffff] py-8 px-6 md:px-16 lg:px-24">
+      
+      {/* breadcrumb navigation */}
+      <div className="flex items-center gap-x-2 mb-10">
+      <h3 className="text-[#dc2626] font-normal cursor-pointer" onClick={() => navigate("/")}>Home</h3>
+      <span>/</span>
+      <span className="text-gray-500 font-normal">About</span>
+      </div>
 
       {/* first About Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-10 mt-4">

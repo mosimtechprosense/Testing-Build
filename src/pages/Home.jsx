@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { CiLocationOn } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
@@ -5,15 +6,54 @@ import homeWalpaper from "../assets/homeWalpaper.jpg";
 import CustomerReview from "../components/CustomerReview";
 import HowItWorks from "../components/HowItWorks";
 import Categories from "../components/Categories";
+import WhyUsSection from "../components/WhyUsSection";
 
 const Home = () => {
-  const whyUsContent = [
-    { title: "Events Organized", count: "1000+" },
-    { title: "Present in Cities", count: "50+" },
-    { title: "Wedding Venues", count: "500+" },
-    { title: "Wedding Locations", count: "50+" },
-  ];
 
+
+    const services = [
+    {name : 'Banquet Halls'},
+    {name : 'Marriage Gardens'},
+    {name : 'Wedding Farmhouse'},
+    {name : 'Party Halls'},
+    {name : '5 Star Wedding Hotels'},
+    {name : 'Destination Weddings'},
+    {name : 'Photographers / Videography'},
+    {name : 'Makeup Artists'},
+    {name : 'Mehandi Artists'},
+    {name : 'Decorators'},
+    {name : 'Invitation Cards'},
+    {name : 'Choreographers / Dancers'},
+    {name : 'Wedding Bands'},
+    {name : 'Wedding Transportation / Vintage cars'},
+    {name : 'Bridal Wear'},
+    {name : 'Groom Wear'},
+    {name : 'Bridal Wear'},
+  ]
+
+  
+const [searchQuery, setSearchQuery] = useState("");
+const [filteredServices, setFilteredServices] = useState(services);
+const [showSuggestions, setShowSuggestions] = useState(false);
+
+
+  const handleSearchChange = (e) => {
+  const value = e.target.value;
+  setSearchQuery(value);
+  setShowSuggestions(true);
+
+  const filtered = services.filter(service =>
+    service.name.toLowerCase().startsWith(value.toLowerCase())
+  );
+  setFilteredServices(filtered);
+};
+
+const handleSelectService = (name) => {
+  setSearchQuery(name);
+  setShowSuggestions(false);
+};
+
+  
   return (
     <div className="w-full">
       {/* 🏠 Hero Section */}
@@ -38,14 +78,47 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row  bg-white border border-[#b4b4be] rounded-md shadow-md overflow-hidden w-[98%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-[1100px]">
             
             {/* 🏛 Venues & Services Input */}
-            <div className="flex items-center gap-2 w-full sm:w-[60%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
-              <IoIosSearch className="text-gray-700 text-xl" />
-              <input
-                type="text"
-                placeholder="Search for venues, Decor, services..."
-                className="w-full text-gray-700 placeholder-gray-500 outline-none"
-              />
-            </div>
+    <div className="relative flex items-center gap-2 w-full sm:w-[60%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
+  <IoIosSearch className="text-gray-700 text-xl" />
+  <input
+    type="text"
+    placeholder="Search for venues, decor, services..."
+    className="w-full text-gray-700 placeholder-gray-500 outline-none"
+    value={searchQuery}
+    onChange={handleSearchChange}
+    onFocus={() => setShowSuggestions(true)}
+    onClick={(e) => e.stopPropagation()}
+  />
+
+  {showSuggestions && (
+    <ul
+      className="absolute top-full left-0 w-full bg-white border border-gray-200 shadow-lg rounded-b-md max-h-60 overflow-y-auto z-50"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {filteredServices.length > 0 ? (
+        filteredServices.map((item) => (
+          <li
+            key={item.name}
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              handleSelectService(item.name);
+            }}
+          >
+            {item.name}
+          </li>
+        ))
+      ) : (
+        <li className="px-4 py-2 text-gray-400 text-sm">No results found</li>
+      )}
+    </ul>
+  )}
+</div>
+
+
+
+
+
 
             {/* 📍 Location Input */}
             <div className="flex items-center gap-2 w-full sm:w-[40%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
@@ -68,21 +141,7 @@ const Home = () => {
       </div>
 
       {/* 🌟 Why Us Section */}
-      <section className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-10 px-4 sm:px-8 md:px-16 lg:px-24 py-12 text-center">
-        {whyUsContent.map((whyus) => (
-          <div
-            key={whyus.title}
-            className="w-full sm:w-1/2 md:w-auto flex-1 min-w-[140px] sm:min-w-[180px] md:min-w-[220px]"
-          >
-            <p className="text-base sm:text-lg md:text-xl font-semibold text-[#dc2626]">
-              {whyus.title}
-            </p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-[#06002e] mt-2">
-              {whyus.count}
-            </h2>
-          </div>
-        ))}
-      </section>
+      <WhyUsSection/>
 
       {/* 💬 Category section */}
       <Categories/>

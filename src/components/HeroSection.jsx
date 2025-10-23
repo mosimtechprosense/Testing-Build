@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import bookmybanquetsLogo from "../assets/bookmybanquet.png";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation  } from "react-router-dom";
 
 const HeroSection = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [navLinks, setNavLinks] = useState("home");
   const [venuesOpen, setVenuesOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const links = [
     { id: "home", label: "Home", path: "/" },
-    { id: "venues", label: "Venues", path: "/" },
+    { id: "venues", label: "Venues", path: null },
     { id: "services", label: "Services", path: "/services" },
     { id: "about", label: "About", path: "/about" },
     { id: "why-us", label: "Why Us?", path: "/why-us" },
@@ -25,19 +26,19 @@ const HeroSection = () => {
     { id: "conference", label: "Conference Halls", path: "/venues/conference-halls" },
   ];
 
+
   // 🧩 Lock scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
 
   const handleLogo = () => {
-    setNavLinks("home");
     navigate("/");
     setMenuOpen(false);
   };
 
   const handleNavClick = (id, path) => {
-    setNavLinks(id);
+    
     navigate(path);
     setMenuOpen(false);
   };
@@ -98,13 +99,18 @@ const HeroSection = () => {
                   handleNavClick(link.id, link.path);
                 }
               }}
-              className={`relative flex items-center gap-1 text-base font-semibold transition-all duration-300 ease-in-out py-3 md:py-4
-                ${
-                  navLinks === link.id
-                    ? "text-[#09122C] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:border-b-4 after:border-[#09122C] after:transition-all after:duration-300 after:ease-in-out"
-                    : "text-white after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:border-b-4 after:border-[#09122C] hover:after:w-full hover:after:transition-all hover:after:duration-300 hover:after:ease-in-out hover:text-[#09122C]"
-                }`}
-            >
+             className={`relative flex items-center gap-1 text-base font-semibold py-3 md:py-4
+                         transition-all duration-300 ease-in-out cursor-pointer
+                       ${location.pathname === link.path || (link.id === "venues" && location.pathname.startsWith("/venues"))
+                        ? "text-[#09122C] after:scale-x-100 after:origin-left"
+                        : "text-white hover:text-[#09122C]"
+                         }
+                         after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full
+                       after:bg-[#09122C] after:scale-x-0 hover:after:scale-x-100 after:origin-right hover:after:origin-left
+                        after:transition-transform after:duration-300
+                        `}
+              >
+                
               {link.label}
               {link.id === "venues" && (
                 <IoMdArrowDropdown
