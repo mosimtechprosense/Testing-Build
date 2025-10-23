@@ -109,7 +109,10 @@ const WhyUs = () => {
           Ready to Plan Your Perfect Event?
         </h3>
         <button
-          onClick={() => navigate("/")}
+            onClick={() => {
+           navigate("/");
+           window.scrollTo({ top: 0, behavior: "smooth" });
+           }}
           className="bg-[#dc2626] text-white px-8 py-3 rounded-lg font-medium cursor-pointer hover:bg-[#b91c1c] transition-all duration-300"
           aria-label="Explore Venues"
         >
