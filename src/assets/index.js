@@ -18,7 +18,6 @@ import about3img from "../assets/aboutUs/third.webp"
 
 
 
-
 export {
     aarav, aditya, manish, priya, rajiv, rohan, caterers, decor, makeup, mehendi, photographers, venues,
     about1img, about2img, about3img

@@ -137,9 +137,9 @@ const venuesDropdown = [
             {link.id === "venues" && (
              <div
               className={`${
-              venuesOpen ? "max-h-76 opacity-100" : "max-h-0 opacity-0"
+              venuesOpen ? "max-h-78 opacity-100" : "max-h-0 opacity-0"
               } overflow-y-auto transition-all duration-300 ease-in-out
-                flex flex-wrap md:absolute md:top-full md:left-0 md:bg-white
+                flex flex-wrap sm:flex md:absolute md:top-full md:left-0 md:bg-white
                 md:shadow-lg md:rounded-lg md:overflow-hidden md:z-50 p-4`}
                style={{ minWidth: "420px" }}
                >
