@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { CiLocationOn } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
-import homeWalpaper from "../assets/homeWalpaper.jpg";
+import homeWalpaper from "../assets/homeWalpaper.avif";
 import CustomerReview from "../components/CustomerReview";
 import HowItWorks from "../components/HowItWorks";
 import Categories from "../components/Categories";
@@ -28,7 +28,6 @@ const Home = () => {
     {name : 'Wedding Transportation / Vintage cars'},
     {name : 'Bridal Wear'},
     {name : 'Groom Wear'},
-    {name : 'Bridal Wear'},
   ]
 
   
@@ -78,46 +77,42 @@ const handleSelectService = (name) => {
           <div className="flex flex-col sm:flex-row  bg-white border border-[#b4b4be] rounded-md shadow-md overflow-hidden w-[98%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-[1100px]">
             
             {/* 🏛 Venues & Services Input */}
-    <div className="relative flex items-center gap-2 w-full sm:w-[60%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
-  <IoIosSearch className="text-gray-700 text-xl" />
-  <input
-    type="text"
-    placeholder="Search for venues, decor, services..."
-    className="w-full text-gray-700 placeholder-gray-500 outline-none"
-    value={searchQuery}
-    onChange={handleSearchChange}
-    onFocus={() => setShowSuggestions(true)}
-    onClick={(e) => e.stopPropagation()}
-  />
+        <div className="relative flex items-center gap-2 w-full sm:w-[60%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
+         <IoIosSearch className="text-gray-700 text-xl" />
+         <input
+          type="text"
+          placeholder="Search for venues, decor, services..."
+          className="w-full text-gray-700 placeholder-gray-500 outline-none"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onFocus={() => setShowSuggestions(true)}
+          onClick={(e) => e.stopPropagation()}
+          />
 
-  {showSuggestions && (
-    <ul
-      className="absolute top-full left-0 w-full bg-white border border-gray-200 shadow-lg rounded-b-md max-h-60 overflow-y-auto z-50"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {filteredServices.length > 0 ? (
-        filteredServices.map((item) => (
-          <li
+         {showSuggestions && (
+          <ul
+           className="absolute top-full left-0 w-full bg-white border border-gray-200 shadow-lg rounded-b-md max-h-60 overflow-y-auto z-50"
+           onClick={(e) => e.stopPropagation()}
+          >
+          {filteredServices.length > 0 ? (
+            filteredServices.map((item) => (
+           <li
             key={item.name}
             className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm"
             onMouseDown={(e) => {
               e.preventDefault();
               handleSelectService(item.name);
             }}
-          >
+            >
             {item.name}
           </li>
-        ))
-      ) : (
-        <li className="px-4 py-2 text-gray-400 text-sm">No results found</li>
-      )}
-    </ul>
-  )}
-</div>
-
-
-
-
+             ))
+            ) : (
+          <li className="px-4 py-2 text-gray-400 text-sm">No results found</li>
+            )}
+         </ul>
+          )}
+       </div>
 
 
             {/* 📍 Location Input */}
