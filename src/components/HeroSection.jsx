@@ -20,11 +20,25 @@ const HeroSection = () => {
     { id: "contact", label: "Contact Us", path: "/contact" },
   ];
 
-  const venuesDropdown = [
-    { id: "banquet", label: "Banquet Halls", path: "/venues/banquet-halls" },
-    { id: "wedding", label: "Wedding Venues", path: "/venues/wedding-venues" },
-    { id: "conference", label: "Conference Halls", path: "/venues/conference-halls" },
-  ];
+const venuesDropdown = [
+  { id: "banquet", label: "Banquet Halls", path: "/venues/banquet-halls" },
+  { id: "marriage-gardens", label: "Marriage Gardens", path: "/venues/marriage-gardens" },
+  { id: "wedding-farmhouse", label: "Wedding Farmhouse", path: "/venues/wedding-farmhouse" },
+  { id: "party-halls", label: "Party Halls", path: "/venues/party-halls" },
+  { id: "five-star-hotels", label: "5 Star Wedding Hotels", path: "/venues/5-star-wedding-hotels" },
+  { id: "destination-weddings", label: "Destination Weddings", path: "/venues/destination-weddings" },
+  { id: "makeup-artists", label: "Makeup Artists", path: "/vendors/makeup-artists" },
+  { id: "mehandi-artists", label: "Mehandi Artists", path: "/vendors/mehandi-artists" },
+  { id: "decorators", label: "Decorators", path: "/vendors/decorators" },
+  { id: "invitation-cards", label: "Invitation Cards", path: "/vendors/invitation-cards" },
+  { id: "choreographers", label: "Choreographers / Dancers", path: "/vendors/choreographers-dancers" },
+  { id: "photographers", label: "Photographers / Videography", path: "/vendors/photographers-videography" },
+  { id: "wedding-bands", label: "Wedding Bands", path: "/vendors/wedding-bands" },
+  { id: "transportation", label: "Wedding Transportation", path: "/vendors/transportation-vintage-cars" },
+  { id: "bridal-wear", label: "Bridal Wear", path: "/vendors/bridal-wear" },
+  { id: "groom-wear", label: "Groom Wear", path: "/vendors/groom-wear" },
+];
+
 
 
   // 🧩 Lock scroll when menu is open
@@ -38,7 +52,6 @@ const HeroSection = () => {
   };
 
   const handleNavClick = (id, path) => {
-    
     navigate(path);
     setMenuOpen(false);
   };
@@ -109,8 +122,7 @@ const HeroSection = () => {
                        after:bg-[#09122C] after:scale-x-0 hover:after:scale-x-100 after:origin-right hover:after:origin-left
                         after:transition-transform after:duration-300
                         `}
-              >
-                
+              >               
               {link.label}
               {link.id === "venues" && (
                 <IoMdArrowDropdown
@@ -123,27 +135,29 @@ const HeroSection = () => {
 
             {/* Dropdown Menu */}
             {link.id === "venues" && (
-              <div
-                className={`${
-                  venuesOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
-                } overflow-hidden transition-all duration-300 ease-in-out 
-                flex flex-col md:absolute md:top-full md:left-0 md:bg-white 
-                md:shadow-lg md:rounded-lg md:overflow-hidden md:z-50`}
-              >
-                {venuesDropdown.map((item) => (
-                  <Link
-                    key={item.id}
-                    to={item.path}
-                    className="text-white md:text-[#09122C] text-sm py-2 px-4 md:px-6 hover:bg-[#f3f3f3] hover:text-[#dc2626] transition-all duration-300"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setVenuesOpen(false);
-                    }}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+             <div
+              className={`${
+              venuesOpen ? "max-h-76 opacity-100" : "max-h-0 opacity-0"
+              } overflow-y-auto transition-all duration-300 ease-in-out
+                flex flex-wrap md:absolute md:top-full md:left-0 md:bg-white
+                md:shadow-lg md:rounded-lg md:overflow-hidden md:z-50 p-4`}
+               style={{ minWidth: "420px" }}
+               >
+            {venuesDropdown.map((item) => (
+              <Link
+               key={item.id}
+               to={item.path}
+               className="text-[#09122C] text-sm py-2 px-2 hover:bg-[#f3f3f3] hover:text-[#dc2626] transition-all duration-300 rounded w-1/2"
+               onClick={() => {
+               setMenuOpen(false);
+               setVenuesOpen(false);
+             }}  
+             >
+            {item.label}
+            </Link>
+             ))}
+           </div>
+
             )}
           </div>
         ))}

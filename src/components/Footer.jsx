@@ -2,6 +2,7 @@ import footer_logo from '../assets/footer_logo.png'
 import { IoLogoFacebook } from "react-icons/io5";
 import { FaLinkedin, FaYoutube } from "react-icons/fa";
 import { RiInstagramLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -17,7 +18,7 @@ const Footer = () => {
         </p>
        </div>
         {/* 2️⃣ Company */}
-        <div>
+        {/* <div>
           <h2 className="text-red-600 mb-3 text-lg">Company</h2>
           <ul className="space-y-2 text-base">
             <li><a href="#" className="hover:text-red-600">About us</a></li>
@@ -25,18 +26,63 @@ const Footer = () => {
             <li><a href="#" className="hover:text-red-600">Blog</a></li>
             <li><a href="#" className="hover:text-red-600">Why?</a></li>
           </ul>
-        </div>
+        </div> */}
 
-        {/* 3️⃣ Support */}
-        <div>
-          <h2 className="text-red-600 mb-3 text-lg">Support</h2>
-          <ul className="space-y-2 text-base">
-            <li><a href="#" className="hover:text-red-600">Get in Touch</a></li>
-            <li><a href="#" className="hover:text-red-600">Terms</a></li>
-            <li><a href="#" className="hover:text-red-600">Privacy</a></li>
-            <li><a href="#" className="hover:text-red-600">Sitemap</a></li>
-          </ul>
-        </div>
+       {/* 3️⃣ Company */}
+       <div>
+         <h2 className="text-red-600 mb-3 text-lg">Company</h2>
+         <ul className="space-y-2 text-base">
+          <li>
+           <Link to="/about" className="hover:text-red-600">
+             About us
+          </Link>
+          
+          </li>
+          <li>
+           <Link to= {null} className="hover:text-red-600">
+             Venues
+          </Link>
+         </li>
+         <li>
+          <Link to={null} className="hover:text-red-600">
+            Blog
+          </Link>
+         </li>
+         <li>
+          <Link to="why-us" className="hover:text-red-600">
+            Why Us?
+          </Link>
+         </li>
+         </ul>
+       </div>
+
+       {/* 3️⃣ Support */}
+       <div>
+         <h2 className="text-red-600 mb-3 text-lg">Support</h2>
+         <ul className="space-y-2 text-base">
+          <li>
+           <Link to="/contact" className="hover:text-red-600">
+             Get in Touch
+          </Link>
+          
+          </li>
+          <li>
+           <Link to="/terms" className="hover:text-red-600">
+             Terms & Conditions
+          </Link>
+         </li>
+         <li>
+          <Link to="/privacy" className="hover:text-red-600">
+            Privacy Policy 
+          </Link>
+         </li>
+         <li>
+          <Link to={null} className="hover:text-red-600">
+            Sitemap
+          </Link>
+         </li>
+         </ul>
+       </div>
 
         {/* 4️⃣ Contact */}
         <div>
