@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { MdCelebration, MdHandshake, MdStarRate, MdEventAvailable } from "react-icons/md";
 
-const features = [
+
+const WhyUs = () => {
+
+  const navigate = useNavigate();
+
+  const features = [
   {
     icon: <MdCelebration className="text-3xl" />,
     title: "Exceptional Venues",
@@ -37,16 +42,14 @@ const trustedLogos = [
   { src: "https://cdn-icons-png.flaticon.com/512/4035/4035117.png", label: "Entertainment & DJs" },
 ];
 
-const WhyUs = () => {
-  const navigate = useNavigate();
 
   return (
-    <div className="w-full bg-gradient-to-b from-[#ffffff] to-[#f9f9f9] py-12 px-6 md:px-16 lg:px-24">
+    <div className="w-full bg-gradient-to-b from-[#ffffff] to-[#f9f9f9] py-8 px-6 md:px-16 lg:px-24">
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-x-2 mb-10 text-sm md:text-base">
+      <div className="flex items-center gap-x-1 mb-10 text-sm md:text-base">
         <h3
-          className="text-[#dc2626] font-normal cursor-pointer hover:underline"
+          className="text-[#dc2626] font-normal cursor-pointer"
           onClick={() => navigate("/")}
         >
           Home
@@ -57,12 +60,12 @@ const WhyUs = () => {
 
       {/* Heading */}
       <div className="w-full text-center mx-auto px-4 md:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#09122C] mb-3">Why Choose Us?</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-[#000000] mb-3">Why Choose Us?</h2>
         <p className="text-gray-600 text-lg italic mb-6">
           We’re more than just a booking platform — we help you craft unforgettable celebrations.
         </p>
         <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
-          Welcome to <span className="font-semibold text-[#dc2626]">BookMyBanquet</span>, your go-to platform for discovering and booking the perfect banquet halls for your special occasions. 
+          Welcome to <span className="font-semibold text-[#dc2626]">BookMyBanquet’s</span>, your go-to platform for discovering and booking the perfect banquet halls for your special occasions. 
           Whether you're planning a wedding, corporate event, birthday party, or any other celebration, 
           we help you find the ideal venue that fits your style, budget, and needs.
         </p>
@@ -71,11 +74,11 @@ const WhyUs = () => {
       {/* Features */}
       <div className="flex flex-wrap justify-center gap-10 md:gap-16 mt-16">
         {features.map((feature, index) => (
-          <div key={index} className="flex items-start gap-5 md:w-[45%] bg-white p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+          <div key={index} className="flex flex-col md:flex-row items-center md:items-start gap-5 md:w-[45%] bg-white p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
             <div className="text-[#dc2626] bg-[#fdeaea] p-4 rounded-full flex-shrink-0">
               {feature.icon}
             </div>
-            <div>
+            <div className="text-center md:text-left mt-3 md:mt-0">
               <h3 className="text-xl font-semibold text-[#dc2626] mb-2">{feature.title}</h3>
               <p className="text-gray-700 leading-relaxed">{feature.description}</p>
             </div>

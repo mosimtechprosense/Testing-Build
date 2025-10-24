@@ -102,7 +102,7 @@ const HeroSection = () => {
              className={`relative flex items-center gap-1 text-base font-semibold py-3 md:py-4
                          transition-all duration-300 ease-in-out cursor-pointer
                        ${location.pathname === link.path || (link.id === "venues" && location.pathname.startsWith("/venues"))
-                        ? "text-[#09122C] after:scale-x-100 after:origin-left"
+                        ? "text-[#000000] after:scale-x-100 after:origin-left"
                         : "text-white hover:text-[#09122C]"
                          }
                          after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full

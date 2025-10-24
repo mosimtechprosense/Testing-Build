@@ -18,7 +18,7 @@ const About = () => {
     <div className="w-full bg-[#ffffff] py-8 px-6 md:px-16 lg:px-24">
       
       {/* breadcrumb navigation */}
-      <div className="flex items-center gap-x-2 mb-10">
+      <div className="flex items-center gap-x-1 mb-10">
       <h3 className="text-[#dc2626] font-normal cursor-pointer" onClick={() => navigate("/")}>Home</h3>
       <span>/</span>
       <span className="text-gray-500 font-normal">About</span>
@@ -28,7 +28,7 @@ const About = () => {
       <div className="flex flex-col md:flex-row items-center justify-between gap-10 mt-4">
         {/* first Left Text Section */}
         <div className="md:w-1/2 text-center md:text-left order-1">
-          <h3 className="text-3xl md:text-4xl font-bold text-[#09122C] mb-4">
+          <h3 className="text-3xl md:text-4xl font-bold text-[#000000] mb-4">
             About Us
           </h3>
           <p className="text-base md:text-lg text-gray-700 leading-relaxed">
