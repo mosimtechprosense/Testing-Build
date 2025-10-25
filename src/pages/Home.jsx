@@ -82,7 +82,7 @@ const handleSelectService = (name) => {
          <input
           type="text"
           placeholder="Search for venues, decor, services..."
-          className="w-full text-gray-700 placeholder-gray-500 outline-none"
+          className="w-full text-gray-700 placeholder-gray-500 outline-none cursor-pointer"
           value={searchQuery}
           onChange={handleSearchChange}
           onFocus={() => setShowSuggestions(true)}
@@ -121,12 +121,12 @@ const handleSelectService = (name) => {
               <input
                 type="text"
                 placeholder="Enter your location"
-                className="w-full text-gray-700 placeholder-gray-500 outline-none"
+                className="w-full text-gray-700 placeholder-gray-500 outline-none cursor-pointer"
               />
             </div>
 
             {/* 🔘 Search Button */}
-            <button className="bg-[#dc2626] text-white px-7 py-4 flex items-center justify-center hover:bg-[#b91c1c] transition-all w-full sm:w-auto text-base font-semibold">
+            <button className="bg-[#dc2626] text-white px-7 py-4 flex items-center justify-center cursor-pointer hover:bg-[#b91c1c] transition-all w-full sm:w-auto text-base font-semibold">
               {/* Show icon on larger screens, text on small screens */}
               <span className="block sm:hidden">Search</span>
               <FaSearch className="hidden sm:block w-6 h-6" />

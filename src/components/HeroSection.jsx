@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import bookmybanquetsLogo from "../assets/bookmybanquet.png";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { Link, useNavigate, useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import VenuesDropdown from "./VenuesDropdown";
 
 const HeroSection = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [venuesOpen, setVenuesOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
 
   const links = [
     { id: "home", label: "Home", path: "/" },
@@ -19,27 +19,6 @@ const HeroSection = () => {
     { id: "blog", label: "Blog", path: "/blog" },
     { id: "contact", label: "Contact Us", path: "/contact" },
   ];
-
-const venuesDropdown = [
-  { id: "banquet", label: "Banquet Halls", path: "/venues/banquet-halls" },
-  { id: "marriage-gardens", label: "Marriage Gardens", path: "/venues/marriage-gardens" },
-  { id: "wedding-farmhouse", label: "Wedding Farmhouse", path: "/venues/wedding-farmhouse" },
-  { id: "party-halls", label: "Party Halls", path: "/venues/party-halls" },
-  { id: "five-star-hotels", label: "5 Star Wedding Hotels", path: "/venues/5-star-wedding-hotels" },
-  { id: "destination-weddings", label: "Destination Weddings", path: "/venues/destination-weddings" },
-  { id: "makeup-artists", label: "Makeup Artists", path: "/vendors/makeup-artists" },
-  { id: "mehandi-artists", label: "Mehandi Artists", path: "/vendors/mehandi-artists" },
-  { id: "decorators", label: "Decorators", path: "/vendors/decorators" },
-  { id: "invitation-cards", label: "Invitation Cards", path: "/vendors/invitation-cards" },
-  { id: "choreographers", label: "Choreographers / Dancers", path: "/vendors/choreographers-dancers" },
-  { id: "photographers", label: "Photographers / Videography", path: "/vendors/photographers-videography" },
-  { id: "wedding-bands", label: "Wedding Bands", path: "/vendors/wedding-bands" },
-  { id: "transportation", label: "Wedding Transportation", path: "/vendors/transportation-vintage-cars" },
-  { id: "bridal-wear", label: "Bridal Wear", path: "/vendors/bridal-wear" },
-  { id: "groom-wear", label: "Groom Wear", path: "/vendors/groom-wear" },
-];
-
-
 
   // 🧩 Lock scroll when menu is open
   useEffect(() => {
@@ -57,7 +36,7 @@ const venuesDropdown = [
   };
 
   return (
-    <div className="w-full bg-[#dc2626] px-4 sm:px-6 md:px-6 lg:px-14 xl:px-20 flex items-center justify-between gap-6 relative z-50">
+    <div className="w-full bg-[#dc2626] overflow-visible px-4 sm:px-6 md:px-6 lg:px-14 xl:px-20 flex items-center justify-between gap-6 relative z-50">
       {/* Logo */}
       <div className="flex items-center">
         <img
@@ -82,47 +61,56 @@ const venuesDropdown = [
       {/* Navigation Menu */}
       <div
         className={`
-          md:flex flex-col md:flex-row md:items-center gap-3 sm:gap-6 md:gap-8 lg:gap-10
-          absolute md:static top-full left-0 w-full md:w-auto
-          bg-[#dc2626] md:bg-transparent px-6 md:px-0 py-4 md:py-0
-          shadow-md md:shadow-none whitespace-nowrap z-40
-          transform transition-all duration-500 ease-in-out
-          ${menuOpen ? "translate-y-0 opacity-100" : "-translate-y-5 opacity-0 md:opacity-100 md:translate-y-0"}
-          ${menuOpen ? "flex" : "hidden md:flex"}
-        `}
+    md:flex flex-col md:flex-row md:items-center gap-3 sm:gap-6 md:gap-8 lg:gap-10
+    absolute md:static top-full left-0 w-full md:w-auto
+    bg-[#dc2626] md:bg-transparent px-6 md:px-0 py-4 md:py-0
+    shadow-md md:shadow-none whitespace-nowrap z-50
+    transform transition-all duration-500 ease-in-out overflow-visible
+    ${
+      menuOpen
+        ? "translate-y-0 opacity-100"
+        : "-translate-y-5 opacity-0 md:opacity-100 md:translate-y-0"
+    }
+    ${menuOpen ? "flex" : "hidden md:flex"}
+  `}
         onClick={(e) => e.stopPropagation()}
       >
         {links.map((link) => (
           <div
             key={link.id}
-            className="relative"
-            onMouseEnter={() =>
-              window.innerWidth >= 768 && link.id === "venues" && setVenuesOpen(true)
-            }
-            onMouseLeave={() =>
-              window.innerWidth >= 768 && link.id === "venues" && setVenuesOpen(false)
-            }
+            className={`relative ${link.id === "venues" ? "group" : ""}`}
           >
             <button
               onClick={() => {
                 if (link.id === "venues") {
                   if (window.innerWidth < 768) setVenuesOpen(!venuesOpen);
-                  else handleNavClick(link.id, link.path);
                 } else {
                   handleNavClick(link.id, link.path);
                 }
               }}
-             className={`relative flex items-center gap-1 text-base font-semibold py-3 md:py-4
-                         transition-all duration-300 ease-in-out cursor-pointer
-                       ${location.pathname === link.path || (link.id === "venues" && location.pathname.startsWith("/venues"))
-                        ? "text-[#000000] after:scale-x-100 after:origin-left"
-                        : "text-white hover:text-[#09122C]"
-                         }
-                         after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full
-                       after:bg-[#09122C] after:scale-x-0 hover:after:scale-x-100 after:origin-right hover:after:origin-left
-                        after:transition-transform after:duration-300
-                        `}
-              >               
+              className={`relative flex items-center gap-1 text-base font-semibold py-3 md:py-4
+          transition-all duration-300 ease-in-out cursor-pointer
+          ${
+            location.pathname === link.path ||
+            (link.id === "venues" && location.pathname.startsWith("/venues"))
+              ? "text-[#000000] after:scale-x-100 after:origin-left"
+              : "text-white hover:text-[#09122C]"
+          }
+          after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full
+          after:bg-[#09122C] after:scale-x-0 hover:after:scale-x-100 after:origin-right hover:after:origin-left
+          after:transition-transform after:duration-300
+        `}
+              onMouseEnter={() =>
+                window.innerWidth >= 768 &&
+                link.id === "venues" &&
+                setVenuesOpen(true)
+              }
+              onMouseLeave={() =>
+                window.innerWidth >= 768 &&
+                link.id === "venues" &&
+                setVenuesOpen(false)
+              }
+            >
               {link.label}
               {link.id === "venues" && (
                 <IoMdArrowDropdown
@@ -135,29 +123,32 @@ const venuesDropdown = [
 
             {/* Dropdown Menu */}
             {link.id === "venues" && (
-             <div
-              className={`${
-              venuesOpen ? "max-h-78 opacity-100" : "max-h-0 opacity-0"
-              } overflow-y-auto transition-all duration-300 ease-in-out
-                flex flex-wrap sm:flex md:absolute md:top-full md:left-0 md:bg-white
-                md:shadow-lg md:rounded-lg md:overflow-hidden md:z-50 p-4`}
-               style={{ minWidth: "420px" }}
-               >
-            {venuesDropdown.map((item) => (
-              <Link
-               key={item.id}
-               to={item.path}
-               className="text-[#09122C] text-sm py-2 px-2 hover:bg-[#f3f3f3] hover:text-[#dc2626] transition-all duration-300 rounded w-1/2"
-               onClick={() => {
-               setMenuOpen(false);
-               setVenuesOpen(false);
-             }}  
-             >
-            {item.label}
-            </Link>
-             ))}
-           </div>
-
+              <div
+                className={`
+                           absolute top-full left-0 mt-0 w-full md:w-[460px] bg-white shadow-lg rounded-lg 
+                           p-3 text-[0.85rem] overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all 
+                           duration-200 ease-in-out z-50
+      ${
+        venuesOpen
+          ? "opacity-100 translate-y-0 visible"
+          : "opacity-0 translate-y-2 invisible"
+      }
+    `}
+                onMouseEnter={() =>
+                  window.innerWidth >= 768 && setVenuesOpen(true)
+                }
+                onMouseLeave={() =>
+                  window.innerWidth >= 768 && setVenuesOpen(false)
+                }
+              >
+                <VenuesDropdown
+                  isOpen={venuesOpen}
+                  onSelect={() => {
+                    setMenuOpen(false);
+                    setVenuesOpen(false);
+                  }}
+                />
+              </div>
             )}
           </div>
         ))}
