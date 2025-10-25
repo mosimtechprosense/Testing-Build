@@ -2,7 +2,7 @@ import React from 'react'
 
 const WhyUsSection = () => {
 
-      const whyUsContent = [
+    const whyUsContent = [
     { title: "Events Organized", count: "1000+" },
     { title: "Present in Cities", count: "50+" },
     { title: "Wedding Venues", count: "500+" },
