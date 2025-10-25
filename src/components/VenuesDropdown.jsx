@@ -77,7 +77,7 @@ const VenuesDropdown = ({ isOpen, onSelect }) => {
         overflow-y-auto
       `}
       style={{
-        minWidth: "420px",
+        minWidth: "435px",
         maxHeight: "400px", // Scrollable height for mobile
       }}
     >
