@@ -23,13 +23,14 @@ const Privacy = () => {
           Privacy Policy
         </h2>
         <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-6xl mx-auto">
-          At <span className="font-semibold text-[#dc2626]">BookMyBanquets</span>, we give importance
-          to privacy, and we are bound to preserve your personal information.
-          This Privacy Policy identifies what data we gather and how we utilize,
-          store, and protect it once you visit or use our site{" "}
-          <span className="font-medium">www.bookmybanquets.in</span> and related
-          services. By visiting or utilizing our website, you agree to this
-          Privacy Policy.
+          At{" "}
+          <span className="font-semibold text-[#dc2626]">BookMyBanquets</span>,
+          we give importance to privacy, and we are bound to preserve your
+          personal information. This Privacy Policy identifies what data we
+          gather and how we utilize, store, and protect it once you visit or use
+          our site <span className="font-medium">www.bookmybanquets.in</span>{" "}
+          and related services. By visiting or utilizing our website, you agree
+          to this Privacy Policy.
         </p>
       </div>
 
@@ -39,16 +40,25 @@ const Privacy = () => {
           <h3 className="text-xl font-semibold text-[#000000] mb-2">
             Information We Collect
           </h3>
-          <p>We collect data to offer superior services and enhance your experience. The information we gather includes:</p>
+          <p>
+            We collect data to offer superior services and enhance your
+            experience. The information we gather includes:
+          </p>
           <ul className="list-disc list-inside mt-2 space-y-1">
             <li>
-              <span className="font-medium">Personal Information:</span> When contacting us, completing forms, or booking events, we may collect your name, phone number, email address, and event details.
+              <span className="font-medium">Personal Information:</span> When
+              contacting us, completing forms, or booking events, we may collect
+              your name, phone number, email address, and event details.
             </li>
             <li>
-              <span className="font-medium">Non-Personal Information:</span> This includes information about your browser, device, IP address, and browsing history, tracked via cookies or analytics.
+              <span className="font-medium">Non-Personal Information:</span>{" "}
+              This includes information about your browser, device, IP address,
+              and browsing history, tracked via cookies or analytics.
             </li>
             <li>
-              <span className="font-medium">Vendor Information:</span> For vendors or banquet owners registering with us, we collect business details, photos, venue prices, and contact information.
+              <span className="font-medium">Vendor Information:</span> For
+              vendors or banquet owners registering with us, we collect business
+              details, photos, venue prices, and contact information.
             </li>
           </ul>
         </section>
@@ -66,7 +76,9 @@ const Privacy = () => {
             <li>Ensure secure transactions and prevent misuse.</li>
           </ul>
           <p className="mt-2">
-            Your personal information is <span className="font-semibold">never sold, rented, or traded</span> to third parties for marketing purposes.
+            Your personal information is{" "}
+            <span className="font-semibold">never sold, rented, or traded</span>{" "}
+            to third parties for marketing purposes.
           </p>
         </section>
 
@@ -77,13 +89,19 @@ const Privacy = () => {
           <p>We may share your information only in the following cases:</p>
           <ul className="list-disc list-inside mt-2 space-y-1">
             <li>
-              <span className="font-medium">With Vendors:</span> When you make an inquiry or booking request, we share your contact information with the relevant banquet partner to process your request.
+              <span className="font-medium">With Vendors:</span> When you make
+              an inquiry or booking request, we share your contact information
+              with the relevant banquet partner to process your request.
             </li>
             <li>
-              <span className="font-medium">With Service Providers:</span> We engage trusted third-party partners for hosting, analytics, or payment processing — all bound by confidentiality.
+              <span className="font-medium">With Service Providers:</span> We
+              engage trusted third-party partners for hosting, analytics, or
+              payment processing — all bound by confidentiality.
             </li>
             <li>
-              <span className="font-medium">When Legally Required:</span> We may disclose your information as required by law or government authorities.
+              <span className="font-medium">When Legally Required:</span> We may
+              disclose your information as required by law or government
+              authorities.
             </li>
           </ul>
         </section>
@@ -93,11 +111,11 @@ const Privacy = () => {
             Data Retention and Security
           </h3>
           <p>
-            We retain your personal data only as long as necessary to provide our
-            services or as required by law. We apply standard security measures
-            to protect your data from unauthorized access or alteration.
-            However, no online platform can guarantee absolute security, and
-            users are encouraged to share data responsibly.
+            We retain your personal data only as long as necessary to provide
+            our services or as required by law. We apply standard security
+            measures to protect your data from unauthorized access or
+            alteration. However, no online platform can guarantee absolute
+            security, and users are encouraged to share data responsibly.
           </p>
         </section>
 
