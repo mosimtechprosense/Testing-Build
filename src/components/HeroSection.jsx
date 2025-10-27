@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import bookmybanquetsLogo from "../assets/bookmybanquet.png";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
