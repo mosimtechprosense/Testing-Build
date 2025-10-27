@@ -20,10 +20,10 @@ const HeroSection = () => {
     { id: "contact", label: "Contact Us", path: "/contact" },
   ];
 
-  // 🧩 Lock scroll when menu is open
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "auto";
-  }, [menuOpen]);
+  //  Lock scroll when menu is open  (Temprory paused)
+  // useEffect(() => {
+  //   document.body.style.overflow = menuOpen ? "hidden" : "auto";
+  // }, [menuOpen]);
 
   const handleLogo = () => {
     navigate("/");

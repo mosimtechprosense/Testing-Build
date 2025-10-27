@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
-
-*{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+* {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* hide scrollbar for customer review on home page */
@@ -13,7 +12,6 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
 
 /*animation for customer review cards */
 
@@ -31,8 +29,11 @@
   display: flex;
 }
 
-
 /* shadow for customer review cards*/
 .shadow-even {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
+
+
+
+
