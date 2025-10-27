@@ -36,7 +36,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="w-full bg-[#dc2626] overflow-visible px-4 sm:px-6 md:px-6 lg:px-14 xl:px-20 flex items-center justify-between gap-6 relative z-50">
+    <div className="w-full bg-[#dc2626] overflow-visible px-4 sm:px-6 md:px-6 lg:px-14 xl:px-20 flex items-center justify-between gap-6 relative z-100">
       {/* Logo */}
       <div className="flex items-center">
         <img
@@ -49,7 +49,7 @@ const HeroSection = () => {
 
       {/* Mobile Menu Button */}
       <div
-        className="md:hidden text-white text-3xl cursor-pointer select-none z-50"
+        className="md:hidden text-white text-3xl cursor-pointer select-none"
         onClick={(e) => {
           e.stopPropagation();
           setMenuOpen(!menuOpen);
@@ -121,25 +121,32 @@ const HeroSection = () => {
               )}
             </button>
 
-            {/* Dropdown Menu */}
-            {link.id === "venues" && (
+            {/* Mobile Inline Dropdown */}
+            {link.id === "venues" && window.innerWidth < 768 && venuesOpen && (
+              <div className="pl-4 py-2 text-white bg-[#dc2626] overflow-visible">
+                <VenuesDropdown
+                  isOpen={venuesOpen}
+                  onSelect={() => {
+                    setVenuesOpen(false);
+                    setMenuOpen(false);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Desktop Hover Dropdown */}
+            {link.id === "venues" && window.innerWidth >= 768 && (
               <div
-                className={`
-                           absolute top-full left-0 mt-0 w-full md:w-[460px] bg-white shadow-lg rounded-lg 
-                           p-3 text-[0.85rem] overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all 
-                           duration-200 ease-in-out z-50
-      ${
-        venuesOpen
-          ? "opacity-100 translate-y-0 visible"
-          : "opacity-0 translate-y-2 invisible"
-      }
-    `}
-                onMouseEnter={() =>
-                  window.innerWidth >= 768 && setVenuesOpen(true)
-                }
-                onMouseLeave={() =>
-                  window.innerWidth >= 768 && setVenuesOpen(false)
-                }
+                className={`absolute top-full left-0 mt-0 w-[460px] bg-white shadow-lg rounded-lg 
+                            p-3 text-[0.85rem] overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all 
+                            duration-200 ease-in-out z-50
+                          ${
+                            venuesOpen
+                              ? "opacity-100 translate-y-0 visible"
+                              : "opacity-0 translate-y-2 invisible"
+                          }`}
+                onMouseEnter={() => setVenuesOpen(true)}
+                onMouseLeave={() => setVenuesOpen(false)}
               >
                 <VenuesDropdown
                   isOpen={venuesOpen}
@@ -157,7 +164,7 @@ const HeroSection = () => {
       {/* Transparent Overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-transparent md:hidden z-30 transition-opacity duration-500 ease-in-out opacity-100"
+          className="fixed inset-0 bg-transparent bg-opacity-20 md:hidden z-30"
           onClick={() => setMenuOpen(false)}
         ></div>
       )}
