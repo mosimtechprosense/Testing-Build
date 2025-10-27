@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Footer from "./components/Footer";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import DiscountPopup from "./components/DiscountPopup";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Navbar />
+        <DiscountPopup />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />

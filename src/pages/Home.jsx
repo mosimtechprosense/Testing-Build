@@ -55,12 +55,12 @@ const Home = () => {
 
   return (
     <div className="w-full">
-      {/* 🏠 Hero Section */}
+      {/*  Hero Section */}
       <div
         className="h-[70vh] sm:h-[80vh] lg:h-[90vh] bg-cover bg-center flex flex-col items-center justify-center relative"
         style={{ backgroundImage: `url(${homeWalpaper})` }}
       >
-        {/* 🌟 Hero Text */}
+        {/*  Hero Text */}
         <div className="text-center px-4 sm:px-6 mb-6">
           <h1
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-4xl mx-auto leading-snug"
@@ -72,10 +72,10 @@ const Home = () => {
           </h1>
         </div>
 
-        {/* 🔍 Search Bar */}
+        {/*  Search Bar */}
         <div className="flex items-center justify-center w-full px-6">
           <div className="flex flex-col sm:flex-row  bg-white border border-[#b4b4be] rounded-md shadow-md w-[98%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-[1100px]">
-            {/* 🏛 Venues & Services Input */}
+            {/*  Venues & Services Input */}
             <div className="relative flex items-center gap-2 w-full sm:w-[60%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
               <IoIosSearch className="text-gray-700 text-xl" />
               <input
@@ -90,7 +90,7 @@ const Home = () => {
 
               {showSuggestions && (
                 <div
-                  className="absolute top-full left-0 w-full bg-white border border-gray-300 max-h-[300px] sm:max-h-[200px] overflow-y-auto z-50 shadow-md rounded scrollbar-hide"
+                  className="absolute top-full left-0 w-full bg-white border border-gray-300 max-h-[255px] sm:max-h-[155px] overflow-y-auto z-50 shadow-md rounded scrollbar-hide"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {filteredServices.length > 0 ? (
@@ -115,7 +115,7 @@ const Home = () => {
               )}
             </div>
 
-            {/* 📍 Location Input */}
+            {/*  Location Input */}
             <div className="flex items-center gap-2 w-full sm:w-[40%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
               <CiLocationOn className="text-gray-700 text-xl" />
               <input
@@ -125,7 +125,7 @@ const Home = () => {
               />
             </div>
 
-            {/* 🔘 Search Button */}
+            {/*  Search Button */}
             <button className="bg-[#dc2626] text-white px-7 py-4 flex items-center justify-center cursor-pointer hover:bg-[#b91c1c] transition-all w-full sm:w-auto text-base font-semibold">
               {/* Show icon on larger screens, text on small screens */}
               <span className="block sm:hidden">Search</span>
@@ -135,13 +135,13 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 🌟 Why Us Section */}
+      {/*  Why Us Section */}
       <WhyUsSection />
 
-      {/* 💬 Category section */}
+      {/*  Category section */}
       <Categories />
 
-      {/* 💬 Customer Review Section */}
+      {/* Customer Review Section */}
       <CustomerReview />
 
       {/*How It Works Section*/}
