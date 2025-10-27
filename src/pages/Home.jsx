@@ -90,7 +90,7 @@ const Home = () => {
 
               {showSuggestions && (
                 <div
-                  className="absolute top-full left-0 w-full bg-white border border-gray-300 max-h-[300px] sm:max-h-[150px] overflow-y-auto z-50 shadow-md rounded scrollbar-hide"
+                  className="absolute top-full left-0 w-full bg-white border border-gray-300 max-h-[300px] sm:max-h-[200px] overflow-y-auto z-50 shadow-md rounded scrollbar-hide"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {filteredServices.length > 0 ? (
