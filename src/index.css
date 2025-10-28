@@ -34,45 +34,82 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
-
-@keyframes fadeInSmooth {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
+/* Shake animation */
+@keyframes softShake {
+  0%,
   100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+}
+
+.animate-softShake {
+  animation: softShake 0.4s ease-in-out;
+}
+
+/* Smooth fade */
+@keyframes fadeInSmooth {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
-@keyframes overlayFadeIn {
+.animate-fadeInSmooth {
+  animation: fadeInSmooth 0.4s ease forwards;
+}
+
+/* === Toastify Progress Bar === */
+.custom-toast {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-toast::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  border-radius: 5px;
+  animation: progressBar 4s linear forwards;
+  background-color: #22c55e; /* Tailwind green-500 */
+}
+
+@keyframes progressBar {
   from {
-    opacity: 0;
+    width: 100%;
   }
   to {
-    opacity: 1;
+    width: 0%;
   }
 }
 
 @keyframes softShake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
 }
-
-.animate-fadeInSmooth {
-  animation: fadeInSmooth 0.4s ease-in-out;
-}
-
-.animate-overlayFadeIn {
-  animation: overlayFadeIn 0.4s ease-in-out;
-}
-
-.animate-softShake {
-  animation: softShake 0.5s ease-in-out;
-}
-
-

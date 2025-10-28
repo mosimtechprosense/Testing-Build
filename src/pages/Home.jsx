@@ -63,7 +63,7 @@ const Home = () => {
         {/*  Hero Text */}
         <div className="text-center px-4 sm:px-6 mb-6">
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-4xl mx-auto leading-snug"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-4xl mx-auto leading-snug select-none"
             style={{
               textShadow: "2px 2px 10px rgba(0,0,0,0.8)",
             }}

@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 const DiscountPopup = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -10,79 +12,137 @@ const DiscountPopup = () => {
     "Fill in your details to unlock your exclusive wedding discount"
   );
 
-  // Reopen logic after first close
+  const [nameError, setNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    if (warning && popupRef.current) {
+      popupRef.current.style.animation = "softShake 0.4s ease-in-out";
+      const timer = setTimeout(() => {
+        popupRef.current.style.animation = "";
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [warning]);
+
+  // Handle reopen logic
+  // Handle reopen logic (only once, don't reopen again)
   useEffect(() => {
     if (closeCount === 1) {
       const timer = setTimeout(() => {
-        setMessage("⚠️ Fill your details to avoid this popup");
-        setIsOpen(true);
+        // Only reopen if popup is actually closed
+        if (!isOpen) {
+          setMessage("⚠️ Fill your details to avoid this popup");
+          setIsOpen(true);
+        }
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [closeCount]);
+  }, [closeCount, isOpen]);
 
-  // Handle form submit
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(phone)) {
-      alert(" Please enter a valid 10-digit phone number!");
-      return;
+  // Validation
+  const validateForm = () => {
+    let valid = true;
+    setNameError("");
+    setPhoneError("");
+
+    if (name.trim().length < 3) {
+      setNameError("Please enter a valid name (min 3 characters)");
+      valid = false;
     }
-    alert(` Thanks ${name}! You’ve unlocked 50% OFF!`);
-    setIsOpen(false);
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+      setPhoneError("Please enter a valid 10-digit phone number");
+      valid = false;
+    }
+
+    return valid;
   };
 
-  // Handle close button
+  // Submit handler
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    Toastify({
+      text: "✅ Success! Our team will contact you shortly!",
+      duration: 4000,
+      gravity: "top",
+      position: "right",
+      className:
+        "custom-toast text-white font-medium text-sm px-4 py-3 rounded-xl shadow-lg",
+      style: { background: "#141414" },
+      close: true,
+    }).showToast();
+
+    setTimeout(() => setIsOpen(false), 2500);
+  };
+
   const handleClose = () => {
     if (closeCount === 0) {
       setIsOpen(false);
       setCloseCount(1);
-    } else if (closeCount === 1) {
-      alert("❌ You must fill the form to close this popup!");
+    } else {
+      setMessage("❌ You must fill the form to close this popup!");
     }
   };
 
-  // Handle outside click for warning
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleOutsideClick = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        if (closeCount === 0) {
+          // ✅ First popup — close normally
+          setIsOpen(false);
+          setCloseCount(1);
+        } else {
+          // ⚠️ Second popup — shake, don't close
+          setWarning(true);
+          setTimeout(() => setWarning(false), 600);
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isOpen, closeCount]);
+
+  // Warning shake animation
   useEffect(() => {
     if (closeCount === 1 && isOpen) {
       const handleClick = (e) => {
         const popup = document.querySelector(".popup-box");
-        const isInsidePopup = popup?.contains(e.target);
-        const isInputOrButton =
-          e.target.tagName === "INPUT" || e.target.tagName === "BUTTON";
-
-        // Trigger warning only if click is outside popup,
-        // or inside but not on input/button
-        if (!isInsidePopup && !isInputOrButton) {
+        if (!popup?.contains(e.target)) {
           setWarning(true);
-          setTimeout(() => setWarning(false), 1000);
+          setTimeout(() => setWarning(false), 600);
         }
       };
-
       window.addEventListener("click", handleClick, true);
       return () => window.removeEventListener("click", handleClick, true);
     }
   }, [closeCount, isOpen]);
 
-  // Smooth shake animation when warning is active
   useEffect(() => {
     if (warning) {
       const popup = document.querySelector(".popup-box");
       popup?.classList.add("animate-softShake");
-      setTimeout(() => popup?.classList.remove("animate-softShake"), 600);
+      setTimeout(() => popup?.classList.remove("animate-softShake"), 500);
     }
   }, [warning]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-150 animate-overlayFadeIn">
-      <div className="popup-box bg-white w-[90%] sm:w-[400px] rounded-2xl shadow-2xl relative animate-fadeInSmooth p-6 transition-transform duration-300 ease-in-out">
-        {/* Close button */}
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 animate-fadeInSmooth select-none">
+      <div
+        ref={popupRef}
+        className="popup-box bg-white w-[85%] sm:w-[400px] rounded-2xl shadow-2xl relative animate-fadeInSmooth p-6"
+      >
         <button
           className={`absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl ${
-            closeCount >= 1 ? "opacity-50 cursor-not-allowed" : ""
+            closeCount >= 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           }`}
           onClick={handleClose}
           disabled={closeCount >= 1}
@@ -90,46 +150,85 @@ const DiscountPopup = () => {
           ✕
         </button>
 
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-[#dc2626] mb-2">Get 50% OFF!</h2>
+        <h2 className="text-2xl font-bold text-[#dc2626] mb-2 text-center">
+          Get 50% OFF!
+        </h2>
 
-        {/* Message */}
         <p
-          className={`mb-4 transition-all duration-500 ease-in-out transform ${
-            warning
-              ? "text-red-600 font-semibold scale-[1.05]"
-              : "text-gray-600 scale-100"
+          className={`mb-5 text-center transition-all duration-200 ${
+            warning ? "text-red-600 scale-105" : "text-gray-600"
           }`}
         >
           {message}
         </p>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="text"
-            placeholder="Enter Your Name"
-            value={name}
-            onChange={(e) => {
-              const value = e.target.value;
-              const formatted =
-                value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-              setName(formatted);
-            }}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#dc2626] transition-all duration-300"
-            required
-          />
-          <input
-            type="tel"
-            placeholder="Enter Phone Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#dc2626] transition-all duration-300"
-            required
-          />
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name Input */}
+          <div className="relative">
+            <label
+              className="absolute -top-0.5 left-3 bg-white px-1 text-sm text-gray-500 font-semibold"
+              htmlFor="name"
+            >
+              Enter Your Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder=" "
+              value={name}
+              onChange={(e) => {
+                setName(
+                  e.target.value.charAt(0).toUpperCase() +
+                    e.target.value.slice(1).toLowerCase()
+                );
+                if (nameError) setNameError("");
+              }}
+              className={`w-full border ${
+                nameError ? "border-red-500" : "border-gray-400"
+              } rounded-md px-3 py-2 mt-2 text-gray-700 focus:outline-none focus:ring-2 ${
+                nameError ? "focus:ring-red-400" : "focus:ring-gray-400"
+              }`}
+              required
+            />
+            {nameError && (
+              <p className="text-red-500 text-sm mt-1">{nameError}</p>
+            )}
+          </div>
+
+          {/* Phone Input */}
+          <div className="relative">
+            <label
+              className="absolute -top-0.5 left-3 bg-white px-1 text-sm text-gray-500 font-semibold"
+              htmlFor="phone"
+            >
+              Enter your Mobile Number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              placeholder=" "
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (phoneError) setPhoneError("");
+              }}
+              className={`w-full border ${
+                phoneError ? "border-red-500" : "border-gray-400"
+              } rounded-md px-3 py-2 mt-2 text-gray-700 focus:outline-none focus:ring-2 ${
+                phoneError ? "focus:ring-red-400" : "focus:ring-gray-400"
+              }`}
+              required
+            />
+            {phoneError && (
+              <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+            )}
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-[#dc2626] text-white font-semibold py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300"
+            className="w-full bg-[#dc2626] text-white font-semibold py-2 rounded-md hover:bg-[#b91c1c] transition-all"
           >
             Submit
           </button>
