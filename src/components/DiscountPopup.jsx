@@ -27,19 +27,18 @@ const DiscountPopup = () => {
   }, [warning]);
 
   // Handle reopen logic
-  // Handle reopen logic (only once, don't reopen again)
   useEffect(() => {
     if (closeCount === 1) {
       const timer = setTimeout(() => {
         // Only reopen if popup is actually closed
-        if (!isOpen) {
+        if (!isOpen && closeCount === 1 && name === "" && phone === "") {
           setMessage("⚠️ Fill your details to avoid this popup");
           setIsOpen(true);
         }
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [closeCount, isOpen]);
+  }, [closeCount, isOpen, name, phone]);
 
   // Validation
   const validateForm = () => {
@@ -69,10 +68,18 @@ const DiscountPopup = () => {
       text: "✅ Success! Our team will contact you shortly!",
       duration: 4000,
       gravity: "top",
-      position: "right",
-      className:
-        "custom-toast text-white font-medium text-sm px-4 py-3 rounded-xl shadow-lg",
-      style: { background: "#141414" },
+      position: window.innerWidth <= 768 ? "center" : "right", // ✅ Center on mobile
+      className: "custom-toast text-white text-sm rounded-xl shadow-lg",
+      style: {
+        background: "#141414",
+        width: "clamp(260px, 90%, 380px)", // ✅ Responsive width with min & max limit
+        whiteSpace: "pre-line", // ✅ Keeps wrapping natural without breaking mid-word
+        wordBreak: "keep-all", // ✅ Prevents unwanted word splits
+        textAlign: "center",
+        borderRadius: "10px",
+        margin: "0 auto",
+        boxSizing: "border-box",
+      },
       close: true,
     }).showToast();
 
@@ -135,7 +142,7 @@ const DiscountPopup = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 animate-fadeInSmooth select-none">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[1000] animate-fadeInSmooth select-none">
       <div
         ref={popupRef}
         className="popup-box bg-white w-[85%] sm:w-[400px] rounded-2xl shadow-2xl relative animate-fadeInSmooth p-6"
@@ -228,7 +235,7 @@ const DiscountPopup = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-[#dc2626] text-white font-semibold py-2 rounded-md hover:bg-[#b91c1c] transition-all"
+            className="w-full bg-[#dc2626] text-white font-semibold py-2 rounded-md hover:bg-[#b91c1c] transition-all cursor-pointer"
           >
             Submit
           </button>

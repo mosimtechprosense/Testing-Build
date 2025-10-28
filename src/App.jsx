@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import DiscountPopup from "./components/DiscountPopup";
+import RecentSearches from "./components/RecentSearches";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
         </Routes>
+        <RecentSearches />
         <Footer />
       </BrowserRouter>
     </>
