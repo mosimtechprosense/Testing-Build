@@ -6,39 +6,37 @@ const DiscountPopup = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [closeCount, setCloseCount] = useState(0);
-  const [warning, setWarning] = useState(false);
-  const [message, setMessage] = useState(
-    "Fill in your details to unlock your exclusive wedding discount"
-  );
-
   const [nameError, setNameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const popupRef = useRef(null);
 
-  useEffect(() => {
-    if (warning && popupRef.current) {
-      popupRef.current.style.animation = "softShake 0.4s ease-in-out";
-      const timer = setTimeout(() => {
-        popupRef.current.style.animation = "";
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [warning]);
-
   // Handle reopen logic
   useEffect(() => {
-    if (closeCount === 1) {
-      const timer = setTimeout(() => {
-        // Only reopen if popup is actually closed
-        if (!isOpen && closeCount === 1 && name === "" && phone === "") {
-          setMessage("⚠️ Fill your details to avoid this popup");
-          setIsOpen(true);
-        }
-      }, 5000);
-      return () => clearTimeout(timer);
+    const timer = setTimeout(() => {
+      // Only reopen if popup is actually closed
+      if (!isOpen && name === "" && phone === "") {
+        setIsOpen(true);
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [isOpen, name, phone]);
+
+  // ✅ Close when clicking outside popup
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
     }
-  }, [closeCount, isOpen, name, phone]);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   // Validation
   const validateForm = () => {
@@ -86,60 +84,6 @@ const DiscountPopup = () => {
     setTimeout(() => setIsOpen(false), 2500);
   };
 
-  const handleClose = () => {
-    if (closeCount === 0) {
-      setIsOpen(false);
-      setCloseCount(1);
-    } else {
-      setWarning(true);
-      setTimeout(() => setWarning(false), 500);
-    }
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleOutsideClick = (e) => {
-      if (popupRef.current && !popupRef.current.contains(e.target)) {
-        if (closeCount === 0) {
-          // ✅ First popup — close normally
-          setIsOpen(false);
-          setCloseCount(1);
-        } else {
-          // ⚠️ Second popup — shake, don't close
-          setWarning(true);
-          setTimeout(() => setWarning(false), 600);
-        }
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [isOpen, closeCount]);
-
-  // Warning shake animation
-  useEffect(() => {
-    if (closeCount === 1 && isOpen) {
-      const handleClick = (e) => {
-        const popup = document.querySelector(".popup-box");
-        if (!popup?.contains(e.target)) {
-          setWarning(true);
-          setTimeout(() => setWarning(false), 600);
-        }
-      };
-      window.addEventListener("click", handleClick, true);
-      return () => window.removeEventListener("click", handleClick, true);
-    }
-  }, [closeCount, isOpen]);
-
-  useEffect(() => {
-    if (warning) {
-      const popup = document.querySelector(".popup-box");
-      popup?.classList.add("animate-softShake");
-      setTimeout(() => popup?.classList.remove("animate-softShake"), 500);
-    }
-  }, [warning]);
-
   if (!isOpen) return null;
 
   return (
@@ -148,27 +92,29 @@ const DiscountPopup = () => {
         ref={popupRef}
         className="popup-box bg-white w-[85%] sm:w-[400px] rounded-2xl shadow-2xl relative animate-fadeInSmooth p-6"
       >
+        <div className="relative">
+          <img
+            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
+            alt="Wedding discount banner"
+            className="w-full h-32 sm:h-40 object-cover rounded-2xl my-4"
+          />
+
+          <h2 className=" absolute bottom-2 left-2 text-2xl sm:text-3xl font-bold text-white drop-shadow-[0_0_15px_#000]">
+            Hurry Get 50% OFF!
+          </h2>
+        </div>
         <button
-          className={`absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl ${
-            closeCount >= 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-          }`}
-          onClick={handleClose}
+          className={`absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl cursor-pointer`}
+          onClick={() => setIsOpen(false)}
         >
           ✕
         </button>
 
-        <h2 className="text-2xl font-bold text-[#dc2626] mb-2 text-center">
-          Get 50% OFF!
-        </h2>
-
         <p
-          className={`mb-5 text-center transition-all duration-200 ${
-            warning ? "text-red-600 scale-105" : "text-gray-600"
-          }`}
+          className={`mb-5 text-center transition-all duration-200 text-gray-600`}
         >
-          {message}
+          Fill in your details to unlock your exclusive wedding discount
         </p>
-
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Input */}
@@ -182,7 +128,7 @@ const DiscountPopup = () => {
             <input
               id="name"
               type="text"
-              placeholder=" "
+              placeholder=""
               value={name}
               onChange={(e) => {
                 setName(
