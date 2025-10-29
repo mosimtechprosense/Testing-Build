@@ -91,7 +91,8 @@ const DiscountPopup = () => {
       setIsOpen(false);
       setCloseCount(1);
     } else {
-      setMessage("❌ You must fill the form to close this popup!");
+      setWarning(true);
+      setTimeout(() => setWarning(false), 500);
     }
   };
 
@@ -152,7 +153,6 @@ const DiscountPopup = () => {
             closeCount >= 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           }`}
           onClick={handleClose}
-          disabled={closeCount >= 1}
         >
           ✕
         </button>
