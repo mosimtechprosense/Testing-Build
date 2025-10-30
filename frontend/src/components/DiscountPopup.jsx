@@ -94,7 +94,7 @@ const DiscountPopup = () => {
       >
         <div className="relative">
           <img
-            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
+            src="/dialog.avif"
             alt="Wedding discount banner"
             className="w-full h-32 sm:h-40 object-cover rounded-2xl my-4"
           />
