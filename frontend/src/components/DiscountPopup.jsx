@@ -17,11 +17,11 @@ const DiscountPopup = () => {
       if (!isOpen && name === "" && phone === "") {
         setIsOpen(true);
       }
-    }, 3000);
+    }, 30000);
     return () => clearTimeout(timer);
   }, [isOpen, name, phone]);
 
-  // ✅ Close when clicking outside popup
+  //  Close when clicking outside popup
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
