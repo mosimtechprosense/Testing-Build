@@ -13,7 +13,7 @@ export const getAllLocationsDB = async ( city ) => {
     return prisma.location.findMany({include : {city: true}});
 };
 
-// fucntion to create the locations if it does not exits
+// fucntion to create the locations if it does not exits    
 export const createLocationDB = async ( name, cityName ) => {
     const city = await prisma.city.upsert({
         where: {name :cityName},
