@@ -64,7 +64,7 @@ const DiscountPopup = () => {
 
     Toastify({
       text: "✅ Success! Our team will contact you shortly!",
-      duration: 4000,
+      duration: 3000,
       gravity: "top",
       position: window.innerWidth <= 768 ? "center" : "right", // ✅ Center on mobile
       className: "custom-toast text-white text-sm rounded-xl shadow-lg",

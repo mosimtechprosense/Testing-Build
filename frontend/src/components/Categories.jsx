@@ -41,7 +41,7 @@ const Categories = () => {
   ];
 
   return (
-    <div className="w-full bg-white py-12 px-4 sm:px-8 md:px-12 lg:px-24">
+    <div className="w-full bg-white py-10 px-4 sm:px-8 md:px-12 lg:px-24">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl sm:text-3xl font-bold text-[#06002e]">

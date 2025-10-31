@@ -4,6 +4,37 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+/* === Toastify Progress Bar start === */
+.custom-toast {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-toast::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  border-radius: 5px;
+  animation: progressBar 3s linear forwards;
+  background-color: #22c55e; /* Tailwind green-500 */
+}
+
+@keyframes progressBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+/* === Toastify Progress Bar end === */
+
+
+
 /* hide scrollbar for customer review on home page */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -13,7 +44,8 @@
   scrollbar-width: none;
 }
 
-/*animation for customer review cards */
+
+/*animation for customer review cards start */
 
 @keyframes scroll {
   0% {
@@ -25,17 +57,70 @@
 }
 
 .animate-scroll {
-  animation: scroll 20s linear infinite;
+  animation: scroll 5s linear infinite;
   display: flex;
 }
+
+/*animation for customer review cards end */
+
 
 /* shadow for customer review cards*/
 .shadow-even {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*! unused css */
+
+
 /* Shake animation */
-@keyframes softShake {
+/* @keyframes softShake {
   0%,
   100% {
     transform: translateX(0);
@@ -53,10 +138,10 @@
 
 .animate-softShake {
   animation: softShake 0.4s ease-in-out;
-}
+} */
 
 /* Smooth fade */
-@keyframes fadeInSmooth {
+/* @keyframes fadeInSmooth {
   from {
     opacity: 0;
     transform: scale(0.95);
@@ -69,47 +154,4 @@
 
 .animate-fadeInSmooth {
   animation: fadeInSmooth 0.4s ease forwards;
-}
-
-/* === Toastify Progress Bar === */
-.custom-toast {
-  position: relative;
-  overflow: hidden;
-}
-
-.custom-toast::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  width: 100%;
-  border-radius: 5px;
-  animation: progressBar 4s linear forwards;
-  background-color: #22c55e; /* Tailwind green-500 */
-}
-
-@keyframes progressBar {
-  from {
-    width: 100%;
-  }
-  to {
-    width: 0%;
-  }
-}
-
-@keyframes softShake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-4px);
-  }
-  50% {
-    transform: translateX(4px);
-  }
-  75% {
-    transform: translateX(-2px);
-  }
-}
+} */
