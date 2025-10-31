@@ -1,23 +1,49 @@
-import { Prisma, PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { getAllLocationsDB, createLocationDB, updateLocationDB, deleteLocationDB } from "../services/locationService.js";
 
-// Get all locations (optionally by city)
-export const getLocations = async (req, res) => {
+
+
+export const getAllLocations = async ( req, res) => {
   try {
     const { city } = req.query
-    let locations
-
-    if (city) {
-      locations = await prisma.location.findMany({
-        where: { city: { name: { equals: city, mode: "insensitive" } } },
-        include: { city: true }
-      })
-    } else {
-      locations = await prisma.location.findMany({ include: { city: true } })
-    }
-
-    res.json(locations)
+    const locations = await getAllLocationsDB(city);
+    res.json(locations);
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+export const createLocation = async ( req, res) => {
+  try {
+    const { name, cityName } = req.body;
+    const newLoc = await createLocationDB(name, cityName);
+    res.json(
+      { newLoc ,
+        success: true,
+        message: "Location added successfully"
+      });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateLocation = async ( req, res ) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const updated = await updateLocationDB(id, name);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
+
+export const deleteLocation = async ( req, res ) => {
+  try {
+    const { id } = req.params;
+    await deleteLocationDB(id);
+    res.json({ message: "Location deleted successfully "});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

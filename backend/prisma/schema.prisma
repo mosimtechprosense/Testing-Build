@@ -20,5 +20,7 @@ model Location {
   cityId    Int
   city      City     @relation(fields: [cityId], references: [id])
   createdAt DateTime @default(now())
+
+  
   @@unique([name, cityId], name: "name_cityId")
 }
