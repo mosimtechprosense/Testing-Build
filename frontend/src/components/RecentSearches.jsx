@@ -1,61 +1,32 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const RecentSearches = () => {
   const navigate = useNavigate();
+    const [locations, setLocations] = useState([]); // full list from API
 
-  const locations = [
-    { location: "Moti Nagar", city: "Delhi" },
-    { location: "Kirti Nagar", city: "Delhi" },
-    { location: "Uttam Nagar", city: "Delhi" },
-    { location: "Punjabi Bagh", city: "Delhi" },
-    { location: "Hari Nagar", city: "Delhi" },
-    { location: "Ramesh Nagar", city: "Delhi" },
-    { location: "Loha Mandi", city: "Delhi" },
-    { location: "Malviya Nagar", city: "Delhi" },
-    { location: "Mahipalpur", city: "Delhi" },
-    { location: "Mayapuri", city: "Delhi" },
-    { location: "Janakpuri", city: "Delhi" },
-    { location: "Dabri", city: "Delhi" },
-    { location: "Udyog Nagar", city: "Delhi" },
-    { location: "Paschim Vihar", city: "Delhi" },
-    { location: "Pitampura", city: "Delhi" },
-    { location: "Britannia Chowk", city: "Delhi" },
-    { location: "Karol Bagh", city: "Delhi" },
-    { location: "East Of Kailash", city: "Delhi" },
-    { location: "Peeragarhi", city: "Delhi" },
-    { location: "Subhash Nagar", city: "Delhi" },
-    { location: "Moti Nagar", city: "Delhi" },
-    { location: "Moti Nagar", city: "Delhi" },
-    { location: "Moti Nagar", city: "Delhi" },
-    { location: "Tilak Nagar", city: "Delhi" },
-    { location: "Najafgarh", city: "Delhi" },
-    { location: "Bijwasan", city: "Delhi" },
-    { location: "Lawrence Road", city: "Delhi" },
-    { location: "Mehrauli", city: "Delhi" },
-    { location: "Gk 1", city: "Delhi" },
-    { location: "Saket", city: "Delhi" },
-    { location: "Wazirpur", city: "Delhi" },
-    { location: "Dwarka", city: "Delhi" },
-    { location: "Rajouri Garden", city: "Delhi" },
-    { location: "Vikaspuri", city: "Delhi" },
-    { location: "Naraina", city: "Delhi" },
-    { location: "Patel Nagar", city: "Delhi" },
-    { location: "Rajendra Nagar", city: "Delhi" },
-    { location: "Chattarpur", city: "Delhi" },
-    { location: "Gt Karnal Road", city: "Delhi" },
-    { location: "Sector 14", city: "Delhi" },
-    { location: "Sohna Road", city: "Delhi" },
-    { location: "Sector 24", city: "Gurugram" },
-    { location: "Manesar", city: "Gurugram" },
-    { location: "Najafgarh Road Industrial Area", city: "Delhi" },
-  ];
+
+  
+    // fetch locations form one mount
+    useEffect(() => {
+      fetch("http://localhost:5000/api/locations")
+      .then((res) => res.json())
+      .then((data) =>{
+        setLocations(data.data || [])
+      })
+      .catch((err) => {
+      console.error("Error fetching locations:", err);
+      setLocations([]);
+      })
+    }, [])
 
   const handleClick = (city, location) => {
+    if (!city || !location) return;
+
     const slug = `/banquet-hall/${city.toLowerCase()}/${location
       .toLowerCase()
       .replace(/\s+/g, "-")}`;
-    navigate(slug);
+     navigate(slug);
   };
 
   return (
@@ -75,11 +46,11 @@ const RecentSearches = () => {
           {locations.map((loc, i) => (
             <button
               key={i}
-              onClick={() => handleClick(loc.city, loc.location)}
+              onClick={() => handleClick(loc.city, loc.name)}
               className="relative group text-left text-white/90 font-medium hover:text-white transition-all duration-300 cursor-pointer"
             >
               <span className="relative inline-block">
-                Banquet Hall in {loc.location}
+                Banquet Hall in {loc.name}
                 <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full"></span>
               </span>
             </button>

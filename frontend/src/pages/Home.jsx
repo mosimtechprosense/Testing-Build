@@ -45,7 +45,6 @@ const Home = () => {
     fetch("http://localhost:5000/api/locations")
     .then((res) => res.json())
     .then((data) => {
-        console.log("Fetched locations:", data.data);
       setLocations(data.data || []);
       setFilteredLocations(data.data || []);
     })
@@ -125,7 +124,7 @@ const Home = () => {
 
         {/*  Search Bar */}
         <div className="flex items-center justify-center w-full px-6">
-          <div className="flex flex-col sm:flex-row  bg-white border border-[#b4b4be] rounded-md shadow-md w-[98%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-[1100px]">
+          <div className="relative flex flex-col sm:flex-row  bg-white border border-[#b4b4be] rounded-md shadow-md w-[98%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-[1100px]">
             {/*  Venues & Services Input */}
             <div className="relative flex items-center gap-2 w-full sm:w-[60%] py-4 px-5 text-[15px] border-b sm:border-b-0 sm:border-r border-gray-300">
               <IoIosSearch className="text-gray-700 text-xl cursor-default" />
@@ -187,7 +186,7 @@ const Home = () => {
 
             {showLocationSuggestions && filteredLocations.length > 0 && (
   <div
-    className="absolute top-full left-0 w-full bg-white border border-gray-300 max-h-[225px] sm:max-h-[170px] overflow-y-auto z-[100] shadow-md rounded-b-sm scrollbar-hide"
+    className="absolute top-[98%] left-0 w-full bg-white border border-gray-300 max-h-[225px] sm:max-h-[170px] overflow-y-auto z-[200] shadow-lg rounded-b-sm scrollbar-hide"
     onClick={(e) => e.stopPropagation()}
   >
     {filteredLocations.map((loc, idx) => (

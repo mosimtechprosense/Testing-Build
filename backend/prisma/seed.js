@@ -9,7 +9,6 @@ const locations = [
   { location: "Punjabi Bagh", city: "Delhi" },
   { location: "Hari Nagar", city: "Delhi" },
   { location: "Ramesh Nagar", city: "Delhi" },
-  { location: "Najafgarh Road Industrial Area", city: "Delhi" },
   { location: "Loha Mandi", city: "Delhi" },
   { location: "Malviya Nagar", city: "Delhi" },
   { location: "Mahipalpur", city: "Delhi" },
@@ -43,7 +42,8 @@ const locations = [
   { location: "Sector 14", city: "Delhi" },
   { location: "Sohna Road", city: "Delhi" },
   { location: "Sector 24", city: "Gurugram" },
-  { location: "Manesar", city: "Gurugram" }
+  { location: "Manesar", city: "Gurugram" },
+  { location: "Najafgarh Road Industrial Area", city: "Delhi" },
 ]
 
 async function main() {
