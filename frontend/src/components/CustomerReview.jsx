@@ -1,4 +1,5 @@
 import {aarav, aditya, manish, priya, rajiv, rohan,} from "../assets/index.js";
+import "../style/customerReview.css"
 
 
 const CustomerReview = () => {
