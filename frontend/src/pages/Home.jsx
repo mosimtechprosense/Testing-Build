@@ -6,8 +6,7 @@ import homeWalpaper from "../assets/homeWalpaper.avif"
 import CustomerReview from "../components/CustomerReview"
 import HowItWorks from "../components/HowItWorks"
 import Categories from "../components/Categories"
-import WhyUsSection from "../components/WhyUsSection"
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import OfferBanner from "../components/OfferBanner"
 
 const Home = () => {
@@ -30,6 +29,8 @@ const Home = () => {
     { name: "Groom Wear" }
   ]
 
+  const navigate = useNavigate();
+  
   // search services state
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredServices, setFilteredServices] = useState(services)
@@ -107,7 +108,7 @@ const Home = () => {
   // search handler
   const handleSearchClick = () => {
 
-     Navigate('/venues/testpage');
+     navigate('/venues/testpage');
     
   }
 

@@ -11,15 +11,15 @@ const DiscountPopup = () => {
   const popupRef = useRef(null);
 
   // Handle reopen logic
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Only reopen if popup is actually closed
-      if (!isOpen && name === "" && phone === "") {
-        setIsOpen(true);
-      }
-    }, 30000);
+useEffect(() => {
+  // Only reopen after 30s if popup was closed and no data was submitted
+  if (!isOpen && name === "" && phone === "") {
+    const timer = setTimeout(() => setIsOpen(true), 7000);
     return () => clearTimeout(timer);
-  }, [isOpen, name, phone]);
+  }
+}, [isOpen, name, phone]);
+
+
 
   //  Close when clicking outside popup
   useEffect(() => {
@@ -131,10 +131,10 @@ const DiscountPopup = () => {
               placeholder=""
               value={name}
               onChange={(e) => {
-                setName(
-                  e.target.value.charAt(0).toUpperCase() +
-                    e.target.value.slice(1).toLowerCase()
-                );
+setName(
+  e.target.value.replace(/^\w/, c => c.toUpperCase())
+);
+
                 if (nameError) setNameError("");
               }}
               className={`w-full border ${

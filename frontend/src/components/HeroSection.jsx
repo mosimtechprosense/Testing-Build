@@ -53,6 +53,7 @@ const HeroSection = () => {
         onClick={(e) => {
           e.stopPropagation();
           setMenuOpen(!menuOpen);
+          setVenuesOpen(false);
         }}
       >
         {menuOpen ? "✕" : "☰"}
