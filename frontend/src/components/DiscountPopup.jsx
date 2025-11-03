@@ -66,13 +66,13 @@ const DiscountPopup = () => {
       text: "✅ Success! Our team will contact you shortly!",
       duration: 3000,
       gravity: "top",
-      position: window.innerWidth <= 768 ? "center" : "right", // ✅ Center on mobile
+      position: window.innerWidth <= 768 ? "center" : "right", // Center on mobile
       className: "custom-toast text-white text-sm rounded-xl shadow-lg",
       style: {
         background: "#141414",
-        width: "clamp(260px, 90%, 380px)", // ✅ Responsive width with min & max limit
-        whiteSpace: "pre-line", // ✅ Keeps wrapping natural without breaking mid-word
-        wordBreak: "keep-all", // ✅ Prevents unwanted word splits
+        width: "clamp(260px, 90%, 380px)", // Responsive width with min & max limit
+        whiteSpace: "pre-line", // Keeps wrapping natural without breaking mid-word
+        wordBreak: "keep-all", // Prevents unwanted word splits
         textAlign: "center",
         borderRadius: "10px",
         margin: "0 auto",

@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 const RecentSearches = () => {
   const navigate = useNavigate();
-    const [locations, setLocations] = useState([]); // full list from API
+  const [locations, setLocations] = useState([]); // full list from API
 
 
   
-    // fetch locations form one mount
+    // fetch locations form API
     useEffect(() => {
       fetch("http://localhost:5000/api/locations")
       .then((res) => res.json())

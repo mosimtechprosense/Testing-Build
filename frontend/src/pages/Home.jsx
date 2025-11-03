@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
-import { FaSearch } from "react-icons/fa";
-import { CiLocationOn } from "react-icons/ci";
-import { IoIosSearch } from "react-icons/io";
-import homeWalpaper from "../assets/homeWalpaper.avif";
-import CustomerReview from "../components/CustomerReview";
-import HowItWorks from "../components/HowItWorks";
-import Categories from "../components/Categories";
-import WhyUsSection from "../components/WhyUsSection";
+import { useState, useEffect } from "react"
+import { FaSearch } from "react-icons/fa"
+import { CiLocationOn } from "react-icons/ci"
+import { IoIosSearch } from "react-icons/io"
+import homeWalpaper from "../assets/homeWalpaper.avif"
+import CustomerReview from "../components/CustomerReview"
+import HowItWorks from "../components/HowItWorks"
+import Categories from "../components/Categories"
+import WhyUsSection from "../components/WhyUsSection"
+import { Navigate } from "react-router-dom"
+import OfferBanner from "../components/OfferBanner"
 
 const Home = () => {
   const services = [
@@ -25,83 +27,91 @@ const Home = () => {
     { name: "Wedding Bands" },
     { name: "Wedding Transportation / Vintage cars" },
     { name: "Bridal Wear" },
-    { name: "Groom Wear" },
-  ];
+    { name: "Groom Wear" }
+  ]
 
   // search services state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredServices, setFilteredServices] = useState(services);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filteredServices, setFilteredServices] = useState(services)
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   // search locations state
-  const [locationQuery, setLocationQuery] = useState("");
-  const [locations, setLocations] = useState([]); // full list from API
-  const [filteredLocations, setFilteredLocations] = useState([]); 
-  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
-  
+  const [locationQuery, setLocationQuery] = useState("")
+  const [locations, setLocations] = useState([]) // full list from API
+  const [filteredLocations, setFilteredLocations] = useState([])
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false)
 
   // Fetch locations once on mount
   useEffect(() => {
     fetch("http://localhost:5000/api/locations")
-    .then((res) => res.json())
-    .then((data) => {
-      setLocations(data.data || []);
-      setFilteredLocations(data.data || []);
-    })
-    .catch((err) => {
-      console.error("Error fetching locations:", err);
-      setLocations([]);
-      setFilteredLocations([]);
-    });
-  }, []);
-
+      .then((res) => res.json())
+      .then((data) => {
+        setLocations(data.data || [])
+        setFilteredLocations(data.data || [])
+      })
+      .catch((err) => {
+        console.error("Error fetching locations:", err)
+        setLocations([])
+        setFilteredLocations([])
+      })
+  }, [])
 
   // venues & services handlers
   const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
+    const value = e.target.value
+    setSearchQuery(value)
 
     const filtered = services.filter((service) =>
       service.name.toLowerCase().startsWith(value.toLowerCase())
-    );
-    setFilteredServices(filtered);
-  };
+    )
+    setFilteredServices(filtered)
+  }
 
   const handleSelectService = (name) => {
-    setSearchQuery(name);
-    setShowSuggestions(false);
-  };
-
+    setSearchQuery(name)
+    setShowSuggestions(false)
+  }
 
   // location handlers
   const handleLocationChange = (e) => {
     const value = e.target.value
-    setLocationQuery(value);
+    setLocationQuery(value)
 
     // filter by name or city name (case-insensitive)
     const filtered = locations.filter((loc) => {
-      const nameMatch = loc.name?.toLowerCase().includes(value.toLowerCase());
-      const cityMatch = loc.city?.name?.toLowerCase().includes(value.toLowerCase());
-      return nameMatch || cityMatch;
-    });
-    setFilteredLocations(filtered);
+      const nameMatch = loc.name?.toLowerCase().includes(value.toLowerCase())
+      const cityMatch = loc.city?.name
+        ?.toLowerCase()
+        .includes(value.toLowerCase())
+      return nameMatch || cityMatch
+    })
+    setFilteredLocations(filtered)
   }
 
   const handleSelectLocation = (name) => {
-    setLocationQuery(name);
-    setShowLocationSuggestions(false);
-  };
-
+    setLocationQuery(name)
+    setShowLocationSuggestions(false)
+  }
 
   // close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = () => {
-      setShowSuggestions(false);
-      setShowLocationSuggestions(false);
-      };
-    window.addEventListener("click", handleClickOutside);
-    return () => window.removeEventListener("click", handleClickOutside);
-  }, []);
+      setShowSuggestions(false)
+      setShowLocationSuggestions(false)
+    }
+    window.addEventListener("click", handleClickOutside)
+    return () => window.removeEventListener("click", handleClickOutside)
+  }, [])
+
+
+  // search handler
+  const handleSearchClick = () => {
+
+     Navigate('/venues/testpage');
+    
+  }
+
+
 
   return (
     <div className="w-full">
@@ -115,7 +125,7 @@ const Home = () => {
           <h1
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-4xl mx-auto leading-snug select-none"
             style={{
-              textShadow: "2px 2px 10px rgba(0,0,0,0.8)",
+              textShadow: "2px 2px 10px rgba(0,0,0,0.8)"
             }}
           >
             Your Dream Wedding Starts Here — Explore Venues, Decor & More!
@@ -135,8 +145,8 @@ const Home = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={() => {
-                  setShowSuggestions(true);
-                  setShowLocationSuggestions(false);
+                  setShowSuggestions(true)
+                  setShowLocationSuggestions(false)
                 }}
                 onClick={(e) => e.stopPropagation()}
               />
@@ -178,46 +188,44 @@ const Home = () => {
                 value={locationQuery}
                 onChange={handleLocationChange}
                 onFocus={() => {
-                  setShowLocationSuggestions(true);
-                  setShowSuggestions(false);
+                  setShowLocationSuggestions(true)
+                  setShowSuggestions(false)
                 }}
                 onClick={(e) => e.stopPropagation()}
               />
 
-            {showLocationSuggestions && filteredLocations.length > 0 && (
-  <div
-    className="absolute top-[98%] left-0 w-full bg-white border border-gray-300 max-h-[225px] sm:max-h-[170px] overflow-y-auto z-[200] shadow-lg rounded-b-sm scrollbar-hide"
-    onClick={(e) => e.stopPropagation()}
-  >
-    {filteredLocations.map((loc, idx) => (
-      <div
-        key={idx}
-        onClick={() => handleSelectLocation(loc.name)}
-        className="flex items-center px-3 py-2.5 z-[100] text-black text-sm outline-none border-b border-gray-100 hover:bg-gray-100 cursor-pointer"
-      >
-        <div className="mr-3 p-2 rounded-full bg-gray-100">
-          <CiLocationOn className="text-gray-500" />
-        </div>
+              {showLocationSuggestions && filteredLocations.length > 0 && (
+                <div
+                  className="absolute top-[98%] left-0 w-full bg-white border border-gray-300 max-h-[225px] sm:max-h-[170px] overflow-y-auto z-[200] shadow-lg rounded-b-sm scrollbar-hide"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {filteredLocations.map((loc, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectLocation(loc.name)}
+                      className="flex items-center px-3 py-2.5 z-[100] text-black text-sm outline-none border-b border-gray-100 hover:bg-gray-100 cursor-pointer"
+                    >
+                      <div className="mr-3 p-2 rounded-full bg-gray-100">
+                        <CiLocationOn className="text-gray-500" />
+                      </div>
 
-        <div>
-          <h5 className="text-m text-[#414146]">{loc.name}</h5>
-          {loc.city?.name && (
-            <h6 className="text-xs text-[#787887]">{loc.city.name}</h6>
-          )}
-        </div>
-      </div>
-    ))}
-  </div>
-)}
-
-
-
-
-
+                      <div>
+                        <h5 className="text-m text-[#414146]">{loc.name}</h5>
+                        {loc.city?.name && (
+                          <h6 className="text-xs text-[#787887]">
+                            {loc.city.name}
+                          </h6>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
+
             {/*  Search Button */}
-            <button className="bg-[#dc2626] text-white px-7 py-4 z-0 rounded-r-md flex items-center justify-center cursor-pointer hover:bg-[#b91c1c] transition-all w-full sm:w-auto text-base font-semibold">
+            <button onClick={handleSearchClick} className="bg-[#dc2626] text-white px-7 py-4 z-0 rounded-r-md flex items-center justify-center cursor-pointer hover:bg-[#b91c1c] transition-all w-full sm:w-auto text-base font-semibold">
               {/* Show icon on larger screens, text on small screens */}
               <span className="block sm:hidden">Search</span>
               <FaSearch className="hidden sm:block w-6 h-6" />
@@ -226,8 +234,12 @@ const Home = () => {
         </div>
       </div>
 
+
+       {/* why us section removed as per instructions ( delete this on final production) */}
       {/*  Why Us Section */}
-      <WhyUsSection />
+      {/* <WhyUsSection />  */}
+
+      <OfferBanner/>
 
       {/*  Category section */}
       <Categories />
@@ -238,7 +250,7 @@ const Home = () => {
       {/*How It Works Section*/}
       <HowItWorks />
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

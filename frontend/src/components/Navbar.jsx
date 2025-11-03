@@ -9,7 +9,7 @@ const Navbar = () => {
     <div>
       <div className="flex flex-col gap-0 md:flex-row items-center justify-between py-2 px-6 md:px-20 bg-white border-b border-gray-200">
         {/* Left Section: Social Icons & Phone */}
-        <div className="flex flex-col sm:flex-row items-center gap-1">
+        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2.5">
           {/* Social Icons */}
           <div className="flex items-center gap-3">
             <a href="#" aria-label="Facebook">
