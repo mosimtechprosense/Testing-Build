@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import bookmybanquetsLogo from "../assets/bookmybanquet.png";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
 import VenuesDropdown from "./VenuesDropdown";
+import { UIContext } from "../store/UIContext";
 
 const HeroSection = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [venuesOpen, setVenuesOpen] = useState(false);
+  const { venuesOpen, setVenuesOpen, popupOpen } = useContext(UIContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,6 +25,20 @@ const HeroSection = () => {
   // useEffect(() => {
   //   document.body.style.overflow = menuOpen ? "hidden" : "auto";
   // }, [menuOpen]);
+
+    // 🔒 Auto-close dropdown when popup is open
+
+useEffect(() => {
+  if (popupOpen) {
+    // add a small fade-out delay for smoother UX
+    const timeout = setTimeout(() => {
+      setVenuesOpen(false);
+    }, 200); // 300ms matches CSS animation
+    return () => clearTimeout(timeout);
+  }
+}, [popupOpen, setVenuesOpen]);
+
+
 
   const handleLogo = () => {
     navigate("/");

@@ -1,48 +1,56 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import { UIContext } from "../store/UIContext";
 
 const DiscountPopup = () => {
-  const [isOpen, setIsOpen] = useState(true);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [nameError, setNameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const popupRef = useRef(null);
+  const { popupOpen, setPopupOpen, setVenuesOpen } = useContext(UIContext);
+
 
   // Handle reopen logic
 useEffect(() => {
   // Only reopen after 30s if popup was closed and no data was submitted
-  if (!isOpen && name === "" && phone === "") {
-    const timer = setTimeout(() => setIsOpen(true), 7000);
+  if (!popupOpen && name === "" && phone === "") {
+    const timer = setTimeout(() => setPopupOpen(true), 7000);
     return () => clearTimeout(timer);
   }
-}, [isOpen, name, phone]);
+}, [popupOpen, setPopupOpen, name, phone]);
 
 
 
   //  Close when clicking outside popup
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+useEffect(() => {
+  if (!popupOpen) return;
+  const handleClickOutside = (e) => {
+    if (popupRef.current && !popupRef.current.contains(e.target)) {
+      setPopupOpen(false);
     }
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, [popupOpen, setPopupOpen]);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
+
+
+  // close venue open when dialog box open
+    useEffect(() => {
+    if (popupOpen) {
+      document.body.style.overflow = "hidden"; // disable scroll
+      setVenuesOpen(false); // close dropdown if open
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [popupOpen, setVenuesOpen]);
 
   
 
 
-
-  // Validation
+  // Validation & Error Handler
   const validateForm = () => {
     let valid = true;
     setNameError("");
@@ -85,10 +93,10 @@ useEffect(() => {
       close: true,
     }).showToast();
 
-    setTimeout(() => setIsOpen(false), 2500);
+    setTimeout(() => setPopupOpen(false), 2500);
   };
 
-  if (!isOpen) return null;
+  if (!popupOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[1000] animate-fadeInSmooth select-none">
@@ -109,7 +117,7 @@ useEffect(() => {
         </div>
         <button
           className={`absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl cursor-pointer`}
-          onClick={() => setIsOpen(false)}
+          onClick={() => setPopupOpen(false)}
         >
           ✕
         </button>
@@ -135,9 +143,8 @@ useEffect(() => {
               placeholder=""
               value={name}
               onChange={(e) => {
-setName(
-  e.target.value.replace(/^\w/, c => c.toUpperCase())
-);
+              setName(e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1));
+
 
                 if (nameError) setNameError("");
               }}
