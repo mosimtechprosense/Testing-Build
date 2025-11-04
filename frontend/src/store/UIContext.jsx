@@ -6,11 +6,12 @@ import { createContext } from "react";
 export const UIContext = createContext(null);
 
 const UIProvider = ({ children }) => {
-      const [venuesOpen, setVenuesOpen] = useState(false);
-      const [popupOpen, setPopupOpen] = useState(true);
+      
+      
+      const [menuOpen, setMenuOpen] = useState(false);
 
       return(
-        <UIContext.Provider value={{venuesOpen, setVenuesOpen, popupOpen, setPopupOpen}}>
+        <UIContext.Provider value={{ menuOpen, setMenuOpen}}>
             {children}
         </UIContext.Provider>
       )

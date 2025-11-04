@@ -8,21 +8,32 @@ const DiscountPopup = () => {
   const [phone, setPhone] = useState("")
   const [nameError, setNameError] = useState("")
   const [phoneError, setPhoneError] = useState("")
+  const [popupOpen, setPopupOpen] = useState(true);
   const popupRef = useRef(null)
-  const { popupOpen, setPopupOpen, venuesOpen, setVenuesOpen } =
-    useContext(UIContext)
+  const { menuOpen } = useContext(UIContext)
 
   // Handle reopen logic
-  useEffect(() => {
-    // Prevent popup if venues dropdown is open
-    if (venuesOpen) return
+useEffect(() => {
+  let timer;
 
-    // Only reopen after 7s if popup was closed and no data was submitted
-    if (!popupOpen && name === "" && phone === "") {
-      const timer = setTimeout(() => setPopupOpen(true), 7000)
-      return () => clearTimeout(timer)
-    }
-  }, [popupOpen, setPopupOpen, name, phone, venuesOpen])
+  const startTimer = () => {
+    timer = setTimeout(() => setPopupOpen(true), 7000);
+  };
+
+  // Debounce start when venuesOpen switches from true → false
+  if (!popupOpen && name === "" && phone === ""  && !menuOpen) {
+    const debounce = setTimeout(startTimer, 500); // wait 0.5s
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(debounce);
+    };
+  }
+
+  return () => clearTimeout(timer);
+}, [popupOpen, setPopupOpen, name, phone, menuOpen]);
+
+
+
 
 
 
@@ -44,11 +55,10 @@ const DiscountPopup = () => {
   useEffect(() => {
     if (popupOpen) {
       document.body.style.overflow = "hidden" // disable scroll
-      setVenuesOpen(false) // close dropdown if open
     } else {
       document.body.style.overflow = "auto"
     }
-  }, [popupOpen, setVenuesOpen])
+  }, [popupOpen])
 
 
 
@@ -72,7 +82,7 @@ const DiscountPopup = () => {
   }
 
 
-  
+
   // Submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
