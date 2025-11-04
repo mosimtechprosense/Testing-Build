@@ -139,7 +139,13 @@ useEffect(() => {
 
             {/* Mobile Inline Dropdown */}
             {link.id === "venues" && window.innerWidth < 768 && venuesOpen && (
-              <div className="pl-4 py-2 text-white bg-[#dc2626] overflow-visible">
+              <div className={`pl-4 py-2 text-white bg-[#dc2626] overflow-visible
+              transition-all duration-300 ease-in-out transform
+              ${
+                venuesOpen
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-2"
+              }`}>
                 <VenuesDropdown
                   isOpen={venuesOpen}
                   onSelect={() => {
@@ -154,8 +160,7 @@ useEffect(() => {
             {link.id === "venues" && window.innerWidth >= 768 && (
               <div
                 className={`absolute top-full left-0 mt-0 w-[460px] bg-white shadow-lg rounded-lg 
-                            p-3 text-[0.85rem] overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all 
-                            duration-200 ease-in-out z-50
+                            p-3 text-[0.85rem] overflow-hidden grid grid-cols-1 md:grid-cols-2  duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-50 transform
                           ${
                             venuesOpen
                               ? "opacity-100 translate-y-0 visible"

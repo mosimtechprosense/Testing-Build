@@ -1,78 +1,82 @@
-import { useState, useEffect, useRef, useContext } from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
-import { UIContext } from "../store/UIContext";
+import { useState, useEffect, useRef, useContext } from "react"
+import Toastify from "toastify-js"
+import "toastify-js/src/toastify.css"
+import { UIContext } from "../store/UIContext"
 
 const DiscountPopup = () => {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [nameError, setNameError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
-  const popupRef = useRef(null);
-  const { popupOpen, setPopupOpen, setVenuesOpen } = useContext(UIContext);
-
+  const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [nameError, setNameError] = useState("")
+  const [phoneError, setPhoneError] = useState("")
+  const popupRef = useRef(null)
+  const { popupOpen, setPopupOpen, venuesOpen, setVenuesOpen } =
+    useContext(UIContext)
 
   // Handle reopen logic
-useEffect(() => {
-  // Only reopen after 30s if popup was closed and no data was submitted
-  if (!popupOpen && name === "" && phone === "") {
-    const timer = setTimeout(() => setPopupOpen(true), 7000);
-    return () => clearTimeout(timer);
-  }
-}, [popupOpen, setPopupOpen, name, phone]);
+  useEffect(() => {
+    // Prevent popup if venues dropdown is open
+    if (venuesOpen) return
+
+    // Only reopen after 7s if popup was closed and no data was submitted
+    if (!popupOpen && name === "" && phone === "") {
+      const timer = setTimeout(() => setPopupOpen(true), 7000)
+      return () => clearTimeout(timer)
+    }
+  }, [popupOpen, setPopupOpen, name, phone, venuesOpen])
 
 
 
   //  Close when clicking outside popup
-useEffect(() => {
-  if (!popupOpen) return;
-  const handleClickOutside = (e) => {
-    if (popupRef.current && !popupRef.current.contains(e.target)) {
-      setPopupOpen(false);
+  useEffect(() => {
+    if (!popupOpen) return
+    const handleClickOutside = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        setPopupOpen(false)
+      }
     }
-  };
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
-}, [popupOpen, setPopupOpen]);
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [popupOpen, setPopupOpen])
 
 
 
   // close venue open when dialog box open
-    useEffect(() => {
+  useEffect(() => {
     if (popupOpen) {
-      document.body.style.overflow = "hidden"; // disable scroll
-      setVenuesOpen(false); // close dropdown if open
+      document.body.style.overflow = "hidden" // disable scroll
+      setVenuesOpen(false) // close dropdown if open
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "auto"
     }
-  }, [popupOpen, setVenuesOpen]);
+  }, [popupOpen, setVenuesOpen])
 
-  
 
 
   // Validation & Error Handler
   const validateForm = () => {
-    let valid = true;
-    setNameError("");
-    setPhoneError("");
+    let valid = true
+    setNameError("")
+    setPhoneError("")
 
     if (name.trim().length < 3) {
-      setNameError("Please enter a valid name (min 3 characters)");
-      valid = false;
+      setNameError("Please enter a valid name (min 3 characters)")
+      valid = false
     }
 
     if (!/^[0-9]{10}$/.test(phone)) {
-      setPhoneError("Please enter a valid 10-digit phone number");
-      valid = false;
+      setPhoneError("Please enter a valid 10-digit phone number")
+      valid = false
     }
 
-    return valid;
-  };
+    return valid
+  }
 
+
+  
   // Submit handler
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+    e.preventDefault()
+    if (!validateForm()) return
 
     Toastify({
       text: "✅ Success! Our team will contact you shortly!",
@@ -88,15 +92,15 @@ useEffect(() => {
         textAlign: "center",
         borderRadius: "10px",
         margin: "0 auto",
-        boxSizing: "border-box",
+        boxSizing: "border-box"
       },
-      close: true,
-    }).showToast();
+      close: true
+    }).showToast()
 
-    setTimeout(() => setPopupOpen(false), 2500);
-  };
+    setTimeout(() => setPopupOpen(false), 2500)
+  }
 
-  if (!popupOpen) return null;
+  if (!popupOpen) return null
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[1000] animate-fadeInSmooth select-none">
@@ -143,10 +147,12 @@ useEffect(() => {
               placeholder=""
               value={name}
               onChange={(e) => {
-              setName(e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1));
+                setName(
+                  e.target.value.charAt(0).toUpperCase() +
+                    e.target.value.slice(1)
+                )
 
-
-                if (nameError) setNameError("");
+                if (nameError) setNameError("")
               }}
               className={`w-full border ${
                 nameError ? "border-red-500" : "border-gray-400"
@@ -174,8 +180,8 @@ useEffect(() => {
               placeholder=" "
               value={phone}
               onChange={(e) => {
-                setPhone(e.target.value);
-                if (phoneError) setPhoneError("");
+                setPhone(e.target.value)
+                if (phoneError) setPhoneError("")
               }}
               className={`w-full border ${
                 phoneError ? "border-red-500" : "border-gray-400"
@@ -199,7 +205,7 @@ useEffect(() => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DiscountPopup;
+export default DiscountPopup
