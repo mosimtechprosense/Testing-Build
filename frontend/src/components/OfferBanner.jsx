@@ -1,4 +1,4 @@
-import "../style/offerBanner.css";
+import "../style/OfferBanner.css";
 
 const OfferBanner = () => {
   return (
