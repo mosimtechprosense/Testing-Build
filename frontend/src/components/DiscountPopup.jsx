@@ -36,19 +36,19 @@ useEffect(() => {
 
 
 
+// Disable scroll but preserve scrollbar space (no layout shift)
+useEffect(() => {
+  if (popupOpen) {
+    const scrollBarWidth =
+      window.innerWidth - document.documentElement.clientWidth
+    document.body.style.overflow = "hidden"
+    document.body.style.paddingRight = `${scrollBarWidth}px` // prevent layout shift
+  } else {
+    document.body.style.overflow = "auto"
+    document.body.style.paddingRight = "0px" // reset cleanly
+  }
+}, [popupOpen])
 
-
-  //  Close when clicking outside popup
-  useEffect(() => {
-    if (!popupOpen) return
-    const handleClickOutside = (e) => {
-      if (popupRef.current && !popupRef.current.contains(e.target)) {
-        setPopupOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [popupOpen, setPopupOpen])
 
 
 
