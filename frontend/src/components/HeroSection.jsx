@@ -1,15 +1,15 @@
-import { useContext, useState } from "react";
-import bookmybanquetsLogo from "../assets/bookmybanquet.png";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { useNavigate, useLocation } from "react-router-dom";
-import VenuesDropdown from "./VenuesDropdown";
-import { UIContext } from "../store/UIContext";
+import { useContext, useState } from "react"
+import bookmybanquetsLogo from "../assets/bookmybanquet.png"
+import { IoMdArrowDropdown } from "react-icons/io"
+import { useNavigate, useLocation } from "react-router-dom"
+import VenuesDropdown from "./VenuesDropdown"
+import { UIContext } from "../store/UIContext"
 
 const HeroSection = () => {
-  const [venuesOpen, setVenuesOpen] = useState(false);
-  const { menuOpen, setMenuOpen } = useContext(UIContext);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [venuesOpen, setVenuesOpen] = useState(false)
+  const { menuOpen, setMenuOpen } = useContext(UIContext)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const links = [
     { id: "home", label: "Home", path: "/" },
@@ -18,25 +18,25 @@ const HeroSection = () => {
     { id: "about", label: "About", path: "/about" },
     { id: "why-us", label: "Why Us?", path: "/why-us" },
     { id: "blog", label: "Blog", path: "/blog" },
-    { id: "contact", label: "Contact Us", path: "/contact" },
-  ];
+    { id: "contact", label: "Contact Us", path: "/contact" }
+  ]
 
   //  Lock scroll when menu is open  (Temprory paused)
   // useEffect(() => {
   //   document.body.style.overflow = menuOpen ? "hidden" : "auto";
   // }, [menuOpen]);
 
-    // 🔒 Auto-close dropdown when popup is open
+  // 🔒 Auto-close dropdown when popup is open
 
   const handleLogo = () => {
-    navigate("/");
-    setMenuOpen(false);
-  };
+    navigate("/")
+    setMenuOpen(false)
+  }
 
   const handleNavClick = (id, path) => {
-    navigate(path);
-    setMenuOpen(false);
-  };
+    navigate(path)
+    setMenuOpen(false)
+  }
 
   return (
     <div className="w-full bg-[#dc2626] overflow-visible px-4 sm:py-0 md:py-0 lg:py-0 sm:px-6 md:px-6 lg:px-14 xl:px-20 flex items-center justify-between gap-6 relative z-100 py-2">
@@ -54,9 +54,9 @@ const HeroSection = () => {
       <div
         className="md:hidden text-white text-3xl cursor-pointer select-none"
         onClick={(e) => {
-          e.stopPropagation();
-          setMenuOpen(!menuOpen);
-          setVenuesOpen(false);
+          e.stopPropagation()
+          setMenuOpen(!menuOpen)
+          setVenuesOpen(false)
         }}
       >
         {menuOpen ? "✕" : "☰"}
@@ -87,9 +87,9 @@ const HeroSection = () => {
             <button
               onClick={() => {
                 if (link.id === "venues") {
-                  if (window.innerWidth < 768) setVenuesOpen(!venuesOpen);
+                  if (window.innerWidth < 768) setVenuesOpen(!venuesOpen)
                 } else {
-                  handleNavClick(link.id, link.path);
+                  handleNavClick(link.id, link.path)
                 }
               }}
               className={`relative flex items-center gap-1 text-base font-semibold py-3 md:py-4
@@ -127,18 +127,20 @@ const HeroSection = () => {
 
             {/* Mobile Inline Dropdown */}
             {link.id === "venues" && window.innerWidth < 768 && venuesOpen && (
-              <div className={`pl-4 py-2 text-white bg-[#dc2626] overflow-visible
+              <div
+                className={`pl-4 py-2 text-white bg-[#dc2626] overflow-visible
               transition-all duration-300 ease-in-out transform
               ${
                 venuesOpen
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2"
-              }`}>
+              }`}
+              >
                 <VenuesDropdown
                   isOpen={venuesOpen}
                   onSelect={() => {
-                    setVenuesOpen(false);
-                    setMenuOpen(false);
+                    setVenuesOpen(false)
+                    setMenuOpen(false)
                   }}
                 />
               </div>
@@ -160,8 +162,8 @@ const HeroSection = () => {
                 <VenuesDropdown
                   isOpen={venuesOpen}
                   onSelect={() => {
-                    setMenuOpen(false);
-                    setVenuesOpen(false);
+                    setMenuOpen(false)
+                    setVenuesOpen(false)
                   }}
                 />
               </div>
@@ -178,7 +180,7 @@ const HeroSection = () => {
         ></div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default HeroSection;
+export default HeroSection
