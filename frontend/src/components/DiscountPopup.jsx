@@ -26,6 +26,7 @@ useEffect(() => {
     return () => {
       clearTimeout(timer);
       clearTimeout(debounce);
+      
     };
   }
 
