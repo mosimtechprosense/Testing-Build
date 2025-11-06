@@ -4,13 +4,14 @@ import "toastify-js/src/toastify.css"
 import { UIContext } from "../store/UIContext"
 
 const DiscountPopup = () => {
-  const [name, setName] = useState("")
-  const [phone, setPhone] = useState("")
-  const [nameError, setNameError] = useState("")
-  const [phoneError, setPhoneError] = useState("")
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [popupOpen, setPopupOpen] = useState(true);
-  const popupRef = useRef(null)
-  const { menuOpen } = useContext(UIContext)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const popupRef = useRef(null);
+  const { menuOpen } = useContext(UIContext);
 
   // Handle reopen logic
 useEffect(() => {
@@ -87,7 +88,11 @@ useEffect(() => {
   // Submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (isSubmitting) return
+
     if (!validateForm()) return
+
+     setIsSubmitting(true)
 
     Toastify({
       text: "✅ Success! Our team will contact you shortly!",
@@ -108,7 +113,10 @@ useEffect(() => {
       close: true
     }).showToast()
 
-    setTimeout(() => setPopupOpen(false), 2500)
+    setTimeout(() => {
+       setIsSubmitting(false);
+      setPopupOpen(false);
+    }, 2500)
   }
 
   if (!popupOpen) return null
@@ -209,9 +217,10 @@ useEffect(() => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-[#dc2626] text-white font-semibold py-2 rounded-md hover:bg-[#b91c1c] transition-all cursor-pointer"
+             className={`w-full bg-[#dc2626] text-white font-semibold py-2 rounded-md transition-all
+             ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-[#b91c1c] cursor-pointer"}`}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>
