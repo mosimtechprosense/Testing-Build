@@ -7,12 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model City {
   id        Int        @id @default(autoincrement())
   name      String     @unique
   locations Location[]
   createdAt DateTime   @default(now())
 }
+
+
 
 model Location {
   id        Int      @id @default(autoincrement())
@@ -23,4 +27,42 @@ model Location {
 
 
   @@unique([name, cityId], name: "name_cityId")
+}
+
+
+
+model Listing {
+  id             BigInt     @id @default(autoincrement())
+  title          String
+  slug           String
+  excerpt        String
+  description    String
+  keywords       String
+  budget         String?
+  min_budget     BigInt
+  max_budget     BigInt
+  min_guest      BigInt
+  max_guest      BigInt
+  guests         String?
+  features       String?
+  policies       String?
+  phone          String?
+  email          String?
+  address        String
+  google_map_url String?
+  locality       String?
+  pincode        BigInt
+  city           String
+  state          String
+  country        String
+  lat            Float?
+  long           Float?
+  recomended     Boolean?   @default(false)
+  popular        Boolean?   @default(false)
+  trending       Boolean?   @default(false)
+  high_demand    Boolean?   @default(false)
+  status         Boolean?   @default(true)
+  created_at     DateTime?  @default(now())
+  updated_at     DateTime?  @updatedAt
+  city_id        BigInt?
 }

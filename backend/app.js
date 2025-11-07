@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import locationRoutes from "./src/routes/locationRoutes.js"
+import locationRoutes from "./src/routes/location.routes.js"
+import errorHandler from "./src/middlewares/errorHandler.js"
 
 
 const app = express();
@@ -14,6 +15,10 @@ const PORT = process.env.PORT || 5000;
 
 // Routes
 app.use("/api/locations", locationRoutes);
+
+
+// global error handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

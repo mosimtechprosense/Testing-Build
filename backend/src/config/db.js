@@ -1,8 +1,18 @@
-import { PrishmaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-export const prisma = new PrishmaClient();
+const prisma = new PrismaClient();
 
-prisma
-  .$connect()
-  .then(() => console.log("Connected to MySQL with Prisma"))
-  .then((err) => console.error("Connected to MySQL with Prisma", err));
+async function connectDB() {
+  try {
+    await prisma.$connect();
+    console.log("✅ Connected to MySQL with Prisma");
+  } catch (err) {
+    console.error("❌ Prisma connection error:", err);
+    process.exit(1); // stop the server if DB fails
+  }
+}
+
+connectDB();
+
+export default prisma;
+

@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllLocations, createLocation, updateLocation, deleteLocation } from "../controllers/locationController.js";
+import { getAllLocations, createLocation, updateLocation, deleteLocation } from "../controllers/location.controller.js";
 
 
 

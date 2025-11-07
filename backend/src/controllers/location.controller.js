@@ -1,4 +1,4 @@
-import { getAllLocationsDB, createLocationDB, updateLocationDB, deleteLocationDB } from "../services/locationService.js";
+import { getAllLocationsDB, createLocationDB, updateLocationDB, deleteLocationDB } from "../services/location.service.js";
 
 
 

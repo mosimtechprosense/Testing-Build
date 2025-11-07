@@ -12,7 +12,8 @@ const DiscountPopup = () => {
   const popupRef = useRef(null);
   const { menuOpen, popupOpen, setPopupOpen } = useContext(UIContext);
 
-  // Handle reopen logic
+
+  //* Handle reopen logic
 useEffect(() => {
   let timer;
 
@@ -35,34 +36,52 @@ useEffect(() => {
 
 
 
-// Disable scroll but preserve scrollbar space (no layout shift)
+//* Disable scroll but preserve scrollbar space (no layout shift)/(scroll lock + layout stability.)
 useEffect(() => {
   if (popupOpen) {
-    const scrollBarWidth =
-      window.innerWidth - document.documentElement.clientWidth
-    document.body.style.overflow = "hidden"
-    document.body.style.paddingRight = `${scrollBarWidth}px` // prevent layout shift
+    // Calculate scrollbar width
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    // Disable scroll and add padding to prevent layout shift
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
   } else {
-    document.body.style.overflow = "auto"
-    document.body.style.paddingRight = "0px" // reset cleanly
+    // Re-enable scroll and reset padding
+    document.body.style.overflow = "auto";
+    document.body.style.paddingRight = "0px";
   }
-}, [popupOpen])
+
+  // Cleanup: ensure scroll and padding reset if component unmounts while popupOpen
+  return () => {
+    document.body.style.overflow = "auto";
+    document.body.style.paddingRight = "0px";
+  };
+}, [popupOpen]);
 
 
 
-
-  // close venue open when dialog box open
-  useEffect(() => {
-    if (popupOpen) {
-      document.body.style.overflow = "hidden" // disable scroll
-    } else {
-      document.body.style.overflow = "auto"
+  //* Close popup on outside click
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (popupRef.current && !popupRef.current.contains(event.target)) {
+      setPopupOpen(false);
     }
-  }, [popupOpen])
+  };
+
+  if (popupOpen) {
+    document.addEventListener("mousedown", handleClickOutside);
+  } else {
+    document.removeEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [popupOpen, setPopupOpen]);
 
 
 
-  // Validation & Error Handler
+  //* Validation & Error Handler
   const validateForm = () => {
     let valid = true
     setNameError("")
@@ -83,7 +102,7 @@ useEffect(() => {
 
 
 
-  // Submit handler
+  //* Submit handler
   const handleSubmit = (e) => {
     e.preventDefault()
     if (isSubmitting) return
@@ -114,6 +133,8 @@ useEffect(() => {
     setTimeout(() => {
        setIsSubmitting(false);
       setPopupOpen(false);
+      setName("");
+      setPhone("");
     }, 2500)
   }
 
