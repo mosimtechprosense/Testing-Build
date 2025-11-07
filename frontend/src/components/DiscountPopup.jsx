@@ -37,6 +37,7 @@ useEffect(() => {
 
 
 //* Disable scroll but preserve scrollbar space (no layout shift)/(scroll lock + layout stability.)
+
 useEffect(() => {
   if (popupOpen) {
     // Calculate scrollbar width
