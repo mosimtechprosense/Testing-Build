@@ -20,6 +20,8 @@ app.use("/api/locations", locationRoutes);
 // global error handler
 app.use(errorHandler);
 
+
+// server start
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
