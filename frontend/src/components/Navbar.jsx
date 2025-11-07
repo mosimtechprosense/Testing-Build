@@ -2,9 +2,19 @@ import { IoLogoFacebook, IoCall } from "react-icons/io5";
 import { FaLinkedin, FaYoutube } from "react-icons/fa";
 import { RiInstagramLine } from "react-icons/ri";
 import HeroSection from "./HeroSection";
+import { useContext } from "react";
+import { UIContext } from "../store/UIContext";
 
 
 const Navbar = () => {
+
+    const { setPopupOpen } = useContext(UIContext);
+
+    const quoteHandler = () => {
+       setPopupOpen(true)
+    }
+
+
   return (
     <div>
       <div className="flex flex-col gap-0 md:flex-row items-center justify-between py-2 px-6 md:px-20 bg-white border-b border-gray-200">
@@ -39,7 +49,7 @@ const Navbar = () => {
 
         {/* Right Section: CTA + City Selector */}
         <div className="flex items-center gap-4 mt-4 md:mt-0">
-          <button className="bg-[#dc2626] text-white text-[0.8rem] font-medium px-5 py-2.5 rounded hover:bg-red-700 cursor-pointer transition duration-200 whitespace-nowrap">
+          <button onClick={quoteHandler} className="bg-[#dc2626] text-white text-[0.8rem] font-medium px-5 py-2.5 rounded hover:bg-red-700 cursor-pointer transition duration-200 whitespace-nowrap">
             Get a Quote
           </button>
           <select

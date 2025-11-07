@@ -8,10 +8,9 @@ const DiscountPopup = () => {
   const [phone, setPhone] = useState("");
   const [nameError, setNameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [popupOpen, setPopupOpen] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const popupRef = useRef(null);
-  const { menuOpen } = useContext(UIContext);
+  const { menuOpen, popupOpen, setPopupOpen } = useContext(UIContext);
 
   // Handle reopen logic
 useEffect(() => {
@@ -33,7 +32,6 @@ useEffect(() => {
 
   return () => clearTimeout(timer);
 }, [popupOpen, setPopupOpen, name, phone, menuOpen]);
-
 
 
 
@@ -99,7 +97,7 @@ useEffect(() => {
       duration: 3000,
       gravity: "top",
       position: window.innerWidth <= 768 ? "center" : "right", // Center on mobile
-      className: "custom-toast text-white text-sm rounded-xl shadow-lg",
+      className: "custom-toast text-white text-sm rounded-xl py-0 shadow-lg",
       style: {
         background: "#141414",
         width: "clamp(260px, 90%, 380px)", // Responsive width with min & max limit
@@ -108,7 +106,7 @@ useEffect(() => {
         textAlign: "center",
         borderRadius: "10px",
         margin: "0 auto",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
       },
       close: true
     }).showToast()
