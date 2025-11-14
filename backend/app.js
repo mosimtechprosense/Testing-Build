@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import locationRoutes from "./src/routes/location.routes.js"
+import apiRoutes from "./src/routes/index.js";
 import errorHandler from "./src/middlewares/errorHandler.js"
 
 
@@ -13,8 +13,14 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 
-// Routes
-app.use("/api/locations", locationRoutes);
+// Fix BigInt JSON problem
+BigInt.prototype.toJSON = function () {
+  return Number(this);
+};
+
+
+// prefix all routes with /api
+app.use("/api", apiRoutes);
 
 
 // global error handler

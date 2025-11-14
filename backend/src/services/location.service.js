@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../config/db.js";
 
-const prisma = new PrismaClient();
 
 // function to get the all loations
 export const getAllLocationsDB = async ( city ) => {

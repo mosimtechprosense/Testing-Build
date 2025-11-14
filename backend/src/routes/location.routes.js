@@ -1,9 +1,9 @@
-import express from "express";
+import { Router } from "express";
 import { getAllLocations, createLocation, updateLocation, deleteLocation } from "../controllers/location.controller.js";
 
 
 
-const router = express.Router();
+const router = Router();
 
 // get all locations or by ?city=Delhi
 router.get("/", getAllLocations);
@@ -15,7 +15,7 @@ router.post("/", createLocation);
 router.put("/:id", updateLocation);
 
 // delete location
-router.delete("/:id", deleteLocation);       
+router.delete("/:id", deleteLocation);      
 
 
 export default router;
