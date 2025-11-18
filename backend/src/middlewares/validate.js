@@ -1,20 +1,24 @@
 import { ZodError } from "zod";
 
 export const validate = (schema) => (req, res, next) => {
-    try {
-       if (schema.body) req.body = schema.body.parse(req.body);
-       if (schema.params) req.params = schema.params.parse(req.params);
-       if (schema.query) req.query = schema.query.parse(req.query);
+  try {
+    ["body", "params", "query"].forEach((key) => {
+      if (schema[key]) {
+        req[key] = schema[key].parse(req[key]);
+      }
+    });
 
-       next();
-    } catch (error) {
-        if(error instanceof ZodError){
-            return res.status(400).json({
-                success: false,
-                message: "Validation Failed",
-                errors: error.errors
-            });
-        }
-        next(error);
+    next();
+
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation Failed",
+        errors: error.errors
+      });
     }
+
+    next(error);
+  }
 };
