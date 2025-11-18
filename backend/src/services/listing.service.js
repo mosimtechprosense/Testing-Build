@@ -67,6 +67,7 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 20) => {
 
     // Guest range filters
     ...(minGuests && maxGuests
+      
       ? {
           AND: [
             { min_guest: { gte: Number(minGuests) } },
