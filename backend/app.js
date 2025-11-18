@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import apiRoutes from "./src/routes/index.js";
 import errorHandler from "./src/middlewares/errorHandler.js"
 
@@ -7,7 +8,13 @@ import errorHandler from "./src/middlewares/errorHandler.js"
 const app = express();
 
 
-app.use(cors({ origin: "http://localhost:5173" }));
+// for security
+app.use(helmet());
+app.use(cors({
+  origin: ["http://localhost:5173", "https://yourdomainExample.com"],
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true
+}));
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
