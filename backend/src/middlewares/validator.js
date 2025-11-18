@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 
-export const validate = (schema) => (req, res, next) => {
+export const validator = (schema) => (req, res, next) => {
   try {
     ["body", "params", "query"].forEach((key) => {
       if (schema[key]) {
