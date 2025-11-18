@@ -13,7 +13,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 
-// Fix BigInt JSON problem
+// Fix BigInt JSON problem on API
 BigInt.prototype.toJSON = function () {
   return Number(this);
 };
