@@ -7,12 +7,12 @@ const RecommendedListings = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5173";
+  const API_BASE = import.meta.env.VITE_API_BASE;
 
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/listings/recommended`);
+        const res = await axios.get(`${API_BASE}/api/listings/recommended`);
         setListings(res.data.data || []);
       } catch (error) {
         console.error("Error fetching recommended listings:", error);
@@ -23,6 +23,16 @@ const RecommendedListings = () => {
 
     fetchListings();
   }, []);
+
+
+ //* remove this 
+useEffect(() => {
+  listings.forEach((item, i) => {
+    console.log(`Item ${i}:`, item);
+  });
+}, [listings]);
+
+
 
   if (loading) {
     return (
@@ -55,10 +65,11 @@ const RecommendedListings = () => {
             {/* Image */}
             <div className="h-48 w-full overflow-hidden">
               <img
-                src={item.images?.[0] || "/placeholder.jpg"}
+                src={`http://localhost:5000/${item.images?.[0]}`}
                 alt={item.title}
                 className="h-full w-full object-cover group-hover:scale-110 transition-all duration-500"
               />
+              
             </div>
 
             {/* Content */}

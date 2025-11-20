@@ -2,6 +2,15 @@ import prisma from "../config/db.js";
 import slugify from "slugify";
 
 
+// venue images url builder fuction
+const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+
+const buildImageURL = (image) => `${BASE_URL}/${image}`;
+
+
+
+
+
 //todo: CREATE — Add new listing
 export const createListingDB = async (data) => {
   const slug = slugify(data.title, { lower: true }) + "-" + Date.now();
@@ -115,22 +124,32 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 20) => {
   };
 
 
-  // Fetch paginated listings
-  const listings = await prisma.listings.findMany({
-    where,
-    skip: Number(skip),
-    take: Number(take),
-    orderBy: { [sortBy]: order },
-    include: {
-    venue_images: true,  
-    },
-  });
+// Fetch paginated listings
+const listings = await prisma.listings.findMany({
+  where,
+  skip: Number(skip),
+  take: Number(take),
+  orderBy: { [sortBy]: order },
+  include: {
+    venue_images: true,
+  },
+});
+
+// Count total for pagination
+const totalCount = await prisma.listings.count({ where });
 
 
-  // Count total for pagination
-  const totalCount = await prisma.listings.count({ where });
+const updatedListings = listings.map(listing => ({
+  ...listing,
+  venue_images: listing.venue_images.map(img => ({
+    ...img,
+    image_url: buildImageURL(img.image),
+  })),
+}));
 
-  return { listings, totalCount };
+
+return { listings: updatedListings, totalCount };
+
 };
 
 

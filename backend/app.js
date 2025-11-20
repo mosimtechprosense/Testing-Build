@@ -10,8 +10,12 @@ import errorHandler from "./src/middlewares/errorHandler.js"
 const app = express();
 
 
-
 const PORT = process.env.PORT || 5000;
+
+
+// serve venue images
+app.use('/listing_image', express.static('public/listing_image'));
+
 
 //* for security
 
