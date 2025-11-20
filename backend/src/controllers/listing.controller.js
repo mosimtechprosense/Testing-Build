@@ -55,14 +55,25 @@ export const getAllListing = async (req, res) => {
 //*  GET RECOMMENDED LISTINGS
 export const getRecommendedListings = async (req, res) => {
     try {
-        const { limit = 10, city} = req.query;
-
+        const { limit = 10, city } = req.query;
         const listings = await getRecommendedListingsDB(Number(limit), city);
+
+        // Map only the fields needed by frontend
+        const result = listings.map(l => ({
+            id: l.id,
+            title: l.title,
+            excerpt: l.excerpt,
+            description: l.description,
+            images: l.venue_images.map(img => img.image),
+            capacityFrom: l.min_guest,
+            capacityTo: l.max_guest,
+            pricePerPlate: l.min_budget // or however you want to calculate/display price
+        }));
 
         res.status(200).json({
             success: true,
-            count: listings.length,
-            data: listings,
+            count: result.length,
+            data: result,
         });
     } catch (error) {
         console.error("Get Recommended Error:", error);
@@ -72,6 +83,7 @@ export const getRecommendedListings = async (req, res) => {
         });
     }
 };
+
 
 
 

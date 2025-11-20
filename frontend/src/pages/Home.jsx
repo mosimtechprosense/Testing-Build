@@ -8,6 +8,7 @@ import HowItWorks from "../components/HowItWorks"
 import Categories from "../components/Categories"
 import { useNavigate } from "react-router-dom";
 import OfferBanner from "../components/OfferBanner"
+import RecommendedListings from "../components/RecommendedListings"
 
 const Home = () => {
   const services = [
@@ -197,14 +198,14 @@ const Home = () => {
 
               {showLocationSuggestions && filteredLocations.length > 0 && (
                 <div
-                  className="absolute top-[98%] left-0 w-full bg-white border border-gray-300 max-h-[225px] sm:max-h-[170px] overflow-y-auto z-[200] shadow-lg rounded-b-sm scrollbar-hide"
+                  className="absolute top-[98%] left-0 w-full bg-white border border-gray-300 max-h-[225px] sm:max-h-[170px] overflow-y-auto z-200 shadow-lg rounded-b-sm scrollbar-hide"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {filteredLocations.map((loc, idx) => (
                     <div
                       key={idx}
                       onClick={() => handleSelectLocation(loc.name)}
-                      className="flex items-center px-3 py-2.5 z-[100] text-black text-sm outline-none border-b border-gray-100 hover:bg-gray-100 cursor-pointer"
+                      className="flex items-center px-3 py-2.5 z-100 text-black text-sm outline-none border-b border-gray-100 hover:bg-gray-100 cursor-pointer"
                     >
                       <div className="mr-3 p-2 rounded-full bg-gray-100">
                         <CiLocationOn className="text-gray-500" />
@@ -245,11 +246,16 @@ const Home = () => {
       {/*  Category section */}
       <Categories />
 
+      {/*Recommended listing Section*/}
+      <RecommendedListings/>
+
       {/* Customer Review Section */}
       <CustomerReview />
 
       {/*How It Works Section*/}
       <HowItWorks />
+
+
     </div>
   )
 }

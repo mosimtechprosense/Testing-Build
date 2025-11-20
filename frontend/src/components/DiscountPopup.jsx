@@ -18,7 +18,7 @@ useEffect(() => {
   let timer;
 
   const startTimer = () => {
-    timer = setTimeout(() => setPopupOpen(true), 7000);
+    timer = setTimeout(() => setPopupOpen(true), 10000);
   };
 
   // Debounce start when venuesOpen switches from true → false
@@ -142,7 +142,7 @@ useEffect(() => {
   if (!popupOpen) return null
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[1000] animate-fadeInSmooth select-none">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-1000 animate-fadeInSmooth select-none">
       <div
         ref={popupRef}
         className="popup-box bg-white w-[85%] sm:w-[400px] rounded-2xl shadow-2xl relative animate-fadeInSmooth p-6"

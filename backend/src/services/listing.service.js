@@ -16,6 +16,7 @@ export const createListingDB = async (data) => {
       slug,
       excerpt
     },
+    include: { venue_images: true },
   });
 };
 
@@ -120,6 +121,9 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 20) => {
     skip: Number(skip),
     take: Number(take),
     orderBy: { [sortBy]: order },
+    include: {
+    venue_images: true,  
+    },
   });
 
 
@@ -134,6 +138,9 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 20) => {
 export const getListingByIdDB = async (id) => {
   return await prisma.listings.findUnique({
     where: { id: BigInt(id) },
+    include: {
+      venue_images: true,   
+    }
   });
 };
 
@@ -144,6 +151,9 @@ export const updateListingDB = async (id, data) => {
   return await prisma.listings.update({
     where: { id: BigInt(id) },
     data,
+    include: {
+    venue_images: true, 
+  },
   });
 };
 
@@ -154,6 +164,7 @@ export const deleteListingDB = async (id) => {
   return await prisma.listings.update({
     where: { id: BigInt(id) },
     data: { status: false },
+    include: { venue_images: true },
   });
 };
 
@@ -163,6 +174,7 @@ export const deleteListingDB = async (id) => {
 export const getRecommendedListingsDB = async (limit = 10, city) => {
   const filters = {
     recommended: true,
+    status: true,
     ...(city ? { city } : {}),
   };
   const { listings } = await getAllListingDB(filters, 0, limit);

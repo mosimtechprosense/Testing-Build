@@ -1,6 +1,7 @@
 import express from "express";
-import cors from "cors";
 import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import apiRoutes from "./src/routes/index.js";
 import errorHandler from "./src/middlewares/errorHandler.js"
 
@@ -21,10 +22,8 @@ app.use(cors({
   credentials: true
 }));
 
-//  Prevent XSS Attacks
-app.use(xssClean());
 
-// Rate Limiting per IP addrees 
+// Rate Limiting per IP addrees
 app.use(
   "/api",
   rateLimit({
@@ -39,6 +38,9 @@ app.use(
 
 app.use(express.json());
 
+
+// lets the browser access stored images.
+app.use('/uploads', express.static('uploads'));
 
 
 // Fix BigInt JSON problem on API
