@@ -25,10 +25,11 @@ const RecommendedListings = () => {
   }, []);
 
 
- //* remove this 
+ //* remove this after setup venue images correctly using image_url
 useEffect(() => {
   listings.forEach((item, i) => {
     console.log(`Item ${i}:`, item);
+    console.log("success")
   });
 }, [listings]);
 
