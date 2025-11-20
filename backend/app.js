@@ -6,7 +6,10 @@ import apiRoutes from "./src/routes/index.js";
 import errorHandler from "./src/middlewares/errorHandler.js"
 
 
+
 const app = express();
+
+
 
 const PORT = process.env.PORT || 5000;
 
