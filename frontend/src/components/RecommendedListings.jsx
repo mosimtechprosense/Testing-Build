@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { HiUserGroup } from "react-icons/hi2";
+
 
 const RecommendedListings = () => {
   const [listings, setListings] = useState([]);
@@ -71,12 +73,13 @@ const RecommendedListings = () => {
 
               {/* Guests & Price */}
               <div className="mt-3 flex justify-between text-sm font-medium text-gray-800">
-                <span>👥 {item.capacityFrom}-{item.capacityTo} guests</span>
+                <span><HiUserGroup /> {item.capacityFrom}-{item.capacityTo} guests</span>
                 <span>₹{item.pricePerPlate}/plate</span>
               </div>
 
               {/* Button */}
-              <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-all">
+              <button className="mt-4 w-full bg-red-600 text-white
+               py-2 rounded-lg hover:bg-red-700 transition-all">
                 View Detail
               </button>
             </div>
