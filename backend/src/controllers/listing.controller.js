@@ -31,17 +31,32 @@ export const getAllListing = async (req, res) => {
 
         const page = Number(filters.page) || 1;
         const limit = Number(filters.limit) || 999;
-
         const skip = (page - 1) * limit;
 
         const { listings, totalCount } = await getAllListingDB(filters, skip, limit);
+
+        // Fetch prices from blogDB
+        const listingIds = listings.map(l => Number(l.id));
+        const prices = await blogDB.venue_prices.findMany({
+            where: { listing_id: { in: listingIds } }
+        });
+
+        // Merge listings with prices
+        const updatedListings = listings.map(l => {
+            const price = prices.find(p => p.listing_id === Number(l.id));
+            return {
+                ...l,
+                vegPrice: price?.vegPrice ?? null,
+                nonVegPrice: price?.nonVegPrice ?? null,
+            };
+        });
 
         res.status(200).json({
             success: true,
             total: totalCount,
             page,
             limit,
-            data: listings
+            data: updatedListings
         });
     } catch (error) {
         console.error("Get All Listings Error:", error);
@@ -137,9 +152,20 @@ export const getListingById = async (req, res) => {
             });
         }
 
+        // Fetch price from blogDB
+        const price = await blogDB.venue_prices.findUnique({
+            where: { listing_id: Number(id) }
+        });
+
+        const listingWithPrice = {
+            ...listing,
+            vegPrice: price?.vegPrice ?? null,
+            nonVegPrice: price?.nonVegPrice ?? null
+        };
+
         res.status(200).json({
             success: true,
-            data: listing,
+            data: listingWithPrice,
         });
     } catch (error) {
         console.error("Get Listing By ID Error:", error);
