@@ -1,4 +1,5 @@
 import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB } from "../services/listing.service.js";
+import { extractPrices } from "../utils/priceExtractor.js";
 
 
 
@@ -29,7 +30,7 @@ export const getAllListing = async (req, res) => {
         const filters = req.query;
 
         const page = Number(filters.page) || 1;
-        const limit = Number(filters.limit) || 20;
+        const limit = Number(filters.limit) || 999;
 
         const skip = (page - 1) * limit;
 
@@ -55,11 +56,15 @@ export const getAllListing = async (req, res) => {
 //*  GET RECOMMENDED LISTINGS
 export const getRecommendedListings = async (req, res) => {
     try {
-        const { limit = 10, city } = req.query;
-        const listings = await getRecommendedListingsDB(Number(limit), city);
+        const { limit, city } = req.query;
+        const listings = await getRecommendedListingsDB( limit ? Number(limit) : undefined, city );
+        
 
         // Map only the fields needed by frontend
-        const result = listings.map(l => ({
+        const result = listings.map(l => {
+          const { veg, nonVeg } = extractPrices(l.description);
+            
+          return{
             id: l.id,
             title: l.title,
             excerpt: l.excerpt,
@@ -67,8 +72,10 @@ export const getRecommendedListings = async (req, res) => {
             images: l.venue_images.map(img => img.image),
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
-            pricePerPlate: l.min_budget // or however you want to calculate/display price
-        }));
+            vegPrice: veg,
+            nonVegPrice: nonVeg
+          };
+    });
 
         res.status(200).json({
             success: true,
@@ -96,7 +103,7 @@ export const getHighDemandListings = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            count: listings.lenght,
+            count: listings.length,
             data: listings,
         });
     } catch (error) {

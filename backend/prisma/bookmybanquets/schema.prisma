@@ -283,6 +283,8 @@ model listings {
   max_budget     BigInt
   min_guest      BigInt
   max_guest      BigInt
+  vegPrice       Int?
+  nonVegPrice    Int?
   guests         String?
   features       String?   @db.Text
   policies       String?   @db.Text

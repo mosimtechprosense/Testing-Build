@@ -31,7 +31,7 @@ export const createListingDB = async (data) => {
 
 
 //* READ — Get all listings (with filters)
-export const getAllListingDB = async (filters = {}, skip = 0, take = 20) => {
+export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
   const {
     city,
     locality,
@@ -190,7 +190,7 @@ export const deleteListingDB = async (id) => {
 
 
 //* RECOMMENDED LISTINGS — For homepage section
-export const getRecommendedListingsDB = async (limit = 10, city) => {
+export const getRecommendedListingsDB = async (limit , city) => {
   const filters = {
     recommended: true,
     status: true,

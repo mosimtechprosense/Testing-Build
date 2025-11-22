@@ -1,37 +1,28 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { HiUserGroup } from "react-icons/hi2";
-
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { LuArrowLeft, LuArrowRight } from "react-icons/lu"
+import { HiUserGroup } from "react-icons/hi2"
 
 const RecommendedListings = () => {
-  const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const API_BASE = import.meta.env.VITE_API_BASE;
+  const API_BASE = import.meta.env.VITE_API_BASE
 
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/api/listings/recommended`);
-        setListings(res.data.data || []);
+        const res = await axios.get(`${API_BASE}/api/listings/recommended`)
+        setListings(res.data.data || [])
       } catch (error) {
-        console.error("Error fetching recommended listings:", error);
+        console.error("Error fetching recommended listings:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchListings();
-  }, []);
-
-
- //* remove this after setup venue images correctly using image_url
-useEffect(() => {
-  listings.forEach((item, i) => {
-    console.log(`Item ${i}:`, item);
-    console.log("success")
-  });
-}, [listings]);
+    fetchListings()
+  }, [])
 
 
 
@@ -40,41 +31,54 @@ useEffect(() => {
       <div className="text-center py-10 text-xl font-semibold text-gray-600">
         Loading recommended listings...
       </div>
-    );
+    )
   }
-
   return (
-    <section className="py-10">
+    <section className="py-10 relative">
       {/* Section Header */}
-      <div className="flex justify-between items-center px-4 md:px-8 mb-6">
+      <div className="flex justify-between items-center px-4 md:px-8 mb-8">
         <h2 className="text-3xl font-bold text-gray-900">
           Recommended Banquet Halls
         </h2>
 
-        <button className="text-sm font-semibold text-red-600 hover:text-red-700">
+        <button className="text-md font-semibold text-red-600 cursor-pointer hover:text-red-700">
           View All →
         </button>
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-8">
+      {/* Left Scroll Button */}
+      <button
+        onClick={() =>
+          document
+            .getElementById("recommendedScroll")
+            .scrollBy({ left: -300, behavior: "smooth" })
+        }
+        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-3 py-2 z-20"
+      >
+        <LuArrowLeft />
+      </button>
+
+      {/* Scroll Container */}
+      <div
+        id="recommendedScroll"
+        className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar px-4 md:px-8 py-2"
+      >
         {listings.map((item) => (
           <div
             key={item.id}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+            className="min-w-[290px] max-w-[290px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group"
           >
             {/* Image */}
-            <div className="h-48 w-full overflow-hidden">
+            <div className="h-42 w-full rounded-md overflow-hidden">
               <img
                 src={`http://localhost:5000/${item.images?.[0]}`}
                 alt={item.title}
                 className="h-full w-full object-cover group-hover:scale-110 transition-all duration-500"
               />
-              
             </div>
 
             {/* Content */}
-            <div className="p-4">
+            <div className="pt-4">
               <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
                 {item.title}
               </h3>
@@ -84,22 +88,59 @@ useEffect(() => {
               </p>
 
               {/* Guests & Price */}
-              <div className="mt-3 flex justify-between text-sm font-medium text-gray-800">
-                <span><HiUserGroup /> {item.capacityFrom}-{item.capacityTo} guests</span>
-                <span>₹{item.pricePerPlate}/plate</span>
+              <div className="mt-3 flex justify-between items-center text-sm font-medium text-gray-800">
+                {/* Guests */}
+                <span className="flex items-center gap-1">
+                  <HiUserGroup className="h-4 w-4" />
+                  {item.capacityFrom}-{item.capacityTo} guests
+                </span>
+
+                {/* Prices */}
+                <div className="flex items-center gap-4">
+                  {/* Veg Price */}
+                  {item.vegPrice && (
+                    <div className="flex items-center gap-1">
+                      <div className="w-[15px] h-[15px] bg-green-600 rounded-sm flex items-center justify-center">
+                        <div className="w-[7px] h-[7px] bg-white rounded-full"></div>
+                      </div>
+                      <span>₹{item.vegPrice}/plate</span>
+                    </div>
+                  )}
+
+                  {/* Non-Veg Price */}
+                  {item.nonVegPrice && (
+                    <div className="flex items-center gap-1">
+                      <div className="w-[15px] h-[15px] bg-red-600 rounded-sm flex items-center justify-center">
+                        <div className="w-[7px] h-[7px] bg-white rounded-full"></div>
+                      </div>
+                      <span>₹{item.nonVegPrice}/plate</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Button */}
-              <button className="mt-4 w-full bg-red-600 text-white
-               py-2 rounded-lg hover:bg-red-700 transition-all">
+              <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all">
                 View Detail
               </button>
             </div>
           </div>
         ))}
       </div>
-    </section>
-  );
-};
 
-export default RecommendedListings;
+      {/* Right Scroll Button */}
+      <button
+        onClick={() =>
+          document
+            .getElementById("recommendedScroll")
+            .scrollBy({ left: 300, behavior: "smooth" })
+        }
+        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-3 py-2 z-20"
+      >
+        <LuArrowRight />
+      </button>
+    </section>
+  )
+}
+
+export default RecommendedListings
