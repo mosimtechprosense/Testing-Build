@@ -1,5 +1,5 @@
 import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB } from "../services/listing.service.js";
-import { extractPrices } from "../utils/priceExtractor.js";
+import blogDB from "../prisma/generated/blogdb";
 
 
 
@@ -58,11 +58,17 @@ export const getRecommendedListings = async (req, res) => {
     try {
         const { limit, city } = req.query;
         const listings = await getRecommendedListingsDB( limit ? Number(limit) : undefined, city );
+
+        // Fetch prices from blogDB
+        const listingIds = listings.map(l => Number(l.id));
+        const prices = await blogDB.venue_prices.findMany({
+            where: { listing_id: { in: listingIds } }
+        });
         
 
-        // Map only the fields needed by frontend
+        // Merge listings with prices
         const result = listings.map(l => {
-          const { veg, nonVeg } = extractPrices(l.description);
+          const price = prices.find(p => p.listing_id === Number(l.id));
             
           return{
             id: l.id,
@@ -72,10 +78,10 @@ export const getRecommendedListings = async (req, res) => {
             images: l.venue_images.map(img => img.image),
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
-            vegPrice: veg,
-            nonVegPrice: nonVeg
+            vegPrice: price?.vegPrice ?? null,
+            nonVegPrice: price?.nonVegPrice ?? null
           };
-    });
+     });
 
         res.status(200).json({
             success: true,
