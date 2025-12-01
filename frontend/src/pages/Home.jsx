@@ -143,7 +143,7 @@ const Home = () => {
               <input
                 type="text"
                 placeholder="Search for venues, decor, services..."
-                className="w-full text-gray-700 placeholder-gray-500 outline-none cursor-pointer"
+                className="w-full text-gray-700 placeholder-gray-500 outline-none cursor-pointer select-none"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={() => {
@@ -186,7 +186,7 @@ const Home = () => {
               <input
                 type="text"
                 placeholder="Enter your location"
-                className="w-full text-gray-700 placeholder-gray-500 outline-none cursor-pointer"
+                className="w-full text-gray-700 placeholder-gray-500 outline-none cursor-pointer select-none"
                 value={locationQuery}
                 onChange={handleLocationChange}
                 onFocus={() => {

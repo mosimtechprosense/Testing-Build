@@ -1,5 +1,4 @@
 import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB } from "../services/listing.service.js";
-import blogDB from "../prisma/generated/blogdb";
 
 
 
@@ -23,7 +22,6 @@ export const createListing = async (req, res) => {
 };
 
 
-
 //*  GET ALL LISTINGS (WITH FILTERS + PAGINATION)
 export const getAllListing = async (req, res) => {
     try {
@@ -35,28 +33,12 @@ export const getAllListing = async (req, res) => {
 
         const { listings, totalCount } = await getAllListingDB(filters, skip, limit);
 
-        // Fetch prices from blogDB
-        const listingIds = listings.map(l => Number(l.id));
-        const prices = await blogDB.venue_prices.findMany({
-            where: { listing_id: { in: listingIds } }
-        });
-
-        // Merge listings with prices
-        const updatedListings = listings.map(l => {
-            const price = prices.find(p => p.listing_id === Number(l.id));
-            return {
-                ...l,
-                vegPrice: price?.vegPrice ?? null,
-                nonVegPrice: price?.nonVegPrice ?? null,
-            };
-        });
-
         res.status(200).json({
             success: true,
             total: totalCount,
             page,
             limit,
-            data: updatedListings
+            data: listings,
         });
     } catch (error) {
         console.error("Get All Listings Error:", error);
@@ -73,18 +55,10 @@ export const getRecommendedListings = async (req, res) => {
     try {
         const { limit, city } = req.query;
         const listings = await getRecommendedListingsDB( limit ? Number(limit) : undefined, city );
-
-        // Fetch prices from blogDB
-        const listingIds = listings.map(l => Number(l.id));
-        const prices = await blogDB.venue_prices.findMany({
-            where: { listing_id: { in: listingIds } }
-        });
         
 
         // Merge listings with prices
-        const result = listings.map(l => {
-          const price = prices.find(p => p.listing_id === Number(l.id));
-            
+        const result = listings.map(l => { 
           return{
             id: l.id,
             title: l.title,
@@ -93,8 +67,6 @@ export const getRecommendedListings = async (req, res) => {
             images: l.venue_images.map(img => img.image),
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
-            vegPrice: price?.vegPrice ?? null,
-            nonVegPrice: price?.nonVegPrice ?? null
           };
      });
 
@@ -104,7 +76,7 @@ export const getRecommendedListings = async (req, res) => {
             data: result,
         });
     } catch (error) {
-        console.error("Get Recommended Error:", error);
+        console.error("Get Reocommended Errr:", error);
         res.status(500).json({
             success: false,
             message: "Server Error"
@@ -134,7 +106,7 @@ export const getHighDemandListings = async (req, res) => {
             message: "Server Error"
         });
     }
-};
+};   
 
 
 
@@ -152,20 +124,9 @@ export const getListingById = async (req, res) => {
             });
         }
 
-        // Fetch price from blogDB
-        const price = await blogDB.venue_prices.findUnique({
-            where: { listing_id: Number(id) }
-        });
-
-        const listingWithPrice = {
-            ...listing,
-            vegPrice: price?.vegPrice ?? null,
-            nonVegPrice: price?.nonVegPrice ?? null
-        };
-
         res.status(200).json({
             success: true,
-            data: listingWithPrice,
+            data: listing,
         });
     } catch (error) {
         console.error("Get Listing By ID Error:", error);

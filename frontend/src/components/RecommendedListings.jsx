@@ -22,7 +22,7 @@ const RecommendedListings = () => {
     }
 
     fetchListings()
-  }, [])
+  }, [API_BASE]);
 
 
 
@@ -34,7 +34,7 @@ const RecommendedListings = () => {
     )
   }
   return (
-    <section className="py-10 relative">
+    <section className="pt-8 relative">
       {/* Section Header */}
       <div className="flex justify-between items-center px-4 md:px-8 mb-8">
         <h2 className="text-3xl font-bold text-gray-900">
@@ -53,15 +53,15 @@ const RecommendedListings = () => {
             .getElementById("recommendedScroll")
             .scrollBy({ left: -300, behavior: "smooth" })
         }
-        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-3 py-2 z-20"
+        className="absolute left-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 transition duration-300 ease-in-out transform hover:scale-125 hover:text-red-600"
       >
-        <LuArrowLeft />
+        <LuArrowLeft className="h-6 w-6 cursor-pointer" />
       </button>
 
       {/* Scroll Container */}
       <div
         id="recommendedScroll"
-        className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar px-4 md:px-8 py-2"
+        className="flex gap-6 overflow-x-hidden scroll-smooth no-scrollbar select-none px-16 md:px-8 py-10"
       >
         {listings.map((item) => (
           <div
@@ -71,7 +71,7 @@ const RecommendedListings = () => {
             {/* Image */}
             <div className="h-42 w-full rounded-md overflow-hidden">
               <img
-                src={`http://localhost:5000/${item.images?.[0]}`}
+                src={`${API_BASE}/${item.images?.[0]}`}
                 alt={item.title}
                 className="h-full w-full object-cover group-hover:scale-110 transition-all duration-500"
               />
@@ -95,28 +95,6 @@ const RecommendedListings = () => {
                   {item.capacityFrom}-{item.capacityTo} guests
                 </span>
 
-                {/* Prices */}
-                <div className="flex items-center gap-4">
-                  {/* Veg Price */}
-                  {item.vegPrice && (
-                    <div className="flex items-center gap-1">
-                      <div className="w-[15px] h-[15px] bg-green-600 rounded-sm flex items-center justify-center">
-                        <div className="w-[7px] h-[7px] bg-white rounded-full"></div>
-                      </div>
-                      <span>₹{item.vegPrice}/plate</span>
-                    </div>
-                  )}
-
-                  {/* Non-Veg Price */}
-                  {item.nonVegPrice && (
-                    <div className="flex items-center gap-1">
-                      <div className="w-[15px] h-[15px] bg-red-600 rounded-sm flex items-center justify-center">
-                        <div className="w-[7px] h-[7px] bg-white rounded-full"></div>
-                      </div>
-                      <span>₹{item.nonVegPrice}/plate</span>
-                    </div>
-                  )}
-                </div>
               </div>
 
               {/* Button */}
@@ -135,11 +113,12 @@ const RecommendedListings = () => {
             .getElementById("recommendedScroll")
             .scrollBy({ left: 300, behavior: "smooth" })
         }
-        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-3 py-2 z-20"
+        className="absolute right-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 transition duration-300 ease-in-out transform hover:scale-125 hover:text-red-600"
       >
-        <LuArrowRight />
+        <LuArrowRight  className="h-6 w-6 cursor-pointer"/>
       </button>
     </section>
+    
   )
 }
 
