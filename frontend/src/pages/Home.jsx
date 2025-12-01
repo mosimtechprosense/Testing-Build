@@ -9,6 +9,7 @@ import Categories from "../components/Categories"
 import { useNavigate } from "react-router-dom";
 import OfferBanner from "../components/OfferBanner"
 import RecommendedListings from "../components/RecommendedListings"
+import HighlyDemandedListings from "../components/HighlyDemandedListings"
 
 const Home = () => {
   const services = [
@@ -248,6 +249,9 @@ const Home = () => {
 
       {/*Recommended listing Section*/}
       <RecommendedListings/>
+
+      {/*Highly Demanded listing Section*/}
+      <HighlyDemandedListings/>
 
       {/* Customer Review Section */}
       <CustomerReview />

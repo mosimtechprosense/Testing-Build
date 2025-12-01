@@ -7,7 +7,12 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
 
 const buildImageURL = (image) => `${BASE_URL}/${image}`;
 
-
+const formatImages = (venue_images = []) => {
+  return venue_images.map(img => ({
+    ...img,
+    image_url: buildImageURL(img.image),
+  }));
+};
 
 
 
@@ -15,19 +20,25 @@ const buildImageURL = (image) => `${BASE_URL}/${image}`;
 export const createListingDB = async (data) => {
   const slug = slugify(data.title, { lower: true }) + "-" + Date.now();
 
-  const excerpt = data.description 
-    ? data.description.slice(0, 150) 
+  const excerpt = data.description
+    ? data.description.slice(0, 150)
     : "No description available";
 
-  return await prisma.listings.create({
+  const listing = await prisma.listings.create({
     data: {
       ...data,
       slug,
-      excerpt
+      excerpt,
     },
     include: { venue_images: true },
   });
+
+  return {
+    ...listing,
+    venue_images: formatImages(listing.venue_images),
+  };
 };
+
 
 
 //* READ — Get all listings (with filters)
@@ -155,37 +166,53 @@ return { listings: updatedListings, totalCount };
 
 //* READ — Get single listing by ID
 export const getListingByIdDB = async (id) => {
-  return await prisma.listings.findUnique({
+  const listing = await prisma.listings.findUnique({
     where: { id: BigInt(id) },
-    include: {
-      venue_images: true,   
-    }
+    include: { venue_images: true },
   });
+
+  if (!listing) return null;
+
+  return {
+    ...listing,
+    venue_images: formatImages(listing.venue_images),
+  };
 };
+
 
 
 
 //? UPDATE — Modify listing
 export const updateListingDB = async (id, data) => {
-  return await prisma.listings.update({
+  const listing = await prisma.listings.update({
     where: { id: BigInt(id) },
     data,
-    include: {
-    venue_images: true, 
-  },
+    include: { venue_images: true },
   });
+
+  return {
+    ...listing,
+    venue_images: formatImages(listing.venue_images),
+  };
 };
+
 
 
 
 //! DELETE — Soft delete (set status = false)
 export const deleteListingDB = async (id) => {
-  return await prisma.listings.update({
+  const listing = await prisma.listings.update({
     where: { id: BigInt(id) },
     data: { status: false },
     include: { venue_images: true },
   });
+
+  return {
+    ...listing,
+    venue_images: formatImages(listing.venue_images),
+  };
 };
+
 
 
 

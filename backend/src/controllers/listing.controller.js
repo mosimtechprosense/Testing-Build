@@ -54,21 +54,20 @@ export const getAllListing = async (req, res) => {
 export const getRecommendedListings = async (req, res) => {
     try {
         const { limit, city } = req.query;
-        const listings = await getRecommendedListingsDB( limit ? Number(limit) : undefined, city );
-        
+        const listings = await getRecommendedListingsDB(
+            limit ? Number(limit) : undefined,
+            city
+        );
 
-        // Merge listings with prices
-        const result = listings.map(l => { 
-          return{
+        const result = listings.map(l => ({
             id: l.id,
             title: l.title,
             excerpt: l.excerpt,
             description: l.description,
-            images: l.venue_images.map(img => img.image),
+            images: l.venue_images.map(img => img.image_url),  // 👈 Correct
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
-          };
-     });
+        }));
 
         res.status(200).json({
             success: true,
@@ -76,7 +75,7 @@ export const getRecommendedListings = async (req, res) => {
             data: result,
         });
     } catch (error) {
-        console.error("Get Reocommended Errr:", error);
+        console.error("Get Recommended Error:", error);
         res.status(500).json({
             success: false,
             message: "Server Error"
@@ -87,17 +86,28 @@ export const getRecommendedListings = async (req, res) => {
 
 
 
+
 //*  GET HIGH DEMAND LISTINGS
 export const getHighDemandListings = async (req, res) => {
     try {
-        const { limit = 10, city} = req.query;
+        const { limit = 10, city } = req.query;
 
         const listings = await getHighDemandListingsDB(Number(limit), city);
 
+        const result = listings.map(l => ({
+            id: l.id,
+            title: l.title,
+            excerpt: l.excerpt,
+            description: l.description,
+            images: l.venue_images.map(img => img.image_url),
+            capacityFrom: l.min_guest,
+            capacityTo: l.max_guest,
+        }));
+
         res.status(200).json({
             success: true,
-            count: listings.length,
-            data: listings,
+            count: result.length,
+            data: result,
         });
     } catch (error) {
         console.error("Get High Demanded Error:", error);
@@ -106,7 +116,8 @@ export const getHighDemandListings = async (req, res) => {
             message: "Server Error"
         });
     }
-};   
+};
+
 
 
 
