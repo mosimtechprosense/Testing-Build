@@ -36,7 +36,7 @@ const RecommendedListings = () => {
   return (
     <section className="pt-8 relative">
       {/* Section Header */}
-      <div className="flex justify-between items-center px-4 md:px-8 mb-8">
+      <div className="flex justify-between items-center px-4 md:px-8">
         <h2 className="text-3xl font-bold text-gray-900">
           Recommended Banquet Halls
         </h2>

@@ -64,7 +64,7 @@ export const getRecommendedListings = async (req, res) => {
             title: l.title,
             excerpt: l.excerpt,
             description: l.description,
-            images: l.venue_images.map(img => img.image_url),  // 👈 Correct
+            images: l.venue_images.map(img => img.image_url), 
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
         }));

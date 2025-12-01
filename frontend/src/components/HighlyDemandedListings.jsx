@@ -35,7 +35,7 @@ const HighlyDemandedListings = () => {
   return (
     <section className="pt-8 relative">
       {/* Section Header */}
-      <div className="flex justify-between items-center px-4 md:px-8 mb-8">
+      <div className="flex justify-between items-center px-4 md:px-8">
         <h2 className="text-3xl font-bold text-gray-900">
           Highly Demanded Halls
         </h2>
@@ -89,7 +89,9 @@ const HighlyDemandedListings = () => {
               {/* Guests */}
               <div className="mt-3 flex items-center text-sm font-medium text-gray-800">
                 <HiUserGroup className="h-4 w-4 mr-1" />
-                {item.min_guest}-{item.max_guest} guests
+                 {item.capacityFrom && item.capacityTo
+                 ? `${item.capacityFrom}-${item.capacityTo} guests`
+                 : "No guest range available"} 
               </div>
 
               {/* Button */}
