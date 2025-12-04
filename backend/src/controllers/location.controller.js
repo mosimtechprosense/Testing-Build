@@ -2,21 +2,23 @@ import { getAllLocationsDB, createLocationDB, updateLocationDB, deleteLocationDB
 
 
 
-export const getAllLocations = async ( req, res) => {
+export const getAllLocations = async (req, res) => {
   try {
-    const { city } = req.query
-      let query = {};
+    console.log("REQ QUERY:", req.query);
 
-  if (city) {
-    query.city = city;
-  }
+    if (req.query.city) {
+      console.log("CITY SEARCH:", `%${req.query.city.replace(/-/g, " ")}%`);
+    }
 
-    const locations = await getAllLocationsDB(query);
+    const locations = await getAllLocationsDB(req.query);
+
     res.json({ success: true, data: locations });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    console.error("Error fetching locations:", err);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
 
 
 export const createLocation = async ( req, res) => {

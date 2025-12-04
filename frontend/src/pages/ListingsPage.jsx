@@ -52,35 +52,45 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(false);
 
   // load localities
-  useEffect(() => {
-    fetchLocalities(filters.city || "")
-      .then((res) => setLocalities(res.localities || []))
-      .catch(() => setLocalities([]));
-  }, [filters.city]);
+useEffect(() => {
+  fetchLocalities(filters.city || "")
+    .then((res) => {
+      const locs = res.data || res.localities || [];
+      setLocalities(locs);
+
+      // Auto-set first locality when loading with citySlug
+      if (locs.length > 0 && !filters.locality) {
+        pushUrl({ locality: locs[0].id });
+      }
+    })
+    .catch(() => setLocalities([]));
+}, [filters.city]);
+
 
   // load listings
-  useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    fetchListings(filters)
-      .then((res) => {
-        if (!mounted) return;
-        setListings(res.listings || []);
-        setTotalCount(res.totalCount || 0);
-      })
-      .catch((err) => {
-        console.error(err);
-        setListings([]);
-        setTotalCount(0);
-      })
-      .finally(() => mounted && setLoading(false));
-    return () => (mounted = false);
-  }, [filters]); // when filters change, re-fetch
+useEffect(() => {
+  let mounted = true;
+  setLoading(true);
 
-  const goPage = (page) => {
-    const take = filters.take || 10;
-    pushUrl({ skip: (page - 1) * take });
-  };
+  fetchListings({
+    ...filters,
+    locationId: filters.locality ? Number(filters.locality) : undefined,
+  })
+    .then((res) => {
+      if (!mounted) return;
+      setListings(res.listings || []);
+      setTotalCount(res.totalCount || 0);
+    })
+    .catch((err) => {
+      console.error(err);
+      setListings([]);
+      setTotalCount(0);
+    })
+    .finally(() => mounted && setLoading(false));
+
+  return () => (mounted = false);
+}, [filters]);
+
 
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1;
   const totalPages = Math.ceil((totalCount || 0) / (filters.take || 10)) || 1;
