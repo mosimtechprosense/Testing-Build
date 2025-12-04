@@ -5,7 +5,13 @@ import { getAllLocationsDB, createLocationDB, updateLocationDB, deleteLocationDB
 export const getAllLocations = async ( req, res) => {
   try {
     const { city } = req.query
-    const locations = await getAllLocationsDB(city);
+      let query = {};
+
+  if (city) {
+    query.city = city;
+  }
+
+    const locations = await getAllLocationsDB(query);
     res.json({ success: true, data: locations });
   } catch (error) {
     res.status(500).json({ error: error.message });

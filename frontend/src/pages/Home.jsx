@@ -108,11 +108,21 @@ const Home = () => {
 
 
   // search handler
-  const handleSearchClick = () => {
+const handleSearchClick = () => {
+  if (!searchQuery && !locationQuery) return;
 
-     navigate('/venues/testpage');
-    
-  }
+  const citySlug = locationQuery
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .trim();
+
+  const params = new URLSearchParams();
+  if (searchQuery) params.set("search", searchQuery);
+  if (locationQuery) params.set("city", locationQuery);
+
+  navigate(`/locations/${citySlug}?${params.toString()}`);
+};
+
 
 
 
