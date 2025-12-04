@@ -13,8 +13,8 @@ import Terms from "./pages/Terms"
 import Privacy from "./pages/Privacy"
 import DiscountPopup from "./components/DiscountPopup"
 import RecentSearches from "./components/RecentSearches"
-import GetVenueDetails from "./pages/GetVenueDetails"
 import UIProvider from "./store/UIContext"
+import ListingsPage from "./pages/ListingsPage"
 
 function App() {
   return (
@@ -33,7 +33,8 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/venues/testpage" element={<GetVenueDetails />} />       //* FOR TESTING ONLY *//
+            <Route path="/venues" element={<ListingsPage />} />
+            <Route path="/locations/:citySlug" element={<ListingsPage />} />
           </Routes>
           <RecentSearches />
           <Footer />
