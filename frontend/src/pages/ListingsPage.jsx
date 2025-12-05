@@ -53,18 +53,21 @@ export default function ListingsPage() {
 
   // load localities
 useEffect(() => {
-  fetchLocalities(filters.city || "")
-    .then((res) => {
-      const locs = res.data || res.localities || [];
+  fetch("http://localhost:5000/api/locations")
+    .then(res => res.json())
+    .then(data => {
+      const locs = data.data || [];
       setLocalities(locs);
 
-      // Auto-set first locality when loading with citySlug
       if (locs.length > 0 && !filters.locality) {
         pushUrl({ locality: locs[0].id });
       }
     })
     .catch(() => setLocalities([]));
-}, [filters.city]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
+
 
 
   // load listings

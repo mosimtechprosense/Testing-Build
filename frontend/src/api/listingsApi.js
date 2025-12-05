@@ -21,7 +21,3 @@ export const fetchLocalities = async (location = "") => {
   if (!res.ok) throw new Error("Failed to fetch locations");
   return res.json();
 };
-
-
-const data = await fetchLocalities("moti-nagar");
-console.log(data); // <-- Add this
