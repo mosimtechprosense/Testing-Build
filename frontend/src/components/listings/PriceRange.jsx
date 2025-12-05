@@ -53,7 +53,7 @@ export default function PriceRange({ onChange }) {
   {/* Min Input */}
   <input
     type="text"
-    className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-hidden focus:outline-none focus:ring-2 focus:ring-red-400"
+    className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
     value={`₹${localValue[0].toLocaleString("en-IN")}`}
     onChange={(e) => {
       let newMin = Number(e.target.value.replace(/,/g, "").replace("₹", ""));
@@ -68,7 +68,7 @@ export default function PriceRange({ onChange }) {
   {/* Max Input */}
   <input
     type="text"
-    className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-hidden-none focus:outline-none focus:ring-2 focus:ring-red-400"
+    className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
     value={
       localValue[1] === max
         ? `₹${localValue[1].toLocaleString("en-IN")}+`
