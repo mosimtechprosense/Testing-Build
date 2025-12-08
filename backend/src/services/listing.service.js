@@ -87,37 +87,40 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
 
 
     // Guest range filters
-    ...(minGuests && maxGuests
-      
-      ? {
-          AND: [
-            { min_guest: { gte: Number(minGuests) } },
-            { max_guest: { lte: Number(maxGuests) } },
-          ],
-        }
-      : {}),
+...(minGuests || maxGuests
+  ? {
+      AND: [
+        minGuests ? { max_guest: { gte: Number(minGuests) } } : {},
+        maxGuests ? { min_guest: { lte: Number(maxGuests) } } : {},
+      ],
+    }
+  : {}),
+
 
 
     // Budget range filters
-    ...(minBudget && maxBudget
-      ? {
-          AND: [
-            { min_budget: { gte: Number(minBudget) } },
-            { max_budget: { lte: Number(maxBudget) } },
-          ],
-        }
-      : {}),
+...(minBudget || maxBudget
+  ? {
+      AND: [
+        minBudget ? { max_budget: { gte: Number(minBudget) } } : {},
+        maxBudget ? { min_budget: { lte: Number(maxBudget) } } : {},
+      ],
+    }
+  : {}),
+
 
 
     // Venue Type (keywords or description)
-    ...(venueType
-      ? {
-          OR: [
-            { keywords: { contains: venueType } },
-            { description: { contains: venueType } },
-          ],
-        }
-      : {}),
+...(venueType
+  ? {
+      OR: [
+        { keywords: { contains: venueType, mode: "insensitive" } },
+        { description: { contains: venueType, mode: "insensitive" } },
+        { title: { contains: venueType, mode: "insensitive" } },
+      ],
+    }
+  : {}),
+
 
 
     // Meal Type filters
@@ -147,7 +150,11 @@ const validSortFields = [
 ];
 
 // Use default if invalid
-const orderBy = validSortFields.includes(sortBy) ? { [sortBy]: order } : { created_at: "desc" };
+const orderBy =
+  validSortFields.includes(sortBy)
+    ? { [sortBy]: order === "asc" ? "asc" : "desc" }
+    : { created_at: "desc" };
+
 
 // Fetch paginated listings
 const listings = await prisma.listings.findMany({
