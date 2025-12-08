@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import FiltersSidebar from "../components/listings/FiltersSidebar";
 import ListingCard from "../components/listings/ListingCard";
-import { fetchListings, fetchLocalities } from "../api/listingsApi";
+import { fetchListings } from "../api/listingsApi";
 
 export default function ListingsPage() {
   const { citySlug } = useParams();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { CiLocationOn } from "react-icons/ci"
 import PriceRange from "./PriceRange"
-import VenuesDropdown from "../VenuesDropdown" // re-used component
+import GuestRange from "./GuestRange"
 
 export default function FiltersSidebar({ filters, setFilters }) {
   // venue type data
@@ -105,7 +105,7 @@ export default function FiltersSidebar({ filters, setFilters }) {
 
   // location handler
   const handleSelectLocation = (loc) => {
-    setLocationQuery(`${loc.name}, ${loc.city?.name || ""}`)
+    setLocationQuery(`${loc.name} ${loc.city?.name || ""}`)
     setShowLocationSuggestions(false)
 
     setFilters({ locality: loc.id, skip: 0 })
@@ -132,7 +132,7 @@ export default function FiltersSidebar({ filters, setFilters }) {
         <input
           value={filters.search || ""}
           onChange={(e) => setFilters({ search: e.target.value, skip: 0 })}
-          className="w-full border rounded px-3 py-2 mt-1"
+          className="w-full h-9 border border-gray-300 rounded px-3 text-sm shadow-inner shadow-gray-200 mt-1 focus:ring-2 focus:ring-red-400 focus:outline-none"
           placeholder="Search venues..."
         />
       </div>
@@ -144,7 +144,7 @@ export default function FiltersSidebar({ filters, setFilters }) {
         <label className="font-semibold text-sm">Location</label>
 
         <div className="relative mt-2">
-          <div className="flex items-center gap-2 border rounded px-3 py-2">
+          <div className="flex items-center gap-2 w-full h-9 border border-gray-300 rounded px-3 shadow-inner shadow-gray-200 mt-1 focus-within:ring-2 focus-within:ring-red-400">
             <CiLocationOn className="text-gray-600 text-lg" />
 
             <input
@@ -153,12 +153,12 @@ export default function FiltersSidebar({ filters, setFilters }) {
               onChange={handleLocationChange}
               onFocus={() => setShowLocationSuggestions(true)}
               placeholder="Enter your location"
-              className="w-full outline-none text-sm"
+              className="w-full outline-none text-sm bg-transparent"
             />
           </div>
 
           {showLocationSuggestions && filteredLocations.length > 0 && (
-            <div className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-50">
+            <div className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
               {filteredLocations.map((loc) => (
                 <div
                   key={loc.id}
@@ -166,6 +166,7 @@ export default function FiltersSidebar({ filters, setFilters }) {
                   className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
                 >
                   <CiLocationOn className="mr-2 text-gray-500" />
+                  
                   <div>
                     <h5 className="text-sm font-medium">{loc.name}</h5>
                     {loc.city?.name && (
@@ -194,25 +195,12 @@ export default function FiltersSidebar({ filters, setFilters }) {
       <hr className="my-4" />
 
       {/* Guests */}
-      <div>
-        <label className="font-semibold text-sm">Guests</label>
-        <div className="flex gap-2 mt-2">
-          <input
-            type="number"
-            placeholder="Min"
-            value={filters.minGuests || ""}
-            onChange={(e) => setFilters({ minGuests: e.target.value, skip: 0 })}
-            className="w-full border rounded px-3 py-2"
-          />
-          <input
-            type="number"
-            placeholder="Max"
-            value={filters.maxGuests || ""}
-            onChange={(e) => setFilters({ maxGuests: e.target.value, skip: 0 })}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
-      </div>
+      <GuestRange
+        value={[filters.minGuests || 0, filters.maxGuests || 1200]}
+        onChange={([minGuests, maxGuests]) =>
+          setFilters({ minGuests, maxGuests, skip: 0 })
+        }
+      />
 
       <hr className="my-4" />
 
@@ -221,19 +209,19 @@ export default function FiltersSidebar({ filters, setFilters }) {
         <label className="font-semibold text-sm">Venue Type</label>
 
         <div className="relative mt-2">
-          <div className="flex items-center gap-2 border rounded px-3 py-2">
+          <div className="flex items-center w-full h-9 border border-gray-300 rounded px-3 shadow-[inset_0_0_6px_rgba(0,0,0,0.15)] mt-1 focus-within:shadow-[inset_0_0_8px_rgba(248,113,113,0.7)] focus-within:ring-2 focus-within:ring-red-400">
             <input
               type="text"
               value={venueQuery}
               onChange={handleVenueChange}
               onFocus={() => setVenueOpen(true)}
               placeholder="Select venue type"
-              className="w-full outline-none text-sm"
+              className="w-full outline-none bg-transparent text-sm"
             />
           </div>
 
           {venueOpen && filteredVenueTypes.length > 0 && (
-            <div className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-50">
+            <div className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
               {filteredVenueTypes.map((item) => (
                 <div
                   key={item.id}

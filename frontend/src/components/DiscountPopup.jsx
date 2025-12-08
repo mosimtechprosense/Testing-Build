@@ -18,7 +18,7 @@ useEffect(() => {
   let timer;
 
   const startTimer = () => {
-    timer = setTimeout(() => setPopupOpen(true), 10000);
+    timer = setTimeout(() => setPopupOpen(true), 100000);
   };
 
   // Debounce start when venuesOpen switches from true → false

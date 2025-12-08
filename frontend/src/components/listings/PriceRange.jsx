@@ -27,7 +27,7 @@ export default function PriceRange({ onChange }) {
         renderTrack={({ props, children }) => (
           <div
             {...props}
-            className="relative w-full h-2 rounded mt-2 bg-gray-300 "
+            className="relative w-full h-2 px-10 rounded mt-2 bg-gray-300 "
             style={{ ...props.style }}
           >
             <div
