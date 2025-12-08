@@ -134,13 +134,27 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
     ...(highDemandBool ? { high_demand: true } : {}),
   };
 
+// Validate sortBy field to match Prisma columns
+const validSortFields = [
+  "created_at",
+  "min_budget",
+  "max_budget",
+  "vegPrice",
+  "nonVegPrice",
+  "guests",
+  "recommended",
+  "high_demand",
+];
+
+// Use default if invalid
+const orderBy = validSortFields.includes(sortBy) ? { [sortBy]: order } : { created_at: "desc" };
 
 // Fetch paginated listings
 const listings = await prisma.listings.findMany({
   where,
   skip: Number(skip),
   take: Number(take),
-  orderBy: { [sortBy]: order },
+  orderBy,
   include: {
     venue_images: true,
   },

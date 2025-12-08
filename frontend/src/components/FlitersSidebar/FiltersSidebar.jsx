@@ -4,7 +4,6 @@ import PriceRange from "./PriceRange";
 import GuestRange from "./GuestRange";
 import VenueTypeFilter from "./VenueTypeFilter";
 import MealTypeFilter from "./MealTypeFilter";
-import TagsFilter from "./TagsFilter";
 import SortFilter from "./SortFilter";
 
 export default function FiltersSidebar({ filters, setFilters }) {
@@ -37,9 +36,6 @@ export default function FiltersSidebar({ filters, setFilters }) {
       <hr className="my-4" />
 
       <MealTypeFilter filters={filters} setFilters={setFilters} />
-      <hr className="my-4" />
-
-      <TagsFilter filters={filters} setFilters={setFilters} />
       <hr className="my-4" />
 
       <SortFilter filters={filters} setFilters={setFilters} />
