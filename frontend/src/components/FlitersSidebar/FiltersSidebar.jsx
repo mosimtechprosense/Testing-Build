@@ -158,17 +158,17 @@ export default function FiltersSidebar({ filters, setFilters }) {
           </div>
 
           {showLocationSuggestions && filteredLocations.length > 0 && (
-            <div className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
+            <div className="absolute left-0 right-0 bg-white border border-gray-300 rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
               {filteredLocations.map((loc) => (
                 <div
                   key={loc.id}
                   onClick={() => handleSelectLocation(loc)}
-                  className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center text-[#09122C] text-sm py-2 px-3 hover:bg-[#f3f3f3] hover:text-[#e71717] rounded w-full cursor-pointer"
                 >
                   <CiLocationOn className="mr-2 text-gray-500" />
-                  
+
                   <div>
-                    <h5 className="text-sm font-medium">{loc.name}</h5>
+                    <h5>{loc.name}</h5>
                     {loc.city?.name && (
                       <p className="text-xs text-gray-500">{loc.city.name}</p>
                     )}
@@ -221,7 +221,7 @@ export default function FiltersSidebar({ filters, setFilters }) {
           </div>
 
           {venueOpen && filteredVenueTypes.length > 0 && (
-            <div className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
+            <div className="absolute left-0 right-0 bg-white border border-gray-300 rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
               {filteredVenueTypes.map((item) => (
                 <div
                   key={item.id}
@@ -230,10 +230,10 @@ export default function FiltersSidebar({ filters, setFilters }) {
                     setFilters({ venueType: item.id, skip: 0 })
                     setVenueOpen(false)
                   }}
-                  className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+                  className="text-[#09122C] text-sm py-2 px-3 hover:bg-[#f3f3f3] hover:text-[#e71717] rounded w-full cursor-pointer"
                 >
                   <div>
-                    <h5 className="text-sm font-medium">{item.label}</h5>
+                    <h5>{item.label}</h5>
                   </div>
                 </div>
               ))}
@@ -313,19 +313,46 @@ export default function FiltersSidebar({ filters, setFilters }) {
 
       <hr className="my-4" />
 
-      {/* Sort By */}
-      <div>
-        <label className="font-semibold text-sm">Sort By</label>
-        <select
-          value={filters.sortBy || "created_at"}
-          onChange={(e) => setFilters({ sortBy: e.target.value, skip: 0 })}
-          className="w-full border rounded px-3 py-2 mt-1"
+{/* Sort By */}
+<div>
+  <label className="font-semibold text-sm">Sort By</label>
+
+  <div className="relative mt-2">
+    <div className="flex items-center w-full h-9 border border-gray-300 rounded px-3 shadow-[inset_0_0_6px_rgba(0,0,0,0.15)] mt-1 focus-within:shadow-[inset_0_0_8px_rgba(248,113,113,0.7)] focus-within:ring-2 focus-within:ring-red-400">
+
+      <select
+        value={filters.sortBy || "created_at"}
+        onChange={(e) => setFilters({ sortBy: e.target.value, skip: 0 })}
+        className="w-full outline-none bg-transparent text-sm text-[#09122C] cursor-pointer"
+      >
+        <option
+          value="created_at"
+          className="text-[#09122C] text-sm bg-white"
         >
-          <option value="created_at">Newest</option>
-          <option value="price_low">Price: Low to High</option>
-          <option value="price_high">Price: High to Low</option>
-        </select>
-      </div>
+          Newest
+        </option>
+
+        <option
+          value="price_low"
+          className="text-[#09122C] text-sm bg-white"
+        >
+          Price: Low to High
+        </option>
+
+        <option
+          value="price_high"
+          className="text-[#09122C] text-sm bg-white"
+        >
+          Price: High to Low
+        </option>
+      </select>
+
+    </div>
+  </div>
+</div>
+
+
+
     </aside>
   )
 }

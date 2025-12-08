@@ -24,29 +24,41 @@ export default function GuestRange({ onChange }) {
         max={max}
         values={localValue}
         onChange={handleChange}
-        renderTrack={({ props, children }) => (
-          <div
-            {...props}
-            className="relative w-full h-2 rounded mt-2 bg-gray-300"
-            style={{ ...props.style }}
-          >
-            <div
-              className="absolute h-2 rounded bg-red-500"
-              style={{
-                left: `${(localValue[0] / max) * 100}%`,
-                right: `${100 - (localValue[1] / max) * 100}%`
-              }}
-            />
-            {children}
-          </div>
-        )}
-        renderThumb={({ props }) => (
-          <div
-            {...props}
-            className="w-4.5 h-4.5 bg-white border-2 border-red-500 rounded-full shadow-md cursor-pointer"
-            style={{ ...props.style }}
-          />
-        )}
+        renderTrack={({ props, children }) => {
+  const newProps = { ...props };
+  delete newProps.key;
+
+  return (
+    <div
+      {...newProps}
+      className="relative w-full h-2 rounded mt-2 bg-gray-300"
+      style={{ ...newProps.style }}
+    >
+      <div
+        className="absolute h-2 rounded bg-red-500"
+        style={{
+          left: `${(localValue[0] / max) * 100}%`,
+          right: `${100 - (localValue[1] / max) * 100}%`,
+        }}
+      />
+      {children}
+    </div>
+  );
+}}
+
+        renderThumb={({ props }) => {
+  const newProps = { ...props };
+  delete newProps.key;
+
+  return (
+    <div
+      {...newProps}
+      className="w-4.5 h-4.5 bg-white border-2 border-red-500 rounded-full shadow-md cursor-pointer"
+      style={{ ...newProps.style }}
+    />
+  );
+}}
+
       />
 
       {/* Inputs */}
