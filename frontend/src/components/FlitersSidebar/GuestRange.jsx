@@ -25,40 +25,38 @@ export default function GuestRange({ onChange }) {
         values={localValue}
         onChange={handleChange}
         renderTrack={({ props, children }) => {
-  const newProps = { ...props };
-  delete newProps.key;
+          const { key, ...rest } = props;
 
-  return (
-    <div
-      {...newProps}
-      className="relative w-full h-2 rounded mt-2 bg-gray-300"
-      style={{ ...newProps.style }}
-    >
-      <div
-        className="absolute h-2 rounded bg-red-500"
-        style={{
-          left: `${(localValue[0] / max) * 100}%`,
-          right: `${100 - (localValue[1] / max) * 100}%`,
+          return (
+            <div
+              key={key}
+              {...rest}
+              className="relative w-full h-2 rounded mt-2 bg-gray-300"
+              style={{ ...rest.style }}
+            >
+              <div
+                className="absolute h-2 rounded bg-red-500"
+                style={{
+                  left: `${(localValue[0] / max) * 100}%`,
+                  right: `${100 - (localValue[1] / max) * 100}%`,
+                }}
+              />
+              {children}
+            </div>
+          );
         }}
-      />
-      {children}
-    </div>
-  );
-}}
-
         renderThumb={({ props }) => {
-  const newProps = { ...props };
-  delete newProps.key;
+          const { key, ...rest } = props;
 
-  return (
-    <div
-      {...newProps}
-      className="w-4.5 h-4.5 bg-white border-2 border-red-500 rounded-full shadow-md cursor-pointer"
-      style={{ ...newProps.style }}
-    />
-  );
-}}
-
+          return (
+            <div
+              key={key}
+              {...rest}
+              className="w-4.5 h-4.5 bg-white border-2 border-red-500 rounded-full shadow-md cursor-pointer"
+              style={{ ...rest.style }}
+            />
+          );
+        }}
       />
 
       {/* Inputs */}
@@ -82,11 +80,7 @@ export default function GuestRange({ onChange }) {
         <input
           type="text"
           className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
-          value={
-            localValue[1] === max
-              ? `${localValue[1]}+`
-              : `${localValue[1]}`
-          }
+          value={localValue[1] === max ? `${localValue[1]}+` : `${localValue[1]}`}
           onChange={(e) => {
             let newMax = Number(e.target.value.replace(/\D/g, ""));
             newMax = Math.min(max, Math.max(newMax, localValue[0]));
