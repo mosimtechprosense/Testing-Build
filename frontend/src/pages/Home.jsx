@@ -120,7 +120,7 @@ const handleSearchClick = () => {
   if (searchQuery) params.set("search", searchQuery);
   if (locationQuery) params.set("city", locationQuery);
 
-  navigate(`/locations/${citySlug}?${params.toString()}`);
+  navigate(`/banquet-hall-in/${citySlug}?${params.toString()}`);
 };
 
 

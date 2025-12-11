@@ -2,8 +2,15 @@ import prisma from "../config/db.js";
 import slugify from "slugify";
 
 
+
 // venue images url builder fuction
 const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+
+const normalize = (value) => {
+  if (!value) return undefined;
+  return value.replace(/-/g, " ").toLowerCase();
+};
+
 
 const buildImageURL = (image) => `${BASE_URL}/${image}`;
 
@@ -63,6 +70,9 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
   // Normalize boolean filters from query params
   const recommendedBool = recommended === "true" || recommended === true;
   const highDemandBool = highDemand === "true" || highDemand === true;
+  const normalizedCity = normalize(city);
+  const normalizedLocality = normalize(locality);
+
 
   const where = {
     status: true,
@@ -82,20 +92,32 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
 
 
     // City / Locality filters
-    ...(city ? { city: { equals: city } } : {}),
-    ...(locality ? { locality: { equals: locality } } : {}),
+
+
+...(city
+  ? { city: { equals: normalizedCity } }
+  : {}),
+
+...(locality
+  ? {
+      locality: {
+        contains: String(normalizedLocality),
+      },
+    }
+  : {}),
+
+
 
 
     // Guest range filters
 ...(minGuests || maxGuests
   ? {
       AND: [
-        minGuests ? { max_guest: { gte: Number(minGuests) } } : {},
-        maxGuests ? { min_guest: { lte: Number(maxGuests) } } : {},
-      ],
+        minGuests ? { maxGuests: { gte: Number(minGuests) } } : undefined,
+        maxGuests ? { minGuests: { lte: Number(maxGuests) } } : undefined,
+      ].filter(Boolean),
     }
   : {}),
-
 
 
     // Budget range filters
@@ -104,7 +126,7 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
       AND: [
         minBudget ? { max_budget: { gte: Number(minBudget) } } : {},
         maxBudget ? { min_budget: { lte: Number(maxBudget) } } : {},
-      ],
+      ].filter(Boolean),
     }
   : {}),
 

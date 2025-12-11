@@ -34,7 +34,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/venues" element={<ListingsPage />} />
-            <Route path="/locations/:citySlug" element={<ListingsPage />} />
+            <Route path="/banquet-hall-in/:citySlug" element={<ListingsPage />} />
           </Routes>
           <RecentSearches />
           <Footer />

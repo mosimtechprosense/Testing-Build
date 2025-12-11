@@ -272,26 +272,24 @@ model listing_listing_category {
 }
 
 model listings {
-  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id             BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
   title          String
   slug           String
-  excerpt        String    @db.Text
-  description    String    @db.Text
-  keywords       String    @db.Text
+  excerpt        String         @db.Text
+  description    String         @db.Text
+  keywords       String         @db.Text
   budget         String?
   min_budget     BigInt
   max_budget     BigInt
   min_guest      BigInt
   max_guest      BigInt
-  vegPrice       Int?
-  nonVegPrice    Int?
   guests         String?
-  features       String?   @db.Text
-  policies       String?   @db.Text
+  features       String?        @db.Text
+  policies       String?        @db.Text
   phone          String?
   email          String?
-  address        String    @db.Text
-  google_map_url String?   @db.Text
+  address        String         @db.Text
+  google_map_url String?        @db.Text
   locality       String?
   pincode        BigInt
   city           String
@@ -299,16 +297,17 @@ model listings {
   country        String
   lat            Float?
   long           Float?
-  recommended    Boolean?  @map("recommended")
+  recommended    Boolean?       @map("recommended")
   popular        Boolean?
   trending       Boolean?
   high_demand    Boolean?
   status         Boolean?
-  created_at     DateTime? @db.Timestamp(0)
-  updated_at     DateTime? @db.Timestamp(0)
-  city_id        BigInt?   @db.UnsignedBigInt
-
-  venue_images venue_images[]
+  created_at     DateTime?      @db.Timestamp(0)
+  updated_at     DateTime?      @db.Timestamp(0)
+  city_id        BigInt?        @db.UnsignedBigInt
+  nonVegPrice    Int?
+  vegPrice       Int?
+  venue_images   venue_images[]
 
   @@index([title], map: "Title_index")
   @@index([min_budget, max_budget], map: "idx_budget_range")
@@ -520,15 +519,15 @@ model venue_features {
 }
 
 model venue_images {
-  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   image      String
   alt_text   String?
-  listing_id BigInt  @db.UnsignedBigInt
-
-  listing listings @relation(fields: [listing_id], references: [id])
-
+  listing_id BigInt    @db.UnsignedBigInt
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @db.Timestamp(0)
+  listing    listings  @relation(fields: [listing_id], references: [id])
+
+  @@index([listing_id], map: "venue_images_listing_id_fkey")
 }
 
 model venue_policies {
