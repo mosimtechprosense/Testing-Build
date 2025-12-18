@@ -17,7 +17,7 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-0 md:flex-row items-center justify-between py-2 px-6 md:px-20 bg-white border-b border-gray-200">
+      <div className="flex flex-col gap-0 md:flex-row items-center justify-between py-2 px-6 md:px-20 bg-white border-b border-gray-200 select-none">
         {/* Left Section: Social Icons & Phone */}
         <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2.5">
           {/* Social Icons */}

@@ -36,7 +36,10 @@ export default function LocationFilter({ setFilters }) {
   const handleSelectLocation = (loc) => {
     setLocationQuery(`${loc.name} ${loc.city?.name || ""}`);
     setShowList(false);
-    setFilters({ locality: loc.id, skip: 0 });
+    setFilters({
+  locality: loc.slug || loc.name,
+  skip: 0
+});
   };
 
   return (

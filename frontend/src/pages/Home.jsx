@@ -107,27 +107,26 @@ const Home = () => {
   }, [])
 
 
-  // search handler
+// handleSearchClick
 const handleSearchClick = () => {
-  if (!searchQuery && !locationQuery) return;
+  if (!searchQuery || !locationQuery) return;
 
-  const citySlug = locationQuery
+  const localitySlug = locationQuery
     .toLowerCase()
     .replace(/\s+/g, "-")
     .trim();
 
   const params = new URLSearchParams();
-  if (searchQuery) params.set("search", searchQuery);
-  if (locationQuery) params.set("city", locationQuery);
+  params.set("search", searchQuery);
+  params.set("locality", locationQuery);
 
-  navigate(`/banquet-hall-in/${citySlug}?${params.toString()}`);
+  navigate(`/banquet-hall-in/${localitySlug}?${params.toString()}`);
 };
 
 
 
-
   return (
-    <div className="w-full">
+    <div className="w-full select-none">
       {/*  Hero Section */}
       <div
         className="h-[70vh] sm:h-[80vh] lg:h-[90vh] bg-cover bg-center flex flex-col items-center justify-center relative"
@@ -251,6 +250,7 @@ const handleSearchClick = () => {
        {/* why us section removed as per instructions ( delete this on final production) */}
       {/*  Why Us Section */}
       {/* <WhyUsSection />  */}
+
 
       <OfferBanner/>
 

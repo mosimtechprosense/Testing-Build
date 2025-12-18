@@ -29,7 +29,7 @@ export const fetchListings = async (filters = {}) => {
 
 
 export const fetchLocalities = async (location = "") => {
-  const url = `${API_BASE}/locations${location ? `?location=${encodeURIComponent(location)}` : ""}`;
+  const url = `${API_BASE}/api/locations${location ? `?location=${encodeURIComponent(location)}` : ""}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch locations");
   return res.json();

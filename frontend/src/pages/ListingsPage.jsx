@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar";
+import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/listings/ListingCard";
 import { fetchListings, fetchLocalities } from "../api/listingsApi";
 
@@ -8,7 +8,6 @@ export default function ListingsPage() {
   const { citySlug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Parse query params from URL
   const paramsFromUrl = useMemo(() => {
     const obj = Object.fromEntries([...searchParams.entries()]);
     ["skip", "take", "minBudget", "maxBudget", "vegetarian", "nonVegetarian"].forEach(key => {
@@ -17,11 +16,11 @@ export default function ListingsPage() {
     return obj;
   }, [searchParams]);
 
-  // Initial filter state
   const initial = {
     city: citySlug ? decodeURIComponent(citySlug) : paramsFromUrl.city || undefined,
     search: paramsFromUrl.search || "",
     locality: paramsFromUrl.locality || undefined,
+    venueType: paramsFromUrl.venueType || undefined,
     minBudget: paramsFromUrl.minBudget || undefined,
     maxBudget: paramsFromUrl.maxBudget || undefined,
     vegetarian: paramsFromUrl.vegetarian || undefined,
@@ -37,37 +36,63 @@ export default function ListingsPage() {
   const [localities, setLocalities] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile toggle
 
-  // Update filters when URL changes
   useEffect(() => {
     setFilters({ ...initial });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [citySlug, searchParams]);
 
-  // Fetch localities
   useEffect(() => {
     fetchLocalities()
       .then(data => setLocalities(data.data || []))
       .catch(() => setLocalities([]));
   }, []);
 
-  // Fetch listings whenever filters change
   useEffect(() => {
     let mounted = true;
     setLoading(true);
 
-    // Remove undefined/null/empty/NaN filters before sending
-const cleanedFilters = Object.fromEntries(
-  Object.entries(filters).filter(([key, value]) => {
-    if (value === undefined || value === null || value === "") return false;
-    if (["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(key) && isNaN(Number(value))) return false;
-    return true;
-  })
-);
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(([key, value]) => {
+        if (value === undefined || value === null || value === "") return false;
+        if (["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(key) && isNaN(Number(value))) return false;
+        return true;
+      })
+    );
 
-// Normalize locality: convert hyphens to spaces and lowercase
+    if (
+  cleanedFilters.search &&
+  ["banquet hall", "banquet halls"].includes(
+    cleanedFilters.search.toLowerCase().trim()
+  )
+) {
+  delete cleanedFilters.search;
+}
+
 if (cleanedFilters.locality) {
-  cleanedFilters.locality = cleanedFilters.locality.replace(/-/g, " ").toLowerCase();
+  // numeric locality (ID) from sidebar → ignore
+  if (typeof cleanedFilters.locality === "number") {
+    delete cleanedFilters.locality;
+  }
+
+  // string locality (home page or URL)
+  else if (typeof cleanedFilters.locality === "string") {
+    cleanedFilters.locality = cleanedFilters.locality
+      .replace(/-/g, " ")
+      .toLowerCase();
+  }
+
+  // object locality (dropdown option)
+  else if (typeof cleanedFilters.locality === "object") {
+    cleanedFilters.locality =
+      cleanedFilters.locality.slug ||
+      cleanedFilters.locality.value ||
+      cleanedFilters.locality.name;
+
+    cleanedFilters.locality = cleanedFilters.locality
+      ?.replace(/-/g, " ")
+      .toLowerCase();
+  }
 }
 
 
@@ -78,8 +103,7 @@ if (cleanedFilters.locality) {
         setListings(res.data || []);
         setTotalCount(res.total || 0);
       })
-      .catch(err => {
-        console.error(err);
+      .catch(() => {
         setListings([]);
         setTotalCount(0);
       })
@@ -88,10 +112,8 @@ if (cleanedFilters.locality) {
     return () => (mounted = false);
   }, [filters]);
 
-  // Push filters to URL
   const pushUrl = (obj) => {
     const merged = { ...filters, ...obj };
-
     const cleaned = Object.fromEntries(
       Object.entries(merged).filter(([k, v]) => {
         if (v === undefined || v === null || v === "") return false;
@@ -101,13 +123,11 @@ if (cleanedFilters.locality) {
     );
 
     const qs = new URLSearchParams();
-    Object.entries(cleaned).forEach(([k, v]) => qs.set(k, String(v).replace(/-/g, " "))); // Locality hyphen fix
-
+    Object.entries(cleaned).forEach(([k, v]) => qs.set(k, String(v).replace(/-/g, " ")));
     setSearchParams(qs);
     setFilters(cleaned);
   };
 
-  // Pagination helpers
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1;
   const totalPages = Math.ceil((totalCount || 0) / (filters.take || 10)) || 1;
 
@@ -117,51 +137,69 @@ if (cleanedFilters.locality) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-[280px,1fr] gap-6">
-        <FiltersSidebar filters={filters} setFilters={pushUrl} localities={localities} />
+    <div className="min-h bg-gray-50 p-4 md:p-6">
 
-        <main>
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold">
-              Listings{filters.city ? ` — ${filters.city}` : ""}
-            </h1>
-            <div className="text-sm text-gray-600">{totalCount} results</div>
-          </div>
+<div className="max-w-7xl mx-auto md:flex md:space-x-6 gap-6">
+  
+  {/* Sidebar */}
+  <aside
+    className={`
+      p-0 md:block
+      ${sidebarOpen ? "block" : "hidden"} md:relative
+      md:w-72 flex-shrink-0
+    `}
+  >
+    <FiltersSidebar filters={filters} setFilters={pushUrl} localities={localities} />
+  </aside>
 
-          <div className="space-y-4">
-            {loading ? (
-              <div className="p-6 bg-white rounded shadow text-center">Loading…</div>
-            ) : listings.length === 0 ? (
-              <div className="p-6 bg-white rounded shadow text-center">No listings found</div>
-            ) : (
-              listings.map(l => <ListingCard key={String(l.id)} item={l} />)
-            )}
-          </div>
+  {/* Listings container */}
+  <main className="flex-1 space">
+    <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
+      <h1 className="text-2xl font-bold">
+        Listings{filters.city ? ` — ${filters.city}` : ""}
+      </h1>
+      <div className="text-sm text-gray-600">{totalCount} results</div>
+    </div>
 
-          <div className="mt-6 flex items-center justify-between">
-            <button
-              className="px-3 py-2 border rounded"
-              onClick={() => goPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage <= 1}
-            >
-              Prev
-            </button>
-
-            <div className="text-gray-600">
-              Page {currentPage} of {totalPages}
-            </div>
-
-            <button
-              className="px-3 py-2 border rounded"
-              onClick={() => goPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage >= totalPages}
-            >
-              Next
-            </button>
-          </div>
-        </main>
+    {loading ? (
+      <div className="p-6 bg-white rounded shadow text-center">Loading…</div>
+    ) : listings.length === 0 ? (
+      <div className="p-6 bg-white rounded shadow text-center">
+        No listings found
       </div>
+    ) : (
+      <div className="grid grid-cols-1 gap-4">
+        {listings.map((l) => (
+          <ListingCard key={String(l.id)} item={l} />
+        ))}
+      </div>
+    )}
+
+    {/* Pagination */}
+    <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-2">
+      <button
+        className="px-4 py-2 border rounded disabled:opacity-50"
+        onClick={() => goPage(Math.max(1, currentPage - 1))}
+        disabled={currentPage <= 1}
+      >
+        Prev
+      </button>
+
+      <div className="text-gray-600">
+        Page {currentPage} of {totalPages}
+      </div>
+
+      <button
+        className="px-4 py-2 border rounded disabled:opacity-50"
+        onClick={() => goPage(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage >= totalPages}
+      >
+        Next
+      </button>
+    </div>
+  </main>
+</div>
+
     </div>
   );
 }

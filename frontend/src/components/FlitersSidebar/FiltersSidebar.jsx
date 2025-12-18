@@ -6,14 +6,27 @@ import VenueTypeFilter from "./VenueTypeFilter";
 import MealTypeFilter from "./MealTypeFilter";
 import SortFilter from "./SortFilter";
 
-export default function FiltersSidebar({ filters, setFilters }) {
+export default function FiltersSidebar({
+  filters,
+  setFilters,
+  initialVenue = "",        // pre-selected venue service
+  initialLocation = "",     // pre-selected location
+}) {
   return (
-    <aside className="bg-white p-4 rounded-lg shadow w-full md:w-72 select-none">
+    <aside className="bg-white p-4 rounded-lg shadow md:w-72 select-none">
       
-      <SearchFilter search={filters.search} setFilters={setFilters} />
+      {/* SearchFilter with pre-filled venue service */}
+      <SearchFilter 
+        search={filters.search || initialVenue} 
+        setFilters={setFilters} 
+      />
       <hr className="my-4" />
 
-      <LocationFilter setFilters={setFilters} />
+      {/* LocationFilter with pre-filled location */}
+      <LocationFilter 
+        setFilters={setFilters} 
+        initialLocation={filters.location || initialLocation} 
+      />
       <hr className="my-4" />
 
       <PriceRange
@@ -39,6 +52,8 @@ export default function FiltersSidebar({ filters, setFilters }) {
       <hr className="my-4" />
 
       <SortFilter filters={filters} setFilters={setFilters} />
+
+      
     </aside>
   );
 }

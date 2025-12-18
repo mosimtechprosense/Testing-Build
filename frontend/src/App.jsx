@@ -15,6 +15,7 @@ import DiscountPopup from "./components/DiscountPopup"
 import RecentSearches from "./components/RecentSearches"
 import UIProvider from "./store/UIContext"
 import ListingsPage from "./pages/ListingsPage"
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 
 function App() {
   return (
@@ -34,8 +35,9 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/venues" element={<ListingsPage />} />
-            <Route path="/banquet-hall-in/:citySlug" element={<ListingsPage />} />
+            <Route path="/banquet-hall-in/:localitySlug" element={<ListingsPage />} />
           </Routes>
+          <FloatingWhatsApp />
           <RecentSearches />
           <Footer />
         </UIProvider>

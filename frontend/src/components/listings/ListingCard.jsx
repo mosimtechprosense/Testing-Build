@@ -1,36 +1,199 @@
-import Badge from "./Badge";
+import { useContext, useState, useRef, useEffect } from "react"
+import { HiLocationMarker, HiUserGroup } from "react-icons/hi"
+import { UIContext } from "../../store/UIContext"
+import Badge from "./Badge"
+import { FaPhoneAlt } from "react-icons/fa"
 
 export default function ListingCard({ item }) {
-  const img = item?.venue_images?.[0]?.image_url || "/placeholder.jpg";
+  const { setPopupOpen } = useContext(UIContext)
+  const [showTags, setShowTags] = useState(false)
+  const tooltipRef = useRef(null)
+  const scrollStartRef = useRef(0)
+
+  const images = item?.venue_images || []
+  const [activeImage, setActiveImage] = useState(
+    images?.[0]?.image_url || "/placeholder.jpg"
+  )
+
+  const rating = item.rating || 5
+  const reviewsCount = item.reviews_count || 1
+
+  const tags = item.display_tags || item.keywords?.split(",") || []
+  const visibleTags = tags.slice(0, 3)
+  const hiddenTags = tags.slice(3)
+
+  // click outside closed
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(e.target)) {
+        setShowTags(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  // closed when scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!showTags) return
+
+      const scrolledDistance = Math.abs(window.scrollY - scrollStartRef.current)
+
+      if (scrolledDistance > 100) {
+        setShowTags(false)
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [showTags])
 
   return (
-    <article className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col md:flex-row">
-      <div className="w-full md:w-1/3 h-48 md:h-auto">
-        <img src={img} alt={item.title} className="w-full h-full object-cover" />
+    <article className="bg-white rounded-xl shadow-md flex flex-col md:flex-row hover:shadow-lg transition">
+      {/* Image */}
+      <div className="w-full md:w-1/3 p-4">
+        {/* Main Image */}
+        <div className="w-full h-45 rounded-lg overflow-hidden">
+          <img
+            src={activeImage}
+            alt={item.title}
+            className="w-full h-full object-cover transition"
+          />
+        </div>
+
+        {/* Thumbnails */}
+        {images.length > 1 && (
+          <div className="mt-3 flex gap-2">
+            {images.slice(0, 4).map((img, idx) => (
+              <div
+                key={idx}
+                className={`w-15 h-11 rounded-md overflow-hidden border cursor-pointer ${
+                  activeImage === img.image_url
+                    ? "border-red-500"
+                    : "border-gray-200"
+                }`}
+                onMouseEnter={() => setActiveImage(img.image_url)}
+              >
+                <img
+                  src={img.image_url}
+                  alt={`thumb-${idx}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="p-4 flex-1">
-        <div className="flex justify-between items-start gap-4">
+      {/* Content */}
+      <div className="p-4 flex-1 flex flex-col">
+        {/* Title + Rating */}
+        <div className="flex justify-between items-start">
           <h3 className="text-lg font-semibold truncate">{item.title}</h3>
-          <div className="text-pink-600 font-semibold">
-            {item.min_budget ? `₹${item.min_budget}` : "Price on Request"}
+
+          {/* Rating top-right */}
+          <div className="flex items-center gap-1 text-sm">
+            <span className="text-yellow-500">★</span>
+            <span className="font-semibold">{rating.toFixed(1)}</span>
+            <span className="text-gray-400">
+              | ({reviewsCount}) {reviewsCount <= 1 ? "review" : "reviews"}
+            </span>
           </div>
         </div>
 
-        <p className="text-sm text-gray-500 mt-2 line-clamp-3">{item.excerpt}</p>
+        {/* Excerpt */}
+        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+          {item.excerpt}
+        </p>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <Badge>{item.city}</Badge>
-          <Badge>{item.locality}</Badge>
-          <Badge>{item.min_guest}-{item.max_guest} pax</Badge>
+        {/* Location & Guests */}
+        <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
+          <span className="flex items-center gap-1">
+            <HiLocationMarker className="h-4 w-4 text-red-600" />
+            {item.city}, {item.locality}
+          </span>
+          <span className="flex items-center gap-1">
+            <HiUserGroup className="h-4 w-4 text-red-600" />
+            {item.min_guest}-{item.max_guest} guests
+          </span>
         </div>
 
-        <div className="mt-4 flex">
-          <button className="ml-auto bg-pink-600 text-white px-4 py-2 rounded-lg">
-            Send Message
+        {/* Keywords with +more */}
+        <div className="mt-3 flex flex-wrap gap-2 relative">
+          {visibleTags.map((tag, idx) => (
+            <Badge key={idx}>{tag.trim()}</Badge>
+          ))}
+          {hiddenTags.length > 0 && (
+            <div ref={tooltipRef} className="relative">
+              {/* Trigger */}
+              <span
+                className="text-xs text-red-600 font-medium cursor-pointer whitespace-nowrap"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowTags((prev) => {
+                    if (!prev) {
+                      scrollStartRef.current = window.scrollY
+                    }
+                    return !prev
+                  })
+                }}
+              >
+                +{hiddenTags.length} more
+              </span>
+
+              {/* Tooltip */}
+              {showTags && (
+                <div
+                  className="
+          absolute
+          top-full mt-2
+          left-1/2 -translate-x-1/2
+          z-50
+          w-72
+          bg-gray-900 text-white text-xs
+          rounded-lg shadow-xl
+          p-3
+        "
+                >
+                  <ul className="space-y-1">
+                    {hiddenTags.map((tag, i) => (
+                      <li key={i} className="flex gap-2 leading-snug">
+                        <span className="mt-[2px]">•</span>
+                        <span>{tag.trim()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-auto flex flex-wrap justify-end gap-2">
+          {/* Get a Quote */}
+          <button
+            onClick={() => setPopupOpen(true)}
+            className="bg-red-600 hover:bg-red-700 text-sm text-white px-4 py-2 rounded-xl transition cursor-pointer"
+          >
+            Get a Quote
           </button>
+
+          {/* Call */}
+          <a
+            href="tel:918920597474"
+            className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-sm text-white px-3 py-2 rounded-xl transition"
+            aria-label="Call now"
+          >
+            <FaPhoneAlt className="text-xs" />
+            Call Us
+          </a>
         </div>
       </div>
     </article>
-  );
+  )
 }
+
+
