@@ -96,7 +96,6 @@ if (cleanedFilters.locality) {
 }
 
 
-
     fetchListings(cleanedFilters)
       .then(res => {
         if (!mounted) return;

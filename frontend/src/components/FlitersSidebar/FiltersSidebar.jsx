@@ -14,7 +14,6 @@ export default function FiltersSidebar({
 }) {
   return (
     <aside className="bg-white p-4 rounded-lg shadow md:w-72 select-none">
-      
       {/* SearchFilter with pre-filled venue service */}
       <SearchFilter 
         search={filters.search || initialVenue} 
@@ -25,7 +24,7 @@ export default function FiltersSidebar({
       {/* LocationFilter with pre-filled location */}
       <LocationFilter 
         setFilters={setFilters} 
-        initialLocation={filters.location || initialLocation} 
+        initialLocation={filters.location || initialLocation}
       />
       <hr className="my-4" />
 
@@ -52,8 +51,6 @@ export default function FiltersSidebar({
       <hr className="my-4" />
 
       <SortFilter filters={filters} setFilters={setFilters} />
-
-      
     </aside>
   );
 }
