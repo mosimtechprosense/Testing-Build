@@ -23,6 +23,8 @@ export default function ListingsPage() {
     venueType: paramsFromUrl.venueType || undefined,
     minBudget: paramsFromUrl.minBudget || undefined,
     maxBudget: paramsFromUrl.maxBudget || undefined,
+    minGuests: paramsFromUrl.minGuests !== undefined ? Number(paramsFromUrl.minGuests) : undefined,
+    maxGuests: paramsFromUrl.maxGuests !== undefined ? Number(paramsFromUrl.maxGuests) : undefined,
     vegetarian: paramsFromUrl.vegetarian || undefined,
     nonVegetarian: paramsFromUrl.nonVegetarian || undefined,
     sortBy: paramsFromUrl.sortBy || "created_at",
@@ -59,6 +61,15 @@ export default function ListingsPage() {
         return true;
       })
     );
+
+    if (cleanedFilters.minGuests == null) {
+  delete cleanedFilters.minGuests
+}
+if (cleanedFilters.maxGuests == null) {
+  delete cleanedFilters.maxGuests
+}
+
+
 
     if (
   cleanedFilters.search &&
@@ -177,7 +188,7 @@ if (cleanedFilters.locality) {
     {/* Pagination */}
     <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-2">
       <button
-        className="px-4 py-2 border rounded disabled:opacity-50"
+        className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
         onClick={() => goPage(Math.max(1, currentPage - 1))}
         disabled={currentPage <= 1}
       >
@@ -189,7 +200,7 @@ if (cleanedFilters.locality) {
       </div>
 
       <button
-        className="px-4 py-2 border rounded disabled:opacity-50"
+        className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
         onClick={() => goPage(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage >= totalPages}
       >
@@ -198,7 +209,6 @@ if (cleanedFilters.locality) {
     </div>
   </main>
 </div>
-
     </div>
   );
 }

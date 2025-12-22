@@ -1,4 +1,5 @@
 import { useContext, useState, useRef, useEffect } from "react"
+import { Link } from "react-router-dom"
 import { HiLocationMarker, HiUserGroup } from "react-icons/hi"
 import { UIContext } from "../../store/UIContext"
 import Badge from "./Badge"
@@ -9,7 +10,6 @@ export default function ListingCard({ item }) {
   const [showTags, setShowTags] = useState(false)
   const tooltipRef = useRef(null)
   const scrollStartRef = useRef(0)
-
   const images = item?.venue_images || []
   const [activeImage, setActiveImage] = useState(
     images?.[0]?.image_url || "/placeholder.jpg"
@@ -17,7 +17,6 @@ export default function ListingCard({ item }) {
 
   const rating = item.rating || 5
   const reviewsCount = item.reviews_count || 1
-
   const tags = item.display_tags || item.keywords?.split(",") || []
   const visibleTags = tags.slice(0, 3)
   const hiddenTags = tags.slice(3)
@@ -50,7 +49,15 @@ export default function ListingCard({ item }) {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [showTags])
 
+  const localitySlug =
+  item.locality_slug ||
+  item.locality?.replace(/\s+/g, "-").toLowerCase()
+
+const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
+
+
   return (
+    <Link to={listingUrl} className="block">
     <article className="bg-white rounded-xl shadow-md flex flex-col md:flex-row hover:shadow-lg transition">
       {/* Image */}
       <div className="w-full md:w-1/3 p-4">
@@ -175,7 +182,10 @@ export default function ListingCard({ item }) {
         <div className="mt-auto flex flex-wrap justify-end gap-2">
           {/* Get a Quote */}
           <button
-            onClick={() => setPopupOpen(true)}
+              onClick={(e) => { 
+                e.stopPropagation()
+                setPopupOpen(true)
+              }}
             className="bg-red-600 hover:bg-red-700 text-sm text-white px-4 py-2 rounded-xl transition cursor-pointer"
           >
             Get a Quote
@@ -193,7 +203,6 @@ export default function ListingCard({ item }) {
         </div>
       </div>
     </article>
+    </Link>
   )
 }
-
-

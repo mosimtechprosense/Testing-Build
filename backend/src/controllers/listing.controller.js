@@ -1,4 +1,4 @@
-import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB } from "../services/listing.service.js";
+import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB, getSimilarListingsDB } from "../services/listing.service.js";
 
 
 
@@ -147,6 +147,34 @@ export const getListingById = async (req, res) => {
         });
     }
 };
+
+
+
+////*  GET SIMILAR LISTING
+export const getSimilarListings = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Received listing ID for similar:", id);
+
+    const similarListings = await getSimilarListingsDB(id);
+
+    console.log("Number of similar listings fetched:", similarListings.length);
+
+    res.status(200).json({
+      success: true,
+      count: similarListings.length,
+      data: similarListings,
+    });
+  } catch (error) {
+    console.error("Get Similar Listings Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+
 
 
 

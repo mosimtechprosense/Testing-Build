@@ -16,6 +16,7 @@ import RecentSearches from "./components/RecentSearches"
 import UIProvider from "./store/UIContext"
 import ListingsPage from "./pages/ListingsPage"
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import ListingDetailsDynamic from "./pages/ListingDetailsDynamic"
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/venues" element={<ListingsPage />} />
             <Route path="/banquet-hall-in/:localitySlug" element={<ListingsPage />} />
+            <Route path="/banquet-hall-in/:localitySlug/:id" element={<ListingDetailsDynamic/>}/>
           </Routes>
           <FloatingWhatsApp />
           <RecentSearches />

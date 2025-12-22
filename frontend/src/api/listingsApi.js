@@ -28,6 +28,30 @@ export const fetchListings = async (filters = {}) => {
 };
 
 
+export const fetchListingById = async (id) => {
+  if (!id) throw new Error("Listing ID is required")
+
+  const res = await fetch(`${API_BASE}/api/listings/${id}`)
+
+  if (!res.ok) throw new Error("Failed to fetch listing")
+
+  return res.json()
+}
+
+
+export const fetchSimilarListings = async (id) => {
+  if (!id) throw new Error("Listing ID is required for similar listings");
+
+  const res = await fetch(`${API_BASE}/api/listings/${id}/similar`);
+  if (!res.ok) throw new Error("Failed to fetch similar listings");
+
+  return res.json(); // returns { success, count, data: [...] }
+};
+
+
+
+
+
 export const fetchLocalities = async (location = "") => {
   const url = `${API_BASE}/api/locations${location ? `?location=${encodeURIComponent(location)}` : ""}`;
   const res = await fetch(url);
