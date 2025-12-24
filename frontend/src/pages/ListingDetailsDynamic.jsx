@@ -1,6 +1,10 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { fetchListingById, fetchSimilarListings } from "../api/listingsApi"
+import {
+  fetchHallsByListingId,
+  fetchListingById,
+  fetchSimilarListings
+} from "../api/listingsApi"
 import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu"
 import { HiUserGroup } from "react-icons/hi2"
 
@@ -10,57 +14,63 @@ export default function ListingDetailsDynamic() {
   const [listing, setListing] = useState(null)
   const [similarListings, setSimilarListings] = useState([])
   const [loading, setLoading] = useState(true)
-
   const [showAllKeywords, setShowAllKeywords] = useState(false)
   const [showFullDesc, setShowFullDesc] = useState(false)
+  const [halls, setHalls] = useState([])
 
-  // 🔹 Image modal
+  // Image modal
   const [activeImageIndex, setActiveImageIndex] = useState(null)
 
-  useEffect(() => {
-    setLoading(true)
+useEffect(() => {
+  setLoading(true);
 
-    Promise.all([fetchListingById(id), fetchSimilarListings(id)])
-      .then(([listingRes, similarRes]) => {
-        setListing(listingRes.data)
-        setSimilarListings(similarRes.data || [])
-      })
-      .catch(() => {
-        setListing(null)
-        setSimilarListings([])
-      })
-      .finally(() => setLoading(false))
-  }, [id])
+  Promise.all([
+    fetchListingById(id),
+    fetchSimilarListings(id),
+    fetchHallsByListingId(id)
+  ])
+    .then(([listingRes, similarRes, hallsRes]) => {
+      setListing(listingRes.data);
+      setSimilarListings(similarRes.data || []);
+      // extract nested data array safely
+      setHalls(Array.isArray(hallsRes.data?.data) ? hallsRes.data.data : []);
+    })
+    .catch(() => {
+      setListing(null);
+      setSimilarListings([]);
+      setHalls([]);
+    })
+    .finally(() => setLoading(false));
+}, [id]);
+
+
+
 
   if (loading) return <div className="py-20 text-center">Loading…</div>
-  if (!listing) return <div className="py-20 text-center">Listing not found</div>
+  if (!listing)
+    return <div className="py-20 text-center">Listing not found</div>
 
   const images = listing.venue_images || []
   const keywordsArray = listing.keywords?.split(",") || []
   const desc = listing.description || ""
   const faqs = listing.faqs || []
 
-  // keep same section but ensure UI stability
-  const visibleSimilar = similarListings.slice(
-    0,
-    similarListings.length < 4 ? similarListings.length : similarListings.length
-  )
+
 
   return (
     <div className="container mx-auto px-4 py-8">
-
       {/* ================= IMAGE GALLERY (RECOMMENDED STYLE) ================= */}
-      <div className="relative mb-12">
-        {images.length > 3 && (
+      <div key={id} className="relative mb-12">
+        {Array.isArray(images) && images.length > 3 && (
           <button
             onClick={() =>
               document
                 .getElementById("imageScroll")
                 ?.scrollBy({ left: -400, behavior: "smooth" })
             }
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-4 z-20 hover:scale-110 transition"
+            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-5 z-20 cursor-pointer transition duration-300 ease-in-out transform hover:scale-125"
           >
-            <LuArrowLeft />
+            <LuArrowLeft className="h-6 w-6 cursor-pointer text-red-600"  />
           </button>
         )}
 
@@ -72,7 +82,7 @@ export default function ListingDetailsDynamic() {
             <div
               key={img.id}
               onClick={() => setActiveImageIndex(i)}
-              className="min-w-[320px] h-[260px] rounded-xl overflow-hidden shadow cursor-pointer"
+              className="min-w-[600px] h-[300px] rounded-md overflow-hidden shadow cursor-pointer"
             >
               <img
                 src={img.image_url}
@@ -90,9 +100,9 @@ export default function ListingDetailsDynamic() {
                 .getElementById("imageScroll")
                 ?.scrollBy({ left: 400, behavior: "smooth" })
             }
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-4 z-20 hover:scale-110 transition"
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-5 z-20 cursor-pointer transition duration-300 ease-in-out transform hover:scale-125"
           >
-            <LuArrowRight />
+            <LuArrowRight className="h-6 w-6 cursor-pointer text-red-600" />
           </button>
         )}
       </div>
@@ -108,7 +118,7 @@ export default function ListingDetailsDynamic() {
           </button>
 
           <button
-            className="absolute left-6 text-white text-3xl"
+            className="absolute left-6 bg-white text-3xl shadow rounded-full p-5 z-20 cursor-pointer hover:text-red-600 transition duration-300 ease-in-out transform hover:scale-125"
             onClick={() =>
               setActiveImageIndex(
                 activeImageIndex === 0
@@ -117,7 +127,7 @@ export default function ListingDetailsDynamic() {
               )
             }
           >
-            <LuArrowLeft />
+            <LuArrowLeft className="h-6 w-6"/>
           </button>
 
           <img
@@ -126,7 +136,7 @@ export default function ListingDetailsDynamic() {
           />
 
           <button
-            className="absolute right-6 text-white text-3xl"
+            className="absolute right-6 bg-white text-3xl shadow rounded-full p-5 z-20 cursor-pointer hover:text-red-600 transition duration-300 ease-in-out transform hover:scale-125"
             onClick={() =>
               setActiveImageIndex(
                 activeImageIndex === images.length - 1
@@ -135,13 +145,15 @@ export default function ListingDetailsDynamic() {
               )
             }
           >
-            <LuArrowRight />
+            <LuArrowRight className="h-6 w-6" />
           </button>
         </div>
       )}
 
       {/* ================= TITLE ================= */}
-      <h1 className="text-3xl font-bold mb-2">{listing.title}, {listing.locality}, {listing.city}</h1>
+      <h1 className="text-3xl font-bold mb-2">
+        {listing.title}, {listing.locality}, {listing.city}
+      </h1>
       <p className="text-gray-600 mb-4">
         {listing.address},{listing.locality}, {listing.city}, {listing.state}
       </p>
@@ -168,19 +180,16 @@ export default function ListingDetailsDynamic() {
       {/* ================= MAIN CONTENT ================= */}
       <div className="grid lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-10">
-
           {/* ABOUT */}
           <section>
-            <h2 className="text-2xl font-semibold mb-2">
-              About this Banquet
-            </h2>
+            <h2 className="text-2xl font-semibold mb-2">About this Banquet</h2>
             <div
               className="text-gray-700"
               dangerouslySetInnerHTML={{
                 __html:
                   showFullDesc || desc.length <= 300
                     ? desc
-                    : desc.slice(0, 300) + "...",
+                    : desc.slice(0, 300) + "..."
               }}
             />
             {desc.length > 300 && (
@@ -192,6 +201,42 @@ export default function ListingDetailsDynamic() {
               </button>
             )}
           </section>
+{/* HALL CAPACITY */}
+{Array.isArray(halls) && halls.length > 0 && (
+  <section className="bg-white p-4 rounded shadow mb-8">
+    <h3 className="text-xl font-semibold mb-3">Hall Capacities</h3>
+    <div className="overflow-x-auto">
+      <table className="min-w-full border">
+        <thead>
+          <tr>
+            <th className="px-3 py-2 border-b">Hall Name</th>
+            <th className="px-3 py-2 border-b">Capacity</th>
+            <th className="px-3 py-2 border-b">Floating</th>
+            <th className="px-3 py-2 border-b">Type</th>
+            <th className="px-3 py-2 border-b">Day Available</th>
+            <th className="px-3 py-2 border-b">Night Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          {halls.filter(Boolean).map((hall) => (
+            <tr key={hall?.id || Math.random()}>
+              <td className="px-3 py-2 border-b">{hall?.area || "N/A"}</td>
+              <td className="px-3 py-2 border-b">{hall?.capacity || "N/A"}</td>
+              <td className="px-3 py-2 border-b">{hall?.floating || "N/A"}</td>
+              <td className="px-3 py-2 border-b">{hall?.type || "N/A"}</td>
+              <td className="px-3 py-2 border-b">
+                {hall?.day_availability === "yes" ? "Yes" : "No"}
+              </td>
+              <td className="px-3 py-2 border-b">
+                {hall?.night_availability === "yes" ? "Yes" : "No"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}
 
           {/* FEATURES */}
           {listing.features && (
@@ -264,7 +309,7 @@ export default function ListingDetailsDynamic() {
           </div>
         </div>
       </div>
-{/* SIMILAR LISTINGS */}
+      {/* SIMILAR LISTINGS */}
       {similarListings.length > 0 && (
         <section className="pt-10 relative">
           {/* Header */}
@@ -295,7 +340,9 @@ export default function ListingDetailsDynamic() {
               <div
                 key={item.id}
                 className="min-w-[290px] max-w-[290px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group cursor-pointer"
-                onClick={() => (window.location.href = `/listing/${item.id}`)}
+                onClick={() =>
+                  (window.location.href = `/banquet-hall-in/${item.locality}/${item.id}`)
+                }
               >
                 {/* Image */}
                 <div className="h-42 w-full rounded-md overflow-hidden">
@@ -344,7 +391,6 @@ export default function ListingDetailsDynamic() {
           </button>
         </section>
       )}
-      
     </div>
   )
 }

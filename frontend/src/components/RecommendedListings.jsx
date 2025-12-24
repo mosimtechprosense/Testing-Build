@@ -2,13 +2,16 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu"
 import { HiUserGroup } from "react-icons/hi2"
+import { Navigate, useNavigate } from "react-router-dom"
 
 const RecommendedListings = () => {
+  const navigate = useNavigate()
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
-
   const API_BASE = import.meta.env.VITE_API_BASE
 
+
+  // fetch listings
   useEffect(() => {
     const fetchListings = async () => {
       try {
@@ -22,10 +25,14 @@ const RecommendedListings = () => {
     }
 
     fetchListings()
-  }, [API_BASE]);
+  }, [API_BASE])
+
+  // handle clicked on view details
+  const slugifyLocality = (locality = "") =>
+    locality.toLowerCase().trim().replace(/\s+/g, "-")
 
 
-
+  // if loading
   if (loading) {
     return (
       <div className="text-center py-10 text-xl font-semibold text-gray-600">
@@ -94,11 +101,16 @@ const RecommendedListings = () => {
                   <HiUserGroup className="h-4 w-4" />
                   {item.capacityFrom}-{item.capacityTo} guests
                 </span>
-
               </div>
 
               {/* Button */}
-              <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all">
+              <button
+                className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all"
+                onClick={() => {
+                  const localitySlug = slugifyLocality(item.locality)
+                  navigate(`/banquet-hall-in/${localitySlug}/${item.id}`)
+                }}
+              >
                 View Detail
               </button>
             </div>
@@ -115,10 +127,9 @@ const RecommendedListings = () => {
         }
         className="absolute right-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 transition duration-300 ease-in-out transform hover:scale-125 hover:text-red-600"
       >
-        <LuArrowRight  className="h-6 w-6 cursor-pointer"/>
+        <LuArrowRight className="h-6 w-6 cursor-pointer" />
       </button>
     </section>
-    
   )
 }
 

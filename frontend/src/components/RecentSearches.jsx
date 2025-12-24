@@ -20,14 +20,22 @@ const RecentSearches = () => {
       })
     }, [])
 
-  const handleClick = (city, location) => {
-    if (!city || !location) return;
+const handleClick = (location) => {
+  if (!location) return;
 
-    const slug = `/banquet-hall/${city.toLowerCase()}/${location
-      .toLowerCase()
-      .replace(/\s+/g, "-")}`;
-     navigate(slug);
-  };
+  const locationSlug = location
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-");
+
+  const queryParams = new URLSearchParams({
+    search: "Banquet Halls",
+    locality: location,
+  }).toString();
+
+  navigate(`/banquet-hall-in/${locationSlug}?${queryParams}`);
+};
+
 
   return (
     <section className="bg-[#dc2626] text-white py-6 px-6 text-center relative overflow-hidden">
@@ -46,7 +54,7 @@ const RecentSearches = () => {
           {locations.map((loc, i) => (
             <button
               key={i}
-              onClick={() => handleClick(loc.city, loc.name)}
+              onClick={() => handleClick(loc.name)}
               className="relative group text-left text-white/90 font-medium hover:text-white transition-all duration-300 cursor-pointer"
             >
               <span className="relative inline-block">

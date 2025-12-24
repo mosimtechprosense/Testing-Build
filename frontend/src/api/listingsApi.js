@@ -49,7 +49,10 @@ export const fetchSimilarListings = async (id) => {
 };
 
 
-
+export const fetchHallsByListingId = async (id) => {
+  const res = await fetch(`${API_BASE}/api/listings/${id}`);
+  return res.json();
+};
 
 
 export const fetchLocalities = async (location = "") => {

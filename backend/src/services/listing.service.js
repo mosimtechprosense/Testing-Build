@@ -190,7 +190,9 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
 export const getListingByIdDB = async (id) => {
   const listing = await prisma.listings.findUnique({
     where: { id: BigInt(id) },
-    include: { venue_images: true }
+    include: { venue_images: true,
+      hall_capacities: true
+     }
   })
 
   if (!listing) return null
@@ -261,21 +263,25 @@ export const deleteListingDB = async (id) => {
 }
 
 //* RECOMMENDED LISTINGS — For homepage section
-export const getRecommendedListingsDB = async (limit, city) => {
+export const getRecommendedListingsDB = async (limit, city, locality) => {
   const filters = {
     recommended: true,
     status: true,
-    ...(city ? { city } : {})
-  }
-  const { listings } = await getAllListingDB(filters, 0, limit)
-  return listings
-}
+    ...(city ? { city } : {}),
+    ...(locality ? { locality } : {})
+  };
+
+  const { listings } = await getAllListingDB(filters, 0, limit);
+  return listings;
+};
+
 
 //* HIGH DEMAND LISTINGS — For homepage section
-export const getHighDemandListingsDB = async (limit = 10, city) => {
+export const getHighDemandListingsDB = async (limit = 10, city, locality) => {
   const filters = {
     highDemand: true,
-    ...(city ? { city } : {})
+    ...(city ? { city } : {}),
+    ...(locality ? { locality } : {})
   }
   const { listings } = await getAllListingDB(filters, 0, limit)
   return listings

@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import { HiUserGroup } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
 
 const HighlyDemandedListings = () => {
+   const navigate = useNavigate()
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const API_BASE = import.meta.env.VITE_API_BASE;
 
+
+  //fetch listings
   useEffect(() => {
     const fetchListings = async () => {
       try {
@@ -24,6 +28,14 @@ const HighlyDemandedListings = () => {
     fetchListings();
   }, [API_BASE]);
 
+
+    // handle clicked on view details
+  const slugifyLocality = (locality = "") =>
+    locality.toLowerCase().trim().replace(/\s+/g, "-")
+
+
+
+  // if loading
   if (loading) {
     return (
       <div className="text-center py-10 text-xl font-semibold text-gray-600">
@@ -31,6 +43,7 @@ const HighlyDemandedListings = () => {
       </div>
     );
   }
+
 
   return (
     <section className="pt-8 relative">
@@ -95,7 +108,11 @@ const HighlyDemandedListings = () => {
               </div>
 
               {/* Button */}
-              <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all">
+              <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all"
+                              onClick={() => {
+                  const localitySlug = slugifyLocality(item.locality)
+                  navigate(`/banquet-hall-in/${localitySlug}/${item.id}`)
+                }}>
                 View Detail
               </button>
             </div>

@@ -52,35 +52,39 @@ export const getAllListing = async (req, res) => {
 
 //*  GET RECOMMENDED LISTINGS
 export const getRecommendedListings = async (req, res) => {
-    try {
-        const { limit, city } = req.query;
-        const listings = await getRecommendedListingsDB(
-            limit ? Number(limit) : undefined,
-            city
-        );
+  try {
+    const { limit, city, locality } = req.query;
 
-        const result = listings.map(l => ({
-            id: l.id,
-            title: l.title,
-            excerpt: l.excerpt,
-            description: l.description,
-            images: l.venue_images.map(img => img.image_url), 
-            capacityFrom: l.min_guest,
-            capacityTo: l.max_guest,
-        }));
+    const listings = await getRecommendedListingsDB(
+      limit ? Number(limit) : undefined,
+      city,
+      locality
+    );
 
-        res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
-    } catch (error) {
-        console.error("Get Recommended Error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server Error"
-        });
-    }
+    const result = listings.map(l => ({
+      id: l.id,
+      title: l.title,
+      excerpt: l.excerpt,
+      description: l.description,
+      images: l.venue_images?.map(img => img.image_url) || [],
+      capacityFrom: l.min_guest,
+      capacityTo: l.max_guest,
+      city: l.city,
+      locality: l.locality,
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: result.length,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Get Recommended Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
+  }
 };
 
 
@@ -90,7 +94,7 @@ export const getRecommendedListings = async (req, res) => {
 //*  GET HIGH DEMAND LISTINGS
 export const getHighDemandListings = async (req, res) => {
     try {
-        const { limit = 10, city } = req.query;
+        const { limit = 10, city, locality} = req.query;
 
         const listings = await getHighDemandListingsDB(Number(limit), city);
 
@@ -99,6 +103,8 @@ export const getHighDemandListings = async (req, res) => {
             title: l.title,
             excerpt: l.excerpt,
             description: l.description,
+            locality: l.locality,
+            city: l.city,
             images: l.venue_images.map(img => img.image_url),
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
