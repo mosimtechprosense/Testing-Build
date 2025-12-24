@@ -205,7 +205,7 @@ export const getListingByIdDB = async (id) => {
 
 //* READ — Get similar listing
 export const getSimilarListingsDB = async (id) => {
-  // ✅ Convert ONCE
+  // Convert ONCE
   let listingId;
   try {
     listingId = BigInt(id);
@@ -214,7 +214,7 @@ export const getSimilarListingsDB = async (id) => {
     return [];
   }
 
-  // ✅ Pass ORIGINAL id, not BigInt
+  // Pass ORIGINAL id, not BigInt
   const currentListing = await getListingByIdDB(id);
   if (!currentListing) return [];
 

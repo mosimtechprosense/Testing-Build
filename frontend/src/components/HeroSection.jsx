@@ -26,7 +26,7 @@ const HeroSection = () => {
   //   document.body.style.overflow = menuOpen ? "hidden" : "auto";
   // }, [menuOpen]);
 
-  // 🔒 Auto-close dropdown when popup is open
+  // Auto-close dropdown when popup is open
 
   const handleLogo = () => {
     navigate("/")
