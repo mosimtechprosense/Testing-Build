@@ -65,6 +65,8 @@ export default function ListingsPage() {
     if (cleanedFilters.minGuests == null) {
   delete cleanedFilters.minGuests
 }
+
+
 if (cleanedFilters.maxGuests == null) {
   delete cleanedFilters.maxGuests
 }

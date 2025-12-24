@@ -40,7 +40,7 @@ export default function ListingDetailsDynamic() {
   const desc = listing.description || ""
   const faqs = listing.faqs || []
 
-  // ✅ keep same section but ensure UI stability
+  // keep same section but ensure UI stability
   const visibleSimilar = similarListings.slice(
     0,
     similarListings.length < 4 ? similarListings.length : similarListings.length
@@ -141,9 +141,9 @@ export default function ListingDetailsDynamic() {
       )}
 
       {/* ================= TITLE ================= */}
-      <h1 className="text-3xl font-bold mb-2">{listing.title}</h1>
+      <h1 className="text-3xl font-bold mb-2">{listing.title}, {listing.locality}, {listing.city}</h1>
       <p className="text-gray-600 mb-4">
-        {listing.address}, {listing.city}, {listing.state}
+        {listing.address},{listing.locality}, {listing.city}, {listing.state}
       </p>
 
       {/* ================= TAGS ================= */}
@@ -323,7 +323,7 @@ export default function ListingDetailsDynamic() {
                   </div>
 
                   {/* Button */}
-                  <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition">
+                  <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition">
                     View Detail
                   </button>
                 </div>
