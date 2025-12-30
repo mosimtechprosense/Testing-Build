@@ -8,8 +8,8 @@ import CustomerReview from "../components/CustomerReview"
 import HowItWorks from "../components/HowItWorks"
 import Categories from "../components/Categories"
 import OfferBanner from "../components/OfferBanner"
-import RecommendedListings from "../components/RecommendedListings"
-import HighlyDemandedListings from "../components/HighlyDemandedListings"
+import RecommendedListings from "../components/ListingCards/RecommendedListings"
+import HighlyDemandedListings from "../components/ListingCards/HighlyDemandedListings"
 
 const Home = () => {
   const services = [

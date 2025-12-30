@@ -1,12 +1,15 @@
 import { useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
-import {
-  fetchHallsByListingId,
-  fetchListingById,
-  fetchSimilarListings
-} from "../api/listingsApi"
+import { useEffect, useState, useContext } from "react"
+import { fetchListingById, fetchSimilarListings } from "../api/listingsApi"
 import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu"
 import { HiUserGroup } from "react-icons/hi2"
+import FoodPrice from "../components/listingsDetails/FoodPrice"
+import { UIContext } from "../store/UIContext"
+import SimilarListingsSection from "../components/ListingCards/SimilarListing"
+import HallCapacities from "../components/listingsDetails/HallCapacities"
+import AboutSection from "../components/listingsDetails/AboutSection"
+import FeaturesSection from "../components/listingsDetails/FeaturesSection"
+import PoliciesSection from "../components/listingsDetails/PoliciesSection"
 
 export default function ListingDetailsDynamic() {
   const { id } = useParams()
@@ -16,49 +19,50 @@ export default function ListingDetailsDynamic() {
   const [loading, setLoading] = useState(true)
   const [showAllKeywords, setShowAllKeywords] = useState(false)
   const [showFullDesc, setShowFullDesc] = useState(false)
-  const [halls, setHalls] = useState([])
+  const { setPopupOpen } = useContext(UIContext)
 
   // Image modal
   const [activeImageIndex, setActiveImageIndex] = useState(null)
+  useEffect(() => {
+    let isMounted = true
+    setLoading(true)
 
-useEffect(() => {
-  setLoading(true);
+    Promise.all([fetchListingById(id), fetchSimilarListings(id)])
+      .then(([listingRes, similarRes]) => {
+        if (!isMounted) return
 
-  Promise.all([
-    fetchListingById(id),
-    fetchSimilarListings(id),
-    fetchHallsByListingId(id)
-  ])
-    .then(([listingRes, similarRes, hallsRes]) => {
-      setListing(listingRes.data);
-      setSimilarListings(similarRes.data || []);
-      // extract nested data array safely
-      setHalls(Array.isArray(hallsRes.data?.data) ? hallsRes.data.data : []);
-    })
-    .catch(() => {
-      setListing(null);
-      setSimilarListings([]);
-      setHalls([]);
-    })
-    .finally(() => setLoading(false));
-}, [id]);
+        const listingData = listingRes?.data?.data || listingRes?.data || null
 
+        setListing(listingData)
+        setSimilarListings(similarRes?.data || [])
+      })
+      .catch(() => {
+        setListing(null)
+        setSimilarListings([])
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false)
+      })
 
-
+    return () => {
+      isMounted = false
+    }
+  }, [id])
 
   if (loading) return <div className="py-20 text-center">Loading…</div>
   if (!listing)
     return <div className="py-20 text-center">Listing not found</div>
 
-  const images = listing.venue_images || []
-  const keywordsArray = listing.keywords?.split(",") || []
-  const desc = listing.description || ""
-  const faqs = listing.faqs || []
-
-
+  const images = listing.venue_images ?? []
+  const keywordsArray = listing.keywords?.split(",") ?? []
+  const desc = listing.description ?? ""
+  const faqs = Array.isArray(listing?.faqs) ? listing.faqs : []
+  const hallCapacities = Array.isArray(listing?.hall_capacities)
+    ? listing.hall_capacities
+    : []
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 select-none">
       {/* ================= IMAGE GALLERY (RECOMMENDED STYLE) ================= */}
       <div key={id} className="relative mb-12">
         {Array.isArray(images) && images.length > 3 && (
@@ -70,7 +74,7 @@ useEffect(() => {
             }
             className="absolute left-3 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-5 z-20 cursor-pointer transition duration-300 ease-in-out transform hover:scale-125"
           >
-            <LuArrowLeft className="h-6 w-6 cursor-pointer text-red-600"  />
+            <LuArrowLeft className="h-6 w-6 cursor-pointer text-red-600" />
           </button>
         )}
 
@@ -127,7 +131,7 @@ useEffect(() => {
               )
             }
           >
-            <LuArrowLeft className="h-6 w-6"/>
+            <LuArrowLeft className="h-6 w-6" />
           </button>
 
           <img
@@ -181,84 +185,16 @@ useEffect(() => {
       <div className="grid lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-10">
           {/* ABOUT */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-2">About this Banquet</h2>
-            <div
-              className="text-gray-700"
-              dangerouslySetInnerHTML={{
-                __html:
-                  showFullDesc || desc.length <= 300
-                    ? desc
-                    : desc.slice(0, 300) + "..."
-              }}
-            />
-            {desc.length > 300 && (
-              <button
-                className="text-blue-600 mt-2"
-                onClick={() => setShowFullDesc(!showFullDesc)}
-              >
-                {showFullDesc ? "Read Less" : "Read More"}
-              </button>
-            )}
-          </section>
-{/* HALL CAPACITY */}
-{Array.isArray(halls) && halls.length > 0 && (
-  <section className="bg-white p-4 rounded shadow mb-8">
-    <h3 className="text-xl font-semibold mb-3">Hall Capacities</h3>
-    <div className="overflow-x-auto">
-      <table className="min-w-full border">
-        <thead>
-          <tr>
-            <th className="px-3 py-2 border-b">Hall Name</th>
-            <th className="px-3 py-2 border-b">Capacity</th>
-            <th className="px-3 py-2 border-b">Floating</th>
-            <th className="px-3 py-2 border-b">Type</th>
-            <th className="px-3 py-2 border-b">Day Available</th>
-            <th className="px-3 py-2 border-b">Night Available</th>
-          </tr>
-        </thead>
-        <tbody>
-          {halls.filter(Boolean).map((hall) => (
-            <tr key={hall?.id || Math.random()}>
-              <td className="px-3 py-2 border-b">{hall?.area || "N/A"}</td>
-              <td className="px-3 py-2 border-b">{hall?.capacity || "N/A"}</td>
-              <td className="px-3 py-2 border-b">{hall?.floating || "N/A"}</td>
-              <td className="px-3 py-2 border-b">{hall?.type || "N/A"}</td>
-              <td className="px-3 py-2 border-b">
-                {hall?.day_availability === "yes" ? "Yes" : "No"}
-              </td>
-              <td className="px-3 py-2 border-b">
-                {hall?.night_availability === "yes" ? "Yes" : "No"}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </section>
-)}
+          <AboutSection description={desc} />
+
+          {/* HALL CAPACITY */}
+          <HallCapacities hallCapacities={hallCapacities} />
 
           {/* FEATURES */}
-          {listing.features && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-2">Features</h2>
-              <div
-                className="list-disc ml-5 text-gray-700"
-                dangerouslySetInnerHTML={{ __html: listing.features }}
-              />
-            </section>
-          )}
+          <FeaturesSection features={listing.features} />
 
           {/* POLICIES */}
-          {listing.policies && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-2">Venue Policies</h2>
-              <div
-                className="list-disc ml-5 text-gray-700"
-                dangerouslySetInnerHTML={{ __html: listing.policies }}
-              />
-            </section>
-          )}
+          <PoliciesSection policies={listing.policies} />
 
           {/* FAQ */}
           {faqs.length > 0 && (
@@ -293,104 +229,47 @@ useEffect(() => {
 
         {/* ================= SIDEBAR ================= */}
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded shadow">
+          <div className="bg-white p-4 rounded drop-shadow-xl">
             <h3 className="text-xl font-semibold mb-2">Event Details</h3>
-            <p>
-              Guests: {listing.min_guest} – {listing.max_guest}
-            </p>
+            {/* Guests & Food Price */}
+            <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-700">
+              <span className="flex items-center gap-1">
+                <HiUserGroup className="h-4 w-4 text-red-600" />
+                {listing.min_guest} – {listing.max_guest} guests
+              </span>
+
+              <FoodPrice
+                vegPrice={listing.vegPrice}
+                nonVegPrice={listing.nonVegPrice}
+                iconSize={14}
+                gap="gap-4"
+              />
+            </div>
           </div>
 
-          <div className="bg-white p-4 rounded shadow">
+          <div className="bg-white p-4 rounded drop-shadow-xl">
             <h3 className="text-xl font-semibold mb-2">Contact</h3>
             <p>Phone: {listing.phone}</p>
-            <button className="mt-4 w-full bg-red-600 text-white py-2 rounded">
-              Enquire Now
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setPopupOpen(true)
+              }}
+              className="mt-4 w-full
+          bg-red-600 text-white py-2 rounded
+            cursor-pointer
+            transition-all duration-200
+          hover:bg-red-700 hover:shadow-md
+            active:scale-[0.98]"
+            >
+              Enquiry Now
             </button>
           </div>
         </div>
       </div>
       {/* SIMILAR LISTINGS */}
-      {similarListings.length > 0 && (
-        <section className="pt-10 relative">
-          {/* Header */}
-          <div className="flex justify-between items-center px-4 md:px-8">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Similar Banquet Halls
-            </h2>
-          </div>
 
-          {/* Left Arrow */}
-          <button
-            onClick={() =>
-              document
-                .getElementById("similarScroll")
-                .scrollBy({ left: -300, behavior: "smooth" })
-            }
-            className="absolute left-6 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 hover:scale-110 transition"
-          >
-            <LuArrowLeft className="h-6 w-6" />
-          </button>
-
-          {/* Scroll Container */}
-          <div
-            id="similarScroll"
-            className="flex gap-6 overflow-x-hidden scroll-smooth no-scrollbar px-16 md:px-8 py-10"
-          >
-            {similarListings.map((item) => (
-              <div
-                key={item.id}
-                className="min-w-[290px] max-w-[290px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group cursor-pointer"
-                onClick={() =>
-                  (window.location.href = `/banquet-hall-in/${item.locality}/${item.id}`)
-                }
-              >
-                {/* Image */}
-                <div className="h-42 w-full rounded-md overflow-hidden">
-                  <img
-                    src={item.venue_images?.[0]?.image_url}
-                    alt={item.title}
-                    className="h-full w-full object-cover group-hover:scale-110 transition-all duration-500"
-                  />
-                </div>
-
-                {/* Content */}
-                <div className="pt-4">
-                  <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                    {item.excerpt || "Beautiful banquet venue"}
-                  </p>
-
-                  {/* Guests */}
-                  <div className="mt-3 flex items-center gap-1 text-sm font-medium text-gray-800">
-                    <HiUserGroup className="h-4 w-4" />
-                    {item.min_guest} – {item.max_guest} guests
-                  </div>
-
-                  {/* Button */}
-                  <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition">
-                    View Detail
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Right Arrow */}
-          <button
-            onClick={() =>
-              document
-                .getElementById("similarScroll")
-                .scrollBy({ left: 300, behavior: "smooth" })
-            }
-            className="absolute right-6 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 hover:scale-110 transition"
-          >
-            <LuArrowRight className="h-6 w-6" />
-          </button>
-        </section>
-      )}
+      <SimilarListingsSection listings={similarListings} />
     </div>
   )
 }

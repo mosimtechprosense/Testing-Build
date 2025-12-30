@@ -71,6 +71,8 @@ export const getRecommendedListings = async (req, res) => {
       capacityTo: l.max_guest,
       city: l.city,
       locality: l.locality,
+      vegPrice: l.vegPrice,
+      nonVegPrice: l.nonVegPrice,
     }));
 
     res.status(200).json({
@@ -108,6 +110,8 @@ export const getHighDemandListings = async (req, res) => {
             images: l.venue_images.map(img => img.image_url),
             capacityFrom: l.min_guest,
             capacityTo: l.max_guest,
+            vegPrice: l.vegPrice,
+            nonVegPrice: l.nonVegPrice,
         }));
 
         res.status(200).json({

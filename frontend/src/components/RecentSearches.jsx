@@ -38,7 +38,7 @@ const handleClick = (location) => {
 
 
   return (
-    <section className="bg-[#dc2626] text-white py-6 px-6 text-center relative overflow-hidden">
+    <section className="bg-[#dc2626] text-white py-6 px-6 text-center relative overflow-hidden select-none">
       {/* Subtle background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-tr from-[#b91c1c] to-[#ef4444] opacity-90"></div>
 

@@ -17,7 +17,7 @@ const HeroSection = () => {
     { id: "services", label: "Services", path: "/services" },
     { id: "about", label: "About", path: "/about" },
     { id: "why-us", label: "Why Us?", path: "/why-us" },
-    { id: "blog", label: "Blog", path: "/blog" },
+    { id: "blog", label: "Blog", path: "/blogs" },
     { id: "contact", label: "Contact Us", path: "/contact" }
   ]
 

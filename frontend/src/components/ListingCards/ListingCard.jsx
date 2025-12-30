@@ -2,8 +2,10 @@ import { useContext, useState, useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { HiLocationMarker, HiUserGroup } from "react-icons/hi"
 import { UIContext } from "../../store/UIContext"
-import Badge from "./Badge"
+import Badge from "../listingsDetails/Badge"
 import { FaPhoneAlt } from "react-icons/fa"
+import FoodPrice from "../listingsDetails/FoodPrice"
+
 
 export default function ListingCard({ item }) {
   const { setPopupOpen } = useContext(UIContext)
@@ -117,8 +119,8 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
 
         {/* Location & Guests */}
         <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
-          <span className="flex items-center gap-1">
-            <HiLocationMarker className="h-4 w-4 text-red-600" />
+          <span className="flex items-center ">
+            <HiLocationMarker className="h-4 w-4 text-red-600 translate-x-[-1px]" />
             {item.city}, {item.locality}
           </span>
           <span className="flex items-center gap-1">
@@ -126,6 +128,12 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
             {item.min_guest}-{item.max_guest} guests
           </span>
         </div>
+
+        {/* Food Prices */}
+<FoodPrice
+  vegPrice={item.vegPrice}
+  nonVegPrice={item.nonVegPrice}
+/>
 
         {/* Keywords with +more */}
         <div className="mt-3 flex flex-wrap gap-2 relative">

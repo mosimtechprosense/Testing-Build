@@ -1,56 +1,52 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
-import { HiUserGroup } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { LuArrowLeft, LuArrowRight } from "react-icons/lu"
+import { HiUserGroup } from "react-icons/hi2"
+import { useNavigate } from "react-router-dom"
+import FoodPrice from "../listingsDetails/FoodPrice"
 
-const HighlyDemandedListings = () => {
-   const navigate = useNavigate()
-  const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(true);
+const RecommendedListings = () => {
+  const navigate = useNavigate()
+  const [listings, setListings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const API_BASE = import.meta.env.VITE_API_BASE
 
-  const API_BASE = import.meta.env.VITE_API_BASE;
 
-
-  //fetch listings
+  // fetch listings
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/api/listings/high-demand`);
-        setListings(res.data.data || []);
+        const res = await axios.get(`${API_BASE}/api/listings/recommended`)
+        setListings(res.data.data || [])
       } catch (error) {
-        console.error("Error fetching high demanded listings:", error);
+        console.error("Error fetching recommended listings:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchListings();
-  }, [API_BASE]);
+    fetchListings()
+  }, [API_BASE])
 
-
-    // handle clicked on view details
+  // handle clicked on view details
   const slugifyLocality = (locality = "") =>
     locality.toLowerCase().trim().replace(/\s+/g, "-")
-
 
 
   // if loading
   if (loading) {
     return (
       <div className="text-center py-10 text-xl font-semibold text-gray-600">
-        Loading highly demanded listings...
+        Loading recommended listings...
       </div>
-    );
+    )
   }
-
-
   return (
     <section className="pt-8 relative">
       {/* Section Header */}
       <div className="flex justify-between items-center px-4 md:px-8">
         <h2 className="text-3xl font-bold text-gray-900">
-          Highly Demanded Halls
+          Recommended Banquet Halls
         </h2>
 
         <button className="text-md font-semibold text-red-600 cursor-pointer hover:text-red-700">
@@ -62,7 +58,7 @@ const HighlyDemandedListings = () => {
       <button
         onClick={() =>
           document
-            .getElementById("highDemandScroll")
+            .getElementById("recommendedScroll")
             .scrollBy({ left: -300, behavior: "smooth" })
         }
         className="absolute left-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 transition duration-300 ease-in-out transform hover:scale-125 hover:text-red-600"
@@ -72,13 +68,13 @@ const HighlyDemandedListings = () => {
 
       {/* Scroll Container */}
       <div
-        id="highDemandScroll"
+        id="recommendedScroll"
         className="flex gap-6 overflow-x-hidden scroll-smooth no-scrollbar select-none px-16 md:px-8 py-10"
       >
         {listings.map((item) => (
           <div
             key={item.id}
-            className="min-w-[290px] max-w-[290px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group"
+            className="min-w-[330px] max-w-[330px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group"
           >
             {/* Image */}
             <div className="h-42 w-full rounded-md overflow-hidden">
@@ -100,19 +96,30 @@ const HighlyDemandedListings = () => {
               </p>
 
               {/* Guests */}
-              <div className="mt-3 flex items-center text-sm font-medium text-gray-800">
-                <HiUserGroup className="h-4 w-4 mr-1" />
-                 {item.capacityFrom && item.capacityTo
-                 ? `${item.capacityFrom}-${item.capacityTo} guests`
-                 : "No guest range available"} 
+              <div className="mt-3 flex justify-between items-center text-sm font-medium text-gray-800">
+                {/* Guests */}
+                <span className="flex items-center gap-1">
+                  <HiUserGroup className="h-4 w-4" />
+                  {item.capacityFrom}-{item.capacityTo} guests
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="mt-3">
+                <FoodPrice
+                  vegPrice={item.vegPrice}
+                  nonVegPrice={item.nonVegPrice}
+                />
               </div>
 
               {/* Button */}
-              <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all"
-                              onClick={() => {
+              <button
+                className="mt-4 w-full text-sm bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all"
+                onClick={() => {
                   const localitySlug = slugifyLocality(item.locality)
                   navigate(`/banquet-hall-in/${localitySlug}/${item.id}`)
-                }}>
+                }}
+              >
                 View Detail
               </button>
             </div>
@@ -121,11 +128,10 @@ const HighlyDemandedListings = () => {
       </div>
 
       {/* Right Scroll Button */}
-      
       <button
         onClick={() =>
           document
-            .getElementById("highDemandScroll")
+            .getElementById("recommendedScroll")
             .scrollBy({ left: 300, behavior: "smooth" })
         }
         className="absolute right-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 transition duration-300 ease-in-out transform hover:scale-125 hover:text-red-600"
@@ -133,7 +139,7 @@ const HighlyDemandedListings = () => {
         <LuArrowRight className="h-6 w-6 cursor-pointer" />
       </button>
     </section>
-  );
-};
+  )
+}
 
-export default HighlyDemandedListings;
+export default RecommendedListings

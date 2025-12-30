@@ -146,12 +146,15 @@ model failed_jobs {
 }
 
 model food_categories {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  name       String
-  icon       String?
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  id       BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  name     String
+  icon     String?
+  created_at DateTime?
+  updated_at DateTime?
+
+  listing_food_categories listing_food_categories[]
 }
+
 
 model food_category_item {
   id               BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
@@ -264,6 +267,12 @@ model listing_food_categories {
   price            String?
   created_at       DateTime? @db.Timestamp(0)
   updated_at       DateTime? @db.Timestamp(0)
+
+  listing       listings       @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+  food_category food_categories @relation(fields: [food_category_id], references: [id])
+
+  @@index([listing_id])
+  @@index([food_category_id])
 }
 
 model listing_listing_category {
@@ -308,10 +317,9 @@ model listings {
   created_at      DateTime?         @db.Timestamp(0)
   updated_at      DateTime?         @db.Timestamp(0)
   city_id         BigInt?           @db.UnsignedBigInt
-  nonVegPrice     Int?
-  vegPrice        Int?
   hall_capacities hall_capacities[]
   venue_images    venue_images[]
+   listing_food_categories listing_food_categories[]
 
   @@index([title], map: "Title_index")
   @@index([min_budget, max_budget], map: "idx_budget_range")

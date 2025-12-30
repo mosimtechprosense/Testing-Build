@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
-import ListingCard from "../components/listings/ListingCard";
+import ListingCard from "../components/ListingCards/ListingCard";
 import { fetchListings, fetchLocalities } from "../api/listingsApi";
 
 export default function ListingsPage() {
@@ -29,10 +29,12 @@ export default function ListingsPage() {
     nonVegetarian: paramsFromUrl.nonVegetarian || undefined,
     sortBy: paramsFromUrl.sortBy || "created_at",
     order: paramsFromUrl.order || "desc",
+
+
     skip: paramsFromUrl.skip || 0,
     take: paramsFromUrl.take || 10,
   };
-
+  
   const [filters, setFilters] = useState(initial);
   const [listings, setListings] = useState([]);
   const [localities, setLocalities] = useState([]);
@@ -44,7 +46,7 @@ export default function ListingsPage() {
     setFilters({ ...initial });
   }, [citySlug, searchParams]);
 
-  useEffect(() => {
+  useEffect(() => { 
     fetchLocalities()
       .then(data => setLocalities(data.data || []))
       .catch(() => setLocalities([]));
@@ -53,7 +55,6 @@ export default function ListingsPage() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-
     const cleanedFilters = Object.fromEntries(
       Object.entries(filters).filter(([key, value]) => {
         if (value === undefined || value === null || value === "") return false;
@@ -66,12 +67,9 @@ export default function ListingsPage() {
   delete cleanedFilters.minGuests
 }
 
-
 if (cleanedFilters.maxGuests == null) {
   delete cleanedFilters.maxGuests
 }
-
-
 
     if (
   cleanedFilters.search &&
@@ -123,6 +121,7 @@ if (cleanedFilters.locality) {
 
     return () => (mounted = false);
   }, [filters]);
+  
 
   const pushUrl = (obj) => {
     const merged = { ...filters, ...obj };

@@ -1,5 +1,6 @@
 import prisma from "../config/db.js"
 import slugify from "slugify"
+import { mapFoodPrices } from "../utils/foodPriceMapper.js"
 
 // venue images url builder fuction
 const BASE_URL = process.env.BASE_URL || "http://localhost:5000"
@@ -32,13 +33,22 @@ export const createListingDB = async (data) => {
       slug,
       excerpt
     },
-    include: { venue_images: true }
+    include: { 
+    venue_images: true,
+    listing_food_categories: true
+   }
   })
 
-  return {
-    ...listing,
-    venue_images: formatImages(listing.venue_images)
-  }
+const { vegPrice, nonVegPrice } = mapFoodPrices(
+  listing.listing_food_categories
+)
+
+return {
+  ...listing,
+  vegPrice,
+  nonVegPrice,
+  venue_images: formatImages(listing.venue_images)
+}
 }
 
 //* READ — Get all listings (with filters)
@@ -149,17 +159,17 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
     "created_at",
     "min_budget",
     "max_budget",
-    "vegPrice",
-    "nonVegPrice",
     "guests",
     "recommended",
     "high_demand"
   ]
 
   // Use default if invalid
-  const orderBy = validSortFields.includes(sortBy)
+const orderBy =
+  sortBy === "min_budget" || sortBy === "max_budget" || sortBy === "created_at"
     ? { [sortBy]: order === "asc" ? "asc" : "desc" }
     : { created_at: "desc" }
+
 
   // Fetch paginated listings
   const listings = await prisma.listings.findMany({
@@ -168,40 +178,55 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
     take: Number(take),
     orderBy,
     include: {
-      venue_images: true
+      venue_images: true,
+      listing_food_categories: true
     }
   })
 
   // Count total for pagination
-  const totalCount = await prisma.listings.count({ where })
+const totalCount = await prisma.listings.count({ where })
 
-  const updatedListings = listings.map((listing) => ({
+const updatedListings = listings.map((listing) => {
+  const { vegPrice, nonVegPrice } = mapFoodPrices(
+    listing.listing_food_categories
+  )
+
+  return {
     ...listing,
-    venue_images: listing.venue_images.map((img) => ({
-      ...img,
-      image_url: buildImageURL(img.image)
-    }))
-  }))
+    vegPrice,
+    nonVegPrice,
+    venue_images: formatImages(listing.venue_images)
+  }
+})
 
-  return { listings: updatedListings, totalCount }
+return { listings: updatedListings, totalCount }
 }
 
 //* READ — Get single listing by ID
 export const getListingByIdDB = async (id) => {
   const listing = await prisma.listings.findUnique({
     where: { id: BigInt(id) },
-    include: { venue_images: true,
-      hall_capacities: true
-     }
+    include: { 
+      venue_images: true,
+      hall_capacities: true,
+      listing_food_categories: true
+    }
   })
 
   if (!listing) return null
 
+  const { vegPrice, nonVegPrice } = mapFoodPrices(
+    listing.listing_food_categories
+  )
+
   return {
     ...listing,
+    vegPrice,
+    nonVegPrice,
     venue_images: formatImages(listing.venue_images)
   }
 }
+
 
 
 
@@ -239,14 +264,25 @@ export const updateListingDB = async (id, data) => {
   const listing = await prisma.listings.update({
     where: { id: BigInt(id) },
     data,
-    include: { venue_images: true }
+    include: {
+      venue_images: true,
+      listing_food_categories: true
+    }
   })
+
+  const { vegPrice, nonVegPrice } = mapFoodPrices(
+    listing.listing_food_categories
+  )
 
   return {
     ...listing,
+    vegPrice,
+    nonVegPrice,
     venue_images: formatImages(listing.venue_images)
   }
 }
+
+
 
 //! DELETE — Soft delete (set status = false)
 export const deleteListingDB = async (id) => {
