@@ -148,7 +148,7 @@ const Blog = () => {
   }, [slug, categoryId, page])
 
   return (
-    <section className="bg-gray-50">
+    <section className="bg-gray-50 select-none">
       <div className="max-w-7xl mx-auto px-4 py-10">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-400 mb-6 flex flex-wrap gap-1">
@@ -288,15 +288,15 @@ const Blog = () => {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg border cursor-pointer
+                    className={`w-15 h-10 flex items-center justify-center rounded-lg border cursor-pointer
           ${
             page === 1
-              ? "text-gray-400 border-gray-300"
-              : "text-red-600 border-gray-300 hover:bg-gray-100"
+              ? "text-gray-400 border-gray-300 hover:bg-gray-100"
+              : "text-gray-400 border-gray-300 hover:bg-gray-100"
           }
         `}
                   >
-                    ←
+                    Prev
                   </button>
 
                   {/* Page Numbers */}
@@ -325,15 +325,15 @@ const Blog = () => {
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg border
+                    className={`w-15 h-10 flex items-center justify-center rounded-lg border cursor-pointer
           ${
             page === totalPages
-              ? "text-gray-400 border-gray-300"
-              : "text-red-600 border-gray-300 hover:bg-gray-100"
+              ? "text-gray-400 border-gray-300 hover:bg-gray-100"
+              : "text-gray-400 border-gray-300 hover:bg-gray-100"
           }
         `}
                   >
-                    →
+                    Next
                   </button>
                 </div>
               </div>

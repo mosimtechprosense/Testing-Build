@@ -333,18 +333,24 @@ model listings {
 }
 
 model localities {
-  id               BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id               BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   name             String
   title            String
   heading          String?
-  description      String    @db.LongText
-  meta_description String    @db.Text
-  keywords         String    @db.Text
-  location_id      BigInt?   @db.UnsignedBigInt
-  city_id          BigInt    @db.UnsignedBigInt
+  description      String   @db.LongText
+  meta_description String   @db.Text
+  keywords         String   @db.Text
+  location_id      BigInt?  @db.UnsignedBigInt
+  city_id          BigInt   @db.UnsignedBigInt
   created_at       DateTime? @db.Timestamp(0)
   updated_at       DateTime? @db.Timestamp(0)
+
+  @@unique([city_id, name])
+  @@index([city_id])
+  @@index([name])
 }
+
+
 
 model location {
   id        Int      @id @default(autoincrement())

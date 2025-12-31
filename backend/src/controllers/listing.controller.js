@@ -1,7 +1,6 @@
 import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB, getSimilarListingsDB } from "../services/listing.service.js";
 
 
-
  //todo: CREATE LISTING
 export const createListing = async (req, res) => {
     try {
@@ -22,32 +21,38 @@ export const createListing = async (req, res) => {
 };
 
 
+
 //*  GET ALL LISTINGS (WITH FILTERS + PAGINATION)
 export const getAllListing = async (req, res) => {
-    try {
-        const filters = req.query;
+  try {
+    const filters = req.query;
 
-        const page = Number(filters.page) || 1;
-        const limit = Number(filters.limit) || 999;
-        const skip = (page - 1) * limit;
+    // 🔒 FRONTEND PAGINATION SUPPORT
+    const skip = Number(filters.skip) || 0;
+    const take = Number(filters.take) || 10; // default 10 per page
 
-        const { listings, totalCount } = await getAllListingDB(filters, skip, limit);
+    // Remove pagination params from filters
+    delete filters.skip;
+    delete filters.take;
 
-        res.status(200).json({
-            success: true,
-            total: totalCount,
-            page,
-            limit,
-            data: listings,
-        });
-    } catch (error) {
-        console.error("Get All Listings Error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server Error"
-        });
-    }
+    const { listings, totalCount } = await getAllListingDB(filters, skip, take);
+
+    res.status(200).json({
+      success: true,
+      total: totalCount,
+      skip,
+      take,
+      data: listings,
+    });
+  } catch (error) {
+    console.error("Get All Listings Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
 };
+
 
 
 //*  GET RECOMMENDED LISTINGS

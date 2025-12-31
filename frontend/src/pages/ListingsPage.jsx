@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/ListingCards/ListingCard";
 import { fetchListings, fetchLocalities } from "../api/listingsApi";
 
 export default function ListingsPage() {
+
   const { citySlug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -32,19 +33,36 @@ export default function ListingsPage() {
 
 
     skip: paramsFromUrl.skip || 0,
-    take: paramsFromUrl.take || 10,
+    take: 10,
   };
+
+const goPage = (pageNumber) => {
+  const newSkip = (pageNumber - 1) * 10;
+  pushUrl({ skip: newSkip });
+};
+
+
   
   const [filters, setFilters] = useState(initial);
   const [listings, setListings] = useState([]);
   const [localities, setLocalities] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile toggle
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const showingFrom = totalCount === 0 ? 0 : filters.skip + 1;
+  const showingTo = Math.min(filters.skip + filters.take, totalCount);
+
 
   useEffect(() => {
-    setFilters({ ...initial });
-  }, [citySlug, searchParams]);
+  if (filters.skip === undefined) return;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}, [filters.skip]);
+
 
   useEffect(() => { 
     fetchLocalities()
@@ -123,29 +141,37 @@ if (cleanedFilters.locality) {
   }, [filters]);
   
 
-  const pushUrl = (obj) => {
-    const merged = { ...filters, ...obj };
-    const cleaned = Object.fromEntries(
-      Object.entries(merged).filter(([k, v]) => {
-        if (v === undefined || v === null || v === "") return false;
-        if (["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(k) && isNaN(Number(v))) return false;
-        return true;
-      })
-    );
+const pushUrl = (obj) => {
+  const merged = { ...filters, ...obj, take: 10 };
 
-    const qs = new URLSearchParams();
-    Object.entries(cleaned).forEach(([k, v]) => qs.set(k, String(v).replace(/-/g, " ")));
-    setSearchParams(qs);
-    setFilters(cleaned);
-  };
+  const cleaned = Object.fromEntries(
+    Object.entries(merged).filter(([k, v]) => {
+      if (v === undefined || v === null || v === "") return false;
+      if (
+        ["minBudget", "maxBudget", "skip", "vegetarian", "nonVegetarian"].includes(k) &&
+        isNaN(Number(v))
+      )
+        return false;
+      return true;
+    })
+  );
+
+  cleaned.take = 10;
+
+  const qs = new URLSearchParams();
+  Object.entries(cleaned).forEach(([k, v]) =>
+    qs.set(k, String(v))
+  );
+
+  setSearchParams(qs, { replace: false, preventScrollReset: true });
+  setFilters(cleaned);
+};
+
 
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1;
   const totalPages = Math.ceil((totalCount || 0) / (filters.take || 10)) || 1;
 
-  const goPage = (pageNumber) => {
-    const newSkip = (pageNumber - 1) * (filters.take || 10);
-    pushUrl({ skip: newSkip });
-  };
+
 
   return (
     <div className="min-h bg-gray-50 p-4 md:p-6">
@@ -165,6 +191,9 @@ if (cleanedFilters.locality) {
 
   {/* Listings container */}
   <main className="flex-1 space">
+
+     {/* SCROLL TARGET */}
+
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
       <h1 className="text-2xl font-bold">
         Listings{filters.city ? ` — ${filters.city}` : ""}
@@ -186,28 +215,58 @@ if (cleanedFilters.locality) {
       </div>
     )}
 
-    {/* Pagination */}
-    <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-2">
+{/* PAGINATION */}
+{totalPages > 1 && (
+  <div className="mt-10 space-y-4">
+    <p className="text-sm text-gray-500 text-center">
+      Showing {showingFrom} to {showingTo} of {totalCount} results
+    </p>
+
+    <div className="flex justify-center gap-2 flex-wrap">
+      {/* Prev */}
       <button
-        className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
         onClick={() => goPage(Math.max(1, currentPage - 1))}
-        disabled={currentPage <= 1}
+        disabled={currentPage === 1}
+        className="w-15 h-10 flex items-center justify-center rounded-lg border cursor-pointer
+          text-gray-400 border-gray-300 hover:bg-gray-100 disabled:opacity-50"
       >
         Prev
       </button>
 
-      <div className="text-gray-600">
-        Page {currentPage} of {totalPages}
-      </div>
+      {/* Page Numbers */}
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const p = i + 1;
+        const isActive = p === currentPage;
 
+        return (
+          <button
+            key={p}
+            onClick={() => goPage(p)}
+            className={`w-10 h-10 flex items-center justify-center rounded-lg border transition cursor-pointer
+              ${
+                isActive
+                  ? "bg-red-600 text-white border-red-600"
+                  : "text-red-600 border-gray-300 hover:bg-gray-100"
+              }`}
+          >
+            {p}
+          </button>
+        );
+      })}
+
+      {/* Next */}
       <button
-        className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
         onClick={() => goPage(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage >= totalPages}
+        disabled={currentPage === totalPages}
+        className="w-15 h-10 flex items-center justify-center rounded-lg border cursor-pointer
+          text-gray-400 border-gray-300 hover:bg-gray-100 disabled:opacity-50"
       >
         Next
       </button>
     </div>
+  </div>
+)}
+
   </main>
 </div>
     </div>
