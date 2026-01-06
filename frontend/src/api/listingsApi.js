@@ -20,7 +20,6 @@ export const fetchListings = async (filters = {}) => {
   });
 
   const url = `${API_BASE}/api/listings?${params.toString()}`;
-  console.log("🌐 fetchListings URL:", url);
 
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch listings");

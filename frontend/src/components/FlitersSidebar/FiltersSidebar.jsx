@@ -37,12 +37,16 @@ export default function FiltersSidebar({
       />
       <hr className="my-4" />
 
-      <GuestRange
-        value={[filters.minGuests || 0, filters.maxGuests || 1200]}
-        onChange={([minGuests, maxGuests]) =>
-          setFilters({ minGuests, maxGuests, skip: 0 })
-        }
-      />
+<GuestRange
+  value={[filters.minGuests ?? 0, filters.maxGuests ?? 1200]}
+  onChange={([minGuests, maxGuests]) =>
+    setFilters({ minGuests, maxGuests, skip: 0 })
+  }
+/>
+
+
+
+
       <hr className="my-4" />
 
       <VenueTypeFilter setFilters={setFilters} />

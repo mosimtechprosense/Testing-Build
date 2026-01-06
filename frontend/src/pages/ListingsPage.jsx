@@ -10,13 +10,14 @@ export default function ListingsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const paramsFromUrl = useMemo(() => {
-    const obj = Object.fromEntries([...searchParams.entries()]);
-    ["skip", "take", "minBudget", "maxBudget", "vegetarian", "nonVegetarian"].forEach(key => {
-      if (obj[key]) obj[key] = Number(obj[key]);
-    });
-    return obj;
-  }, [searchParams]);
+const paramsFromUrl = useMemo(() => {
+  const obj = Object.fromEntries([...searchParams.entries()]);
+  ["skip", "take", "minBudget", "maxBudget", "minGuests", "maxGuests", "vegetarian", "nonVegetarian"].forEach(key => {
+    if (obj[key] !== undefined) obj[key] = Number(obj[key]);
+  });
+  return obj;
+}, [searchParams]);
+
 
   const initial = {
     city: citySlug ? decodeURIComponent(citySlug) : paramsFromUrl.city || undefined,
@@ -38,7 +39,7 @@ export default function ListingsPage() {
   };
 
 const goPage = (pageNumber) => {
-  const newSkip = (pageNumber - 1) * 10;
+  const newSkip = (pageNumber - 1) * (filters.take || 10);
   pushUrl({ skip: newSkip });
 };
 
@@ -82,13 +83,10 @@ const goPage = (pageNumber) => {
       })
     );
 
-    if (cleanedFilters.minGuests == null) {
-  delete cleanedFilters.minGuests
-}
+    cleanedFilters.minGuests = cleanedFilters.minGuests ?? 0;
+    cleanedFilters.maxGuests = cleanedFilters.maxGuests ?? 1200;
 
-if (cleanedFilters.maxGuests == null) {
-  delete cleanedFilters.maxGuests
-}
+
 
     if (
   cleanedFilters.search &&
@@ -142,34 +140,42 @@ if (cleanedFilters.locality) {
   }, [filters]);
   
 
-const pushUrl = (obj) => {
+  const pushUrl = (obj) => {
+  // Merge new values into existing filters
   const merged = { ...filters, ...obj };
 
-  if (obj.locality) {
-    const slug =
-      typeof obj.locality === "string"
-        ? obj.locality.replace(/\s+/g, "-").toLowerCase()
-        : "";
-
-    const qs = new URLSearchParams();
-    if (merged.search) qs.set("search", merged.search);
-    qs.set("skip", "0");
-    qs.set("take", "10");
-
-    navigate(`/banquet-hall-in/${slug}?${qs.toString()}`, { replace: false });
-
-    // Only update locality in filters; citySlug will handle API sync
-    setFilters({
-      ...merged,
-      locality: obj.locality,
-      skip: 0,
-    });
-
-    return;
+  // Reset pagination if any filter changes (not skip itself)
+  if (Object.keys(obj).some(key => key !== "skip")) {
+    merged.skip = 0;
   }
 
-  // Handle other cases if needed
+  // Build query string
+  const qs = new URLSearchParams();
+  if (merged.search) qs.set("search", merged.search);
+  if (merged.skip !== undefined) qs.set("skip", merged.skip);
+  qs.set("minGuests", merged.minGuests ?? 0);
+  qs.set("maxGuests", merged.maxGuests ?? 1200);
+
+  qs.set("take", merged.take || 10);
+
+  // Determine the path slug
+  const locality =
+    obj.locality !== undefined ? obj.locality : filters.locality;
+
+  const slug =
+    locality && typeof locality === "string"
+      ? locality.replace(/\s+/g, "-").toLowerCase()
+      : "";
+
+  const path = slug ? `/banquet-hall-in/${slug}` : `/banquet-hall-in`;
+
+  // Update URL and filters
+  navigate(`${path}?${qs.toString()}`, { replace: false });
+  setFilters(merged);
 };
+
+
+
 
 
 

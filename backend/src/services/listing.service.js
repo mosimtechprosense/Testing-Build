@@ -116,18 +116,24 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
         }
       : {}),
 
-    // Guest range filters
-    AND: [
-      { max_guest: { gte: safeMinGuests } },
-      { min_guest: { lte: safeMaxGuests } }
-    ],
+
+
+        // Guest range filters
+    ...(minGuests || maxGuests
+      ? {
+          AND: [
+            minGuests ? { min_guest: { gte: Number(minGuests) } } : {},
+            maxGuests ? { max_guest: { lte: Number(maxGuests) } } : {}
+          ].filter(Boolean)
+        }
+      : {}),
 
     // Budget range filters
     ...(minBudget || maxBudget
       ? {
           AND: [
-            minBudget ? { max_budget: { gte: Number(minBudget) } } : {},
-            maxBudget ? { min_budget: { lte: Number(maxBudget) } } : {}
+            minBudget ? { min_budget: { gte: Number(minBudget) } } : {},
+            maxBudget ? { max_budget: { lte: Number(maxBudget) } } : {}
           ].filter(Boolean)
         }
       : {}),

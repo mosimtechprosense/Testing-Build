@@ -1,11 +1,22 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Range } from "react-range"
 
-export default function GuestRange({ onChange }) {
+export default function GuestRange({ onChange, value }) {
   const min = 0
   const max = 1200
 
-  const [localValue, setLocalValue] = useState([min, max])
+  const [localValue, setLocalValue] = useState(value || [min, max])
+
+  // Sync internal state when external value changes
+useEffect(() => {
+  if (!value) return;
+  const [min, maxValue] = value;
+  setLocalValue([
+    Math.max(0, min),
+    Math.min(1200, maxValue ?? 1200)
+  ]);
+}, [value]);
+
 
   const handleChange = (values) => {
     const sorted = [...values].sort((a, b) => a - b)
