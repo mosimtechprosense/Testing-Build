@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams, useNavigate  } from "react-router-dom";
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/ListingCards/ListingCard";
 import { fetchListings, fetchLocalities } from "../api/listingsApi";
@@ -7,6 +7,7 @@ import { fetchListings, fetchLocalities } from "../api/listingsApi";
 export default function ListingsPage() {
 
   const { citySlug } = useParams();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const paramsFromUrl = useMemo(() => {
@@ -142,30 +143,34 @@ if (cleanedFilters.locality) {
   
 
 const pushUrl = (obj) => {
-  const merged = { ...filters, ...obj, take: 10 };
+  const merged = { ...filters, ...obj };
 
-  const cleaned = Object.fromEntries(
-    Object.entries(merged).filter(([k, v]) => {
-      if (v === undefined || v === null || v === "") return false;
-      if (
-        ["minBudget", "maxBudget", "skip", "vegetarian", "nonVegetarian"].includes(k) &&
-        isNaN(Number(v))
-      )
-        return false;
-      return true;
-    })
-  );
+  if (obj.locality) {
+    const slug =
+      typeof obj.locality === "string"
+        ? obj.locality.replace(/\s+/g, "-").toLowerCase()
+        : "";
 
-  cleaned.take = 10;
+    const qs = new URLSearchParams();
+    if (merged.search) qs.set("search", merged.search);
+    qs.set("skip", "0");
+    qs.set("take", "10");
 
-  const qs = new URLSearchParams();
-  Object.entries(cleaned).forEach(([k, v]) =>
-    qs.set(k, String(v))
-  );
+    navigate(`/banquet-hall-in/${slug}?${qs.toString()}`, { replace: false });
 
-  setSearchParams(qs, { replace: false, preventScrollReset: true });
-  setFilters(cleaned);
+    // Only update locality in filters; citySlug will handle API sync
+    setFilters({
+      ...merged,
+      locality: obj.locality,
+      skip: 0,
+    });
+
+    return;
+  }
+
+  // Handle other cases if needed
 };
+
 
 
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1;

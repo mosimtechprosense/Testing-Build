@@ -189,6 +189,24 @@ model hall_capacities {
   @@index([listing_id], map: "fk_hall_capacities_listing")
 }
 
+model ListingFaq {
+  id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  question  String
+  answer    String
+  order     Int      @default(0)
+  isActive  Boolean  @map("is_active")
+
+  listingId BigInt   @map("listing_id") @db.UnsignedBigInt
+  listing   listings @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime? @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(0)
+
+  @@map("listing_faqs")
+  @@index([listingId])
+}
+
+
 model inquiries {
   id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   name       String
@@ -319,7 +337,9 @@ model listings {
   city_id         BigInt?           @db.UnsignedBigInt
   hall_capacities hall_capacities[]
   venue_images    venue_images[]
-   listing_food_categories listing_food_categories[]
+  listing_food_categories listing_food_categories[]
+  faqs ListingFaq[]
+
 
   @@index([title], map: "Title_index")
   @@index([min_budget, max_budget], map: "idx_budget_range")

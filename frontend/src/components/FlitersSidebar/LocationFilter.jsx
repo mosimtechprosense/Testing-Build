@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { CiLocationOn } from "react-icons/ci";
 
-export default function LocationFilter({ setFilters }) {
+export default function LocationFilter({ setFilters, value }) {
   const [locationQuery, setLocationQuery] = useState("");
   const [locations, setLocations] = useState([]);
   const [filteredLocations, setFilteredLocations] = useState([]);
@@ -17,6 +17,16 @@ export default function LocationFilter({ setFilters }) {
       })
       .catch(() => {});
   }, []);
+
+useEffect(() => {
+  if (!value) {
+    setLocationQuery("")
+    return
+  }
+  setLocationQuery(value.replace(/-/g, " "))
+}, [value])
+
+
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -41,6 +51,8 @@ export default function LocationFilter({ setFilters }) {
   skip: 0
 });
   };
+
+
 
   return (
     <div>

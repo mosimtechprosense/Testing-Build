@@ -10,6 +10,7 @@ import HallCapacities from "../components/listingsDetails/HallCapacities"
 import AboutSection from "../components/listingsDetails/AboutSection"
 import FeaturesSection from "../components/listingsDetails/FeaturesSection"
 import PoliciesSection from "../components/listingsDetails/PoliciesSection"
+import FaqSection from "../components/ListingCards/FaqSection"
 
 export default function ListingDetailsDynamic() {
   const { id } = useParams()
@@ -197,21 +198,7 @@ export default function ListingDetailsDynamic() {
           <PoliciesSection policies={listing.policies} />
 
           {/* FAQ */}
-          {faqs.length > 0 && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">
-                Frequently Asked Questions
-              </h2>
-              <div className="space-y-4">
-                {faqs.map((faq, i) => (
-                  <div key={i} className="border rounded p-4">
-                    <p className="font-semibold">{faq.question}</p>
-                    <p className="text-gray-700 mt-1">{faq.answer}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+          <FaqSection faqs={faqs} />
 
           {/* MAP */}
           <section>

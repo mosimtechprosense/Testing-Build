@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { useNavigate  } from "react-router-dom"
 import { HiLocationMarker, HiUserGroup } from "react-icons/hi"
 import { UIContext } from "../../store/UIContext"
 import Badge from "../listingsDetails/Badge"
@@ -12,6 +12,7 @@ export default function ListingCard({ item }) {
   const [showTags, setShowTags] = useState(false)
   const tooltipRef = useRef(null)
   const scrollStartRef = useRef(0)
+  const navigate = useNavigate()
   const images = item?.venue_images || []
   const [activeImage, setActiveImage] = useState(
     images?.[0]?.image_url || "/placeholder.jpg"
@@ -59,8 +60,10 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
 
 
   return (
-    <Link to={listingUrl} className="block">
-    <article className="bg-white rounded-xl shadow-md flex flex-col md:flex-row hover:shadow-lg transition">
+ <article
+   onClick={() => navigate(listingUrl)}
+   className="bg-white rounded-xl shadow-md flex flex-col md:flex-row hover:shadow-lg transition cursor-pointer"
+ >
       {/* Image */}
       <div className="w-full md:w-1/3 p-4">
         {/* Main Image */}
@@ -202,6 +205,7 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
           {/* Call */}
           <a
             href="tel:918920597474"
+            onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-sm text-white px-3 py-2 rounded-xl transition"
             aria-label="Call now"
           >
@@ -211,6 +215,5 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
         </div>
       </div>
     </article>
-    </Link>
   )
 }

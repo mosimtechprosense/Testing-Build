@@ -204,14 +204,19 @@ return { listings: updatedListings, totalCount }
 
 //* READ — Get single listing by ID
 export const getListingByIdDB = async (id) => {
-  const listing = await prisma.listings.findUnique({
-    where: { id: BigInt(id) },
-    include: { 
-      venue_images: true,
-      hall_capacities: true,
-      listing_food_categories: true
+const listing = await prisma.listings.findUnique({
+  where: { id: BigInt(id) },
+  include: { 
+    venue_images: true,
+    hall_capacities: true,
+    listing_food_categories: true,
+    faqs: {
+      where: { isActive: true },
+      orderBy: { order: "asc" }
     }
-  })
+  }
+})
+
 
   if (!listing) return null
 

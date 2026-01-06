@@ -23,7 +23,8 @@ export default function FiltersSidebar({
 
       {/* LocationFilter with pre-filled location */}
       <LocationFilter 
-        setFilters={setFilters} 
+        setFilters={setFilters}
+        value={filters.locality} 
         initialLocation={filters.location || initialLocation}
       />
       <hr className="my-4" />
