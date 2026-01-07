@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SortFilter({ filters, setFilters }) {
 const sortOptions = [
@@ -12,6 +12,19 @@ const sortOptions = [
 
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+    // handle closed dropdown when click outside
+    useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
 
   // Filter options based on input query
   const filtered = sortOptions.filter((s) =>
@@ -34,7 +47,7 @@ const sortOptions = [
 
 
   return (
-    <div className="relative w-full">
+    <div ref={dropdownRef} className="relative w-full">
       <label className="font-semibold text-sm">Sort by</label>
       <div className="relative mt-2">
         <input

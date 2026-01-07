@@ -9,8 +9,8 @@ import SortFilter from "./SortFilter";
 export default function FiltersSidebar({
   filters,
   setFilters,
-  initialVenue = "",        // pre-selected venue service
-  initialLocation = "",     // pre-selected location
+  initialVenue = "",        
+  initialLocation = "",     
 }) {
   return (
     <aside className="bg-white p-4 rounded-lg shadow md:w-72 select-none">

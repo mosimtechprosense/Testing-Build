@@ -9,7 +9,7 @@ export default function FloatingWhatsApp() {
       aria-label="Chat on WhatsApp"
       className="
         fixed
-        bottom-6 right-6
+        bottom-18 md:bottom-6 lg:bottom-6 right-6
         z-[9999]
         flex items-center justify-center
         w-14 h-14

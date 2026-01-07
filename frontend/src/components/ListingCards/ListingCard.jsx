@@ -1,11 +1,10 @@
 import { useContext, useState, useRef, useEffect } from "react"
-import { useNavigate  } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { HiLocationMarker, HiUserGroup } from "react-icons/hi"
 import { UIContext } from "../../store/UIContext"
 import Badge from "../listingsDetails/Badge"
 import { FaPhoneAlt } from "react-icons/fa"
 import FoodPrice from "../listingsDetails/FoodPrice"
-
 
 export default function ListingCard({ item }) {
   const { setPopupOpen } = useContext(UIContext)
@@ -53,17 +52,15 @@ export default function ListingCard({ item }) {
   }, [showTags])
 
   const localitySlug =
-  item.locality_slug ||
-  item.locality?.replace(/\s+/g, "-").toLowerCase()
+    item.locality_slug || item.locality?.replace(/\s+/g, "-").toLowerCase()
 
-const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
-
+  const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
 
   return (
- <article
-   onClick={() => navigate(listingUrl)}
-   className="bg-white rounded-xl shadow-md flex flex-col md:flex-row hover:shadow-lg transition cursor-pointer"
- >
+    <article
+      onClick={() => navigate(listingUrl)}
+      className="bg-white rounded-xl shadow-md flex flex-col md:flex-row hover:shadow-lg transition cursor-pointer"
+    >
       {/* Image */}
       <div className="w-full md:w-1/3 p-4">
         {/* Main Image */}
@@ -133,10 +130,7 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
         </div>
 
         {/* Food Prices */}
-<FoodPrice
-  vegPrice={item.vegPrice}
-  nonVegPrice={item.nonVegPrice}
-/>
+        <FoodPrice vegPrice={item.vegPrice} nonVegPrice={item.nonVegPrice} />
 
         {/* Keywords with +more */}
         <div className="mt-3 flex flex-wrap gap-2 relative">
@@ -190,14 +184,14 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
         </div>
 
         {/* CTA */}
-        <div className="mt-auto flex flex-wrap justify-end gap-2">
+        <div className="mt-4 sm:mt-auto md:mt-auto flex flex-row gap-2 justify-end flex-wrap">
           {/* Get a Quote */}
           <button
-              onClick={(e) => { 
-                e.stopPropagation()
-                setPopupOpen(true)
-              }}
-            className="bg-red-600 hover:bg-red-700 text-sm text-white px-4 py-2 rounded-xl transition cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation()
+              setPopupOpen(true)
+            }}
+            className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-sm text-white px-4 py-2 rounded-xl transition cursor-pointer min-w-[120px]"
           >
             Get a Quote
           </button>
@@ -206,7 +200,7 @@ const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
           <a
             href="tel:918920597474"
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-sm text-white px-3 py-2 rounded-xl transition"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-green-500 hover:bg-green-600 text-sm text-white px-3 py-2 rounded-xl transition min-w-[120px]"
             aria-label="Call now"
           >
             <FaPhoneAlt className="text-xs" />

@@ -54,6 +54,7 @@ return {
 //* READ — Get all listings (with filters)
 export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
   const {
+    mealType,
     city,
     locality,
     minGuests,
@@ -62,8 +63,6 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
     maxBudget,
     venueType,
     category,
-    vegetarian,
-    nonVegetarian,
     recommended,
     highDemand,
     search,
@@ -71,8 +70,6 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
     order = "desc"
   } = filters
 
-  const safeMinGuests = minGuests !== undefined ? Number(minGuests) : 0
-  const safeMaxGuests = maxGuests !== undefined ? Number(maxGuests) : 100000
 
   // Normalize boolean filters from query params
   const recommendedBool = recommended === "true" || recommended === true
@@ -150,10 +147,22 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
       : {}),
 
     // Meal Type filters
-    ...(vegetarian === "true" ? { features: { contains: "vegetarian" } } : {}),
-    ...(nonVegetarian === "true"
-      ? { features: { contains: "non-vegetarian" } }
-      : {}),
+...(mealType === "veg"
+  ? {
+      listing_food_categories: {
+        none: { food_category_id: 2 }
+      }
+    }
+  : {}),
+
+...(mealType === "nonVeg"
+  ? {
+      listing_food_categories: {
+        some: { food_category_id: 2 }
+      }
+    }
+  : {}),
+
 
     // Recommended / High demand
     ...(recommendedBool ? { recommended: true } : {}),
@@ -197,6 +206,7 @@ const updatedListings = listings.map((listing) => {
     listing.listing_food_categories
   )
 
+  
   return {
     ...listing,
     vegPrice,

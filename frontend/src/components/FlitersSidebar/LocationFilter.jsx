@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CiLocationOn } from "react-icons/ci";
 
 export default function LocationFilter({ setFilters, value }) {
@@ -6,6 +6,7 @@ export default function LocationFilter({ setFilters, value }) {
   const [locations, setLocations] = useState([]);
   const [filteredLocations, setFilteredLocations] = useState([]);
   const [showList, setShowList] = useState(false);
+   const dropdownRef = useRef(null);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/locations")
@@ -25,6 +26,19 @@ useEffect(() => {
   }
   setLocationQuery(value.replace(/-/g, " "))
 }, [value])
+
+
+
+  // handle closed dropdown when click outside
+  useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setShowList(false);
+    }
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
 
 
@@ -55,7 +69,7 @@ useEffect(() => {
 
 
   return (
-    <div>
+    <div ref={dropdownRef}>
       <label className="font-semibold text-sm">Location</label>
 
       <div className="relative mt-2">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function VenueTypeFilter({ setFilters }) {
   const venueTypeOptions = [
@@ -22,13 +22,26 @@ export default function VenueTypeFilter({ setFilters }) {
 
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+
+  // handle closed dropdown when click outside
+  useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setOpen(false);
+    }
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
   const filtered = venueTypeOptions.filter((v) =>
     v.label.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
-    <div>
+    <div ref={dropdownRef}>
       <label className="font-semibold text-sm">Venue Type</label>
 
       <div className="relative mt-2">
