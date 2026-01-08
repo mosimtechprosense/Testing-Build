@@ -1,44 +1,90 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"
 
-export default function VenueTypeFilter({ setFilters }) {
+export default function VenueTypeFilter({ setFilters, value }) {
   const venueTypeOptions = [
-    { id: "banquet", label: "Banquet Halls" },
-    { id: "marriage-gardens", label: "Marriage Gardens" },
-    { id: "wedding-farmhouse", label: "Wedding Farmhouse" },
-    { id: "party-halls", label: "Party Halls" },
-    { id: "five-star-hotels", label: "5 Star Wedding Hotels" },
-    { id: "destination-weddings", label: "Destination Weddings" },
-    { id: "makeup-artists", label: "Makeup Artists" },
-    { id: "mehandi-artists", label: "Mehandi Artists" },
-    { id: "decorators", label: "Decorators" },
-    { id: "invitation-cards", label: "Invitation Cards" },
-    { id: "choreographers", label: "Choreographers / Dancers" },
-    { id: "photographers", label: "Photographers / Videography" },
-    { id: "wedding-bands", label: "Wedding Bands" },
-    { id: "transportation", label: "Wedding Transportation" },
-    { id: "bridal-wear", label: "Bridal Wear" },
-    { id: "groom-wear", label: "Groom Wear" },
-  ];
+    { label: "Banquet Halls", path: "/venues/banquet-halls", categoryId: 6 },
+    {
+      label: "Banquet with Hotel Room",
+      path: "/venues/banquet-with-room",
+      categoryId: 9
+    },
+    { label: "Marriage Halls", path: "/venues/marriage-halls", categoryId: 8 },
+    {
+      label: "Wedding Farmhouse",
+      path: "/venues/wedding-farmhouse",
+      categoryId: 13
+    },
+    { label: "Party Halls", path: "/venues/party-halls", categoryId: 7 },
+    {
+      label: "5 Star Wedding Hotels",
+      path: "/venues/5-star-wedding-hotels",
+      categoryId: 11
+    },
+    {
+      label: "Destination Weddings",
+      path: "/venues/destination-weddings",
+      categoryId: 12
+    },
+    {
+      label: "Small Function Halls",
+      path: "/venues/small-function-halls",
+      categoryId: 14
+    },
+    {
+      label: "Engagement Venue",
+      path: "/venues/engagement-venue",
+      categoryId: 16
+    },
+    { label: "Baby Shower", path: "/venues/baby-shower", categoryId: 18 },
+    { label: "Sikh Wedding", path: "/venues/sikh-wedding", categoryId: 20 },
+    {
+      label: "Cocktail Venues",
+      path: "/venues/cocktail-venues",
+      categoryId: 5
+    },
+    { label: "Party Lawn", path: "/venues/party-lawn", categoryId: 10 },
+    {
+      label: "Corporate Events",
+      path: "/venues/corporate-events",
+      categoryId: 15
+    },
+    { label: "Ring Ceremony", path: "/venues/ring-ceremony", categoryId: 17 },
+    {
+      label: "Mehendi Ceremony",
+      path: "/venues/mehendi-ceremony",
+      categoryId: 21
+    },
+    {
+      label: "Retirement Party",
+      path: "/venues/retirement-party",
+      categoryId: 19
+    }
+  ]
 
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [query, setQuery] = useState("")
+  const [open, setOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
+  useEffect(() => {
+    if (value) {
+      setQuery(value)
+    }
+  }, [value])
 
   // handle closed dropdown when click outside
   useEffect(() => {
-  const handleClickOutside = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-      setOpen(false);
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false)
+      }
     }
-  };
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
-}, []);
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const filtered = venueTypeOptions.filter((v) =>
     v.label.toLowerCase().includes(query.toLowerCase())
-  );
+  )
 
   return (
     <div ref={dropdownRef}>
@@ -48,10 +94,10 @@ export default function VenueTypeFilter({ setFilters }) {
         {/* INPUT */}
         <div className="flex items-center w-full h-9 border border-gray-300 rounded px-3 shadow-inner shadow-gray-200 focus-within:ring-2 focus-within:ring-red-400 bg-white">
           <input
-            value={query}
+            value={query || value || ""}
             onChange={(e) => {
-              setQuery(e.target.value);
-              setOpen(true);
+              setQuery(e.target.value)
+              setOpen(true)
             }}
             onFocus={() => setOpen(true)}
             placeholder="Select venue type"
@@ -64,11 +110,17 @@ export default function VenueTypeFilter({ setFilters }) {
           <div className="absolute left-0 right-0 bg-white border border-gray-300 rounded mt-1 max-h-56 overflow-y-auto shadow-lg z-[999] scrollbar-none">
             {filtered.map((item) => (
               <div
-                key={item.id}
+                key={item.categoryId}
                 onClick={() => {
-                  setQuery(item.label);
-                  setFilters({ venueType: item.id, skip: 0 });
-                  setOpen(false);
+                  setQuery(item.label)
+                  setFilters({
+                    category: item.categoryId,
+                    search: item.label,
+                    serviceLabel: item.label,
+                    skip: 0
+                  })
+
+                  setOpen(false)
                 }}
                 className="flex items-center text-[#09122C] text-sm py-2 px-3 hover:bg-[#f3f3f3] hover:text-[#e71717] rounded cursor-pointer"
               >
@@ -79,5 +131,5 @@ export default function VenueTypeFilter({ setFilters }) {
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -1,30 +1,30 @@
-import SearchFilter from "./SearchFilter";
-import LocationFilter from "./LocationFilter";
-import PriceRange from "./PriceRange";
-import GuestRange from "./GuestRange";
-import VenueTypeFilter from "./VenueTypeFilter";
-import MealTypeFilter from "./MealTypeFilter";
-import SortFilter from "./SortFilter";
+import SearchFilter from "./SearchFilter"
+import LocationFilter from "./LocationFilter"
+import PriceRange from "./PriceRange"
+import GuestRange from "./GuestRange"
+import VenueTypeFilter from "./VenueTypeFilter"
+import MealTypeFilter from "./MealTypeFilter"
+import SortFilter from "./SortFilter"
 
 export default function FiltersSidebar({
   filters,
   setFilters,
-  initialVenue = "",        
-  initialLocation = "",     
+  initialVenue = "",
+  initialLocation = ""
 }) {
   return (
     <aside className="bg-white p-4 rounded-lg shadow md:w-72 select-none">
       {/* SearchFilter with pre-filled venue service */}
-      <SearchFilter 
-        search={filters.search || initialVenue} 
-        setFilters={setFilters} 
+      <SearchFilter
+        search={filters.search}
+        setFilters={setFilters}
+        initialVenue={initialVenue}
       />
       <hr className="my-4" />
-
       {/* LocationFilter with pre-filled location */}
-      <LocationFilter 
+      <LocationFilter
         setFilters={setFilters}
-        value={filters.locality} 
+        value={filters.locality}
         initialLocation={filters.location || initialLocation}
       />
       <hr className="my-4" />
@@ -37,19 +37,17 @@ export default function FiltersSidebar({
       />
       <hr className="my-4" />
 
-<GuestRange
-  value={[filters.minGuests ?? 0, filters.maxGuests ?? 1200]}
-  onChange={([minGuests, maxGuests]) =>
-    setFilters({ minGuests, maxGuests, skip: 0 })
-  }
-/>
-
-
-
+      <GuestRange
+        value={[filters.minGuests ?? 0, filters.maxGuests ?? 1200]}
+        onChange={([minGuests, maxGuests]) =>
+          setFilters({ minGuests, maxGuests, skip: 0 })
+        }
+      />
 
       <hr className="my-4" />
 
-      <VenueTypeFilter setFilters={setFilters} />
+      {/* hide temprerory */}
+      {/* <VenueTypeFilter setFilters={setFilters} /> */}
       <hr className="my-4" />
 
       <MealTypeFilter filters={filters} setFilters={setFilters} />
@@ -57,5 +55,5 @@ export default function FiltersSidebar({
 
       <SortFilter filters={filters} setFilters={setFilters} />
     </aside>
-  );
+  )
 }

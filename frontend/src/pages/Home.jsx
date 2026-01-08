@@ -12,24 +12,46 @@ import RecommendedListings from "../components/ListingCards/RecommendedListings"
 import HighlyDemandedListings from "../components/ListingCards/HighlyDemandedListings"
 
 const Home = () => {
-  const services = [
-    { name: "Banquet Halls" },
-    { name: "Marriage Gardens" },
-    { name: "Wedding Farmhouse" },
-    { name: "Party Halls" },
-    { name: "5 Star Wedding Hotels" },
-    { name: "Destination Weddings" },
-    { name: "Photographers / Videography" },
-    { name: "Makeup Artists" },
-    { name: "Mehandi Artists" },
-    { name: "Decorators" },
-    { name: "Invitation Cards" },
-    { name: "Choreographers / Dancers" },
-    { name: "Wedding Bands" },
-    { name: "Wedding Transportation / Vintage cars" },
-    { name: "Bridal Wear" },
-    { name: "Groom Wear" }
-  ]
+const services = [
+  { label: "Banquet Halls", path: "/venues/banquet-halls", categoryId: 6 },
+  { label: "Banquet with Hotel Room", path: "/venues/banquet-with-room", categoryId: 9 },
+  { label: "Marriage Halls", path: "/venues/marriage-halls", categoryId: 8 },
+  { label: "Wedding Farmhouse", path: "/venues/wedding-farmhouse", categoryId: 13 },
+  { label: "Party Halls", path: "/venues/party-halls", categoryId: 7 },
+  { label: "5 Star Wedding Hotels", path: "/venues/5-star-wedding-hotels", categoryId: 11 },
+  { label: "Destination Weddings", path: "/venues/destination-weddings", categoryId: 12 },
+  { label: "Small Function Halls", path: "/venues/small-function-halls", categoryId: 14 },
+  { label: "Engagement Venue", path: "/venues/engagement-venue", categoryId: 16 },
+  { label: "Baby Shower", path: "/venues/baby-shower", categoryId: 18 },
+  { label: "Sikh Wedding", path: "/venues/sikh-wedding", categoryId: 20 },
+  { label: "Cocktail Venues", path: "/venues/cocktail-venues", categoryId: 5 },
+  { label: "Party Lawn", path: "/venues/party-lawn", categoryId: 10 },
+  { label: "Corporate Events", path: "/venues/corporate-events", categoryId: 15 },
+  { label: "Ring Ceremony", path: "/venues/ring-ceremony", categoryId: 17 },
+  { label: "Mehendi Ceremony", path: "/venues/mehendi-ceremony", categoryId: 21 },
+  { label: "Retirement Party", path: "/venues/retirement-party", categoryId: 19 }
+];
+
+const categoryToSlug = {
+  6: "banquet-hall",
+  7: "party-hall",
+  8: "marriage-hall",
+  9: "banquet-with-room",
+  10: "party-lawn",
+  11: "5-star-wedding-hotel",
+  12: "destination-wedding",
+  13: "wedding-farmhouse",
+  14: "small-function-hall",
+  15: "corporate-event",
+  16: "engagement-venue",
+  17: "ring-ceremony",
+  18: "baby-shower",
+  19: "retirement-party",
+  20: "sikh-wedding",
+  21: "mehendi-ceremony",
+  5: "cocktail-venue"
+};
+
 
   const navigate = useNavigate();
   
@@ -37,6 +59,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredServices, setFilteredServices] = useState(services)
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedService, setSelectedService] = useState(null)
 
   // search locations state
   const [locationQuery, setLocationQuery] = useState("")
@@ -65,22 +88,23 @@ const Home = () => {
     setSearchQuery(value)
 
     const filtered = services.filter((service) =>
-      service.name.toLowerCase().startsWith(value.toLowerCase())
+      service.label.toLowerCase().startsWith(value.toLowerCase())
     )
     setFilteredServices(filtered)
   }
 
-  const handleSelectService = (name) => {
-    setSearchQuery(name)
-    setShowSuggestions(false)
-  }
+const handleSelectService = (service) => {
+  setSearchQuery(service.label)
+  setSelectedService(service)
+  setShowSuggestions(false)
+}
 
   // location handlers
   const handleLocationChange = (e) => {
     const value = e.target.value
     setLocationQuery(value)
 
-    // filter by name or city name (case-insensitive)
+    // filter by label or city name (case-insensitive)
     const filtered = locations.filter((loc) => {
       const nameMatch = loc.name?.toLowerCase().includes(value.toLowerCase())
       const cityMatch = loc.city?.name
@@ -109,18 +133,23 @@ const Home = () => {
 
 // handleSearchClick
 const handleSearchClick = () => {
-  if (!searchQuery || !locationQuery) return;
+  if (!selectedService || !locationQuery) return;
 
   const localitySlug = locationQuery
     .toLowerCase()
     .replace(/\s+/g, "-")
     .trim();
 
-  const params = new URLSearchParams();
-  params.set("search", searchQuery);
-  params.set("locality", locationQuery);
+  // extract service slug from path
+const serviceSlug = categoryToSlug[selectedService.categoryId] || "banquet-hall";
 
-  navigate(`/banquet-hall-in/${localitySlug}?${params.toString()}`);
+
+  const params = new URLSearchParams();
+  params.set("search", selectedService.label);
+  params.set("locality", locationQuery);
+  params.set("category", selectedService.categoryId);
+
+  navigate(`/${serviceSlug}-in/${localitySlug}?${params.toString()}`);
 };
 
 
@@ -172,13 +201,13 @@ const handleSearchClick = () => {
                     filteredServices.map((item, idx) => (
                       <div
                         key={idx}
-                        onClick={() => handleSelectService(item.name)}
+                        onClick={() => handleSelectService(item)}
                         className="flex items-center px-3.5 py-3 text-gray-700 text-sm border-b border-gray-100 hover:bg-gray-100 cursor-pointer"
                       >
                         <div className="mr-3 p-2 rounded-full bg-gray-100">
                           <IoIosSearch className="text-gray-500" />
                         </div>
-                        <span className="text-[#414146]">{item.name}</span>
+                        <span className="text-[#414146]">{item.label}</span>
                       </div>
                     ))
                   ) : (

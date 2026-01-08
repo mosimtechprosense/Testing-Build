@@ -52,7 +52,10 @@ const Navbar = () => {
           <button onClick={quoteHandler} className="bg-[#dc2626] text-white text-[0.8rem] font-medium px-5 py-2.5 rounded hover:bg-red-700 cursor-pointer transition duration-200 whitespace-nowrap">
             Get a Quote
           </button>
-          <select
+
+
+          {/* temprerory hide */}
+          {/* <select
             className="px-5 py-2.5 rounded border text-[#212121] text-[0.8rem] font-medium cursor-pointer border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#dc2626]"
             defaultValue="Select"
           >
@@ -61,7 +64,9 @@ const Navbar = () => {
             </option>
             <option>Delhi</option>
             <option>Gurgaon</option>
-          </select>
+          </select> */}
+
+
         </div>
       </div>
       <HeroSection/>

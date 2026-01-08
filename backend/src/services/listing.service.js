@@ -93,14 +93,16 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
       : {}),
 
     // listing keywords
-    ...(category
-      ? {
-          keywords: {
-            contains: category,
-            mode: "insensitive"
-          }
+...(category
+  ? {
+      listing_categories: {
+        some: {
+          listing_category_id: Number(category)
         }
-      : {}),
+      }
+    }
+  : {}),
+
 
     // City / Locality filters
     ...(city ? { city: { equals: normalizedCity } } : {}),

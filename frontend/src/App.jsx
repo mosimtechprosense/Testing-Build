@@ -40,6 +40,7 @@ function App() {
             <Route path="/venues" element={<ListingsPage />} />
             <Route path="/venues/:categorySlug" element={<ListingsPage />} />
             <Route path="/banquet-hall-in/:localitySlug?" element={<ListingsPage />} />
+            <Route path="/:serviceSlug-in/:localitySlug?" element={<ListingsPage />} />
             <Route path="/banquet-hall-in/:localitySlug/:id" element={<ListingDetailsDynamic/>}/>
           </Routes>
           <FloatingWhatsApp />

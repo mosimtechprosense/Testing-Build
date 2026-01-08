@@ -6,6 +6,27 @@ import { fetchListings, fetchLocalities } from "../api/listingsApi"
 import MobileFilters from "../components/mobile/MobileFilters"
 
 export default function ListingsPage() {
+
+  const categoryToSlug = {
+  6: "banquet-hall",
+  7: "party-hall",
+  8: "marriage-hall",
+  9: "banquet-with-room",
+  10: "party-lawn",
+  11: "5-star-wedding-hotel",
+  12: "destination-wedding",
+  13: "wedding-farmhouse",
+  14: "small-function-hall",
+  15: "corporate-event",
+  16: "engagement-venue",
+  17: "ring-ceremony",
+  18: "baby-shower",
+  19: "retirement-party",
+  20: "sikh-wedding",
+  21: "mehendi-ceremony"
+};
+
+
   const { citySlug } = useParams()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -35,6 +56,9 @@ export default function ListingsPage() {
     city: citySlug
       ? decodeURIComponent(citySlug)
       : paramsFromUrl.city || undefined,
+    category: paramsFromUrl.category
+      ? Number(paramsFromUrl.category)
+      : undefined,
     search: paramsFromUrl.search || "",
     locality: paramsFromUrl.locality || undefined,
     venueType: paramsFromUrl.venueType || undefined,
@@ -50,10 +74,8 @@ export default function ListingsPage() {
         : undefined,
     vegetarian: paramsFromUrl.vegetarian ?? undefined,
     nonVegetarian: paramsFromUrl.nonVegetarian ?? undefined,
-
     sortBy: paramsFromUrl.sortBy || "created_at",
     order: paramsFromUrl.order || "desc",
-
     skip: paramsFromUrl.skip || 0,
     take: 10
   }
@@ -69,9 +91,21 @@ export default function ListingsPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(false)
 
-
   const showingFrom = totalCount === 0 ? 0 : filters.skip + 1
   const showingTo = Math.min(filters.skip + filters.take, totalCount)
+
+  useEffect(() => {
+  setFilters((prev) => ({
+    ...prev,
+    category: searchParams.get("category")
+      ? Number(searchParams.get("category"))
+      : undefined,
+    skip: searchParams.get("skip")
+      ? Number(searchParams.get("skip"))
+      : 0
+  }))
+}, [searchParams])
+
 
   useEffect(() => {
     if (filters.skip === undefined) return
@@ -103,10 +137,17 @@ export default function ListingsPage() {
       })
     )
 
+
+
     cleanedFilters.minGuests = cleanedFilters.minGuests ?? 0
     cleanedFilters.maxGuests = cleanedFilters.maxGuests ?? 1200
 
-    if (
+//  If category is selected, search must NOT filter listings
+if (cleanedFilters.category) {
+  delete cleanedFilters.search
+}
+
+if (
       cleanedFilters.search &&
       ["banquet hall", "banquet halls"].includes(
         cleanedFilters.search.toLowerCase().trim()
@@ -114,6 +155,7 @@ export default function ListingsPage() {
     ) {
       delete cleanedFilters.search
     }
+    
 
     if (cleanedFilters.locality) {
       // numeric locality (ID) from sidebar → ignore
@@ -153,6 +195,9 @@ export default function ListingsPage() {
     // both checked or none checked → no filtering
     delete cleanedFilters.vegetarian
     delete cleanedFilters.nonVegetarian
+
+    console.log("Fetching listings with filters:", cleanedFilters);
+
 
     fetchListings(cleanedFilters)
       .then((res) => {
@@ -208,7 +253,14 @@ export default function ListingsPage() {
         ? locality.replace(/\s+/g, "-").toLowerCase()
         : ""
 
-    const path = slug ? `/banquet-hall-in/${slug}` : `/banquet-hall-in`
+const serviceSlug =
+  filters.category && categoryToSlug[filters.category]
+    ? categoryToSlug[filters.category]
+    : "banquet-hall";
+
+
+  const path = slug ? `/${serviceSlug}-in/${slug}`: `/${serviceSlug}-in`;
+
 
     // Update URL and filters
     navigate(`${path}?${qs.toString()}`, { replace: false })
@@ -218,18 +270,29 @@ export default function ListingsPage() {
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1
   const totalPages = Math.ceil((totalCount || 0) / (filters.take || 10)) || 1
 
+  // PAGINATION WINDOW (max 10 buttons)
+  const MAX_PAGES = 10
+
+  const startPage = Math.floor((currentPage - 1) / MAX_PAGES) * MAX_PAGES + 1
+
+  const endPage = Math.min(startPage + MAX_PAGES - 1, totalPages)
+
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  )
+
   return (
     <div className="min-h bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto md:flex md:space-x-6 gap-6">
-
         {/* DESKTOP SIDEBAR */}
-<aside className="hidden md:block w-72 shrink-0">
-  <FiltersSidebar
-    filters={filters}
-    setFilters={pushUrl}
-    localities={localities}
-  />
-</aside>      
+        <aside className="hidden md:block w-72 shrink-0">
+          <FiltersSidebar
+            filters={filters}
+            setFilters={pushUrl}
+            localities={localities}
+          />
+        </aside>
 
         {/* Listings container */}
         <main className="flex-1 space">
@@ -241,7 +304,6 @@ export default function ListingsPage() {
             </h1>
             <div className="text-sm text-gray-600">{totalCount} results</div>
           </div>
-          
 
           {loading ? (
             <div className="p-6 bg-white rounded shadow text-center">
@@ -278,8 +340,8 @@ export default function ListingsPage() {
                 </button>
 
                 {/* Page Numbers */}
-                {Array.from({ length: totalPages }).map((_, i) => {
-                  const p = i + 1
+                {/* Page Numbers */}
+                {visiblePages.map((p) => {
                   const isActive = p === currentPage
 
                   return (
@@ -287,11 +349,11 @@ export default function ListingsPage() {
                       key={p}
                       onClick={() => goPage(p)}
                       className={`w-10 h-10 flex items-center justify-center rounded-lg border transition cursor-pointer
-              ${
-                isActive
-                  ? "bg-red-600 text-white border-red-600"
-                  : "text-red-600 border-gray-300 hover:bg-gray-100"
-              }`}
+        ${
+          isActive
+            ? "bg-red-600 text-white border-red-600"
+            : "text-red-600 border-gray-300 hover:bg-gray-100"
+        }`}
                     >
                       {p}
                     </button>
@@ -313,14 +375,13 @@ export default function ListingsPage() {
         </main>
       </div>
 
-<MobileFilters
-  open={mobilePanel}
-  setOpen={setMobilePanel}
-  filters={filters}
-  setFilters={pushUrl}
-  localities={localities}
-/>
-
+      <MobileFilters
+        open={mobilePanel}
+        setOpen={setMobilePanel}
+        filters={filters}
+        setFilters={pushUrl}
+        localities={localities}
+      />
     </div>
   )
 }
