@@ -41,7 +41,6 @@ const sortOptions = [
     } else {
       setFilters({ ...filters, sortBy: item.id, skip: 0 });
     }
-
     setOpen(false);
   };
 

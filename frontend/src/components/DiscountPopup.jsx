@@ -104,21 +104,20 @@ useEffect(() => {
 
 
   //* Submit handler
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (isSubmitting) return
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (isSubmitting) return;
+  if (!validateForm()) return;
 
-    if (!validateForm()) return
+  setIsSubmitting(true);
 
-     setIsSubmitting(true)
-
-    Toastify({
-      text: "✅ Success! Our team will contact you shortly!",
-      duration: 3000,
-      gravity: "top",
-      position: window.innerWidth <= 768 ? "center" : "right", // Center on mobile
-      className: "custom-toast text-white text-sm rounded-xl py-0 shadow-lg",
-      style: {
+  Toastify({
+    text: "✅ Success! Our team will contact you shortly!",
+    duration: 4000, 
+    gravity: "top",
+    position: window.innerWidth <= 768 ? "center" : "right",
+    className: "custom-toast text-white text-sm rounded-xl py-0 shadow-lg",
+    style: {
         background: "#141414",
         width: "clamp(260px, 90%, 380px)", // Responsive width with min & max limit
         whiteSpace: "pre-line", // Keeps wrapping natural without breaking mid-word
@@ -126,18 +125,42 @@ useEffect(() => {
         textAlign: "center",
         borderRadius: "10px",
         margin: "0 auto",
-        boxSizing: "border-box",
-      },
-      close: true
-    }).showToast()
+        boxSizing: "border-box", 
+    },
+    close: true
+  }).showToast();
 
-    setTimeout(() => {
-       setIsSubmitting(false);
+  try {
+    await fetch("http://localhost:5000/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        phone: phone,
+        email: "",
+        message: "Discount request form"
+      })
+    });
+
+      setIsSubmitting(false);
       setPopupOpen(false);
       setName("");
       setPhone("");
-    }, 2500)
+
+  } catch (error) {
+    console.error(error);
+    Toastify({
+      text: "❌ Failed to send request. Please try again.",
+      duration: 3000,
+      gravity: "top",
+      position: window.innerWidth <= 768 ? "center" : "right",
+      style: { background: "#dc2626", borderRadius: "10px", textAlign: "center" }
+    }).showToast();
+  } finally {
+    setIsSubmitting(false);
   }
+};
+
 
   if (!popupOpen) return null
 

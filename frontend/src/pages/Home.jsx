@@ -251,7 +251,7 @@ const handleSearchClick = () => {
       {/*  Why Us Section */}
       {/* <WhyUsSection />  */}
 
-
+      {/*  Offer Banner */}
       <OfferBanner/>
 
       {/*  Category section */}
