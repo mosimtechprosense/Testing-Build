@@ -3,9 +3,9 @@ import {
   createLocalityContent,
   getAllLocalityContent,
   getLocalityContentById,
-  getLocalityContentBySlug,
   updateLocalityContent,
-  deleteLocalityContent
+  deleteLocalityContent,
+  getLocalitySeoBySlug,
 } from "../controllers/localityContent.controller.js"
 
 const router = express.Router()
@@ -16,11 +16,10 @@ router.get("/locality-content", getAllLocalityContent)
 router.get("/locality-content/:id", getLocalityContentById)
 router.put("/locality-content/:id", updateLocalityContent)
 router.delete("/locality-content/:id", deleteLocalityContent)
+router.get("/seo/locality/:slug", getLocalitySeoBySlug)
 
-// Frontend SEO
-router.get(
-  "/seo/locality/:slug",
-  getLocalityContentBySlug
-)
+
+
+
 
 export default router

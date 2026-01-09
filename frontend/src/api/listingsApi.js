@@ -60,3 +60,17 @@ export const fetchLocalities = async (location = "") => {
   if (!res.ok) throw new Error("Failed to fetch locations");
   return res.json();
 };
+
+
+export const fetchLocalityDescription = async (slug) => {
+  const res = await fetch(`${API_BASE}/api/localities/seo/locality/${slug}`)
+
+  if (!res.ok) {
+    throw new Error("Locality SEO not found")
+  }
+
+  return res.json()
+}
+
+
+

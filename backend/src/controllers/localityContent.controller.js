@@ -33,15 +33,26 @@ export const getLocalityContentById = async (req, res) => {
   res.json({ success: true, data })
 }
 
+
+
+
 // READ BY SLUG (SEO)
-export const getLocalityContentBySlug = async (req, res) => {
-  const data = await getLocalityContentBySlugDB(req.params.slug)
+export const getLocalitySeoBySlug = async (req, res) => {
+  try {
+    const data = await getLocalityContentBySlugDB(req.params.slug)
 
-  if (!data)
-    return res.status(404).json({ message: "SEO content not found" })
+    if (!data) {
+      return res.status(404).json({ success: false, message: "Locality not found" })
+    }
 
-  res.json({ success: true, data })
+    res.json({ success: true, data })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ success: false, message: "Server error" })
+  }
 }
+
+
 
 // UPDATE
 export const updateLocalityContent = async (req, res) => {

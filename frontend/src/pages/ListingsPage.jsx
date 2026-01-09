@@ -1,31 +1,58 @@
 import { useEffect, useMemo, useState } from "react"
-import { useParams, useSearchParams, useNavigate } from "react-router-dom"
+import {
+  useParams,
+  useSearchParams,
+  useNavigate,
+  useLocation
+} from "react-router-dom"
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/ListingCards/ListingCard"
-import { fetchListings, fetchLocalities } from "../api/listingsApi"
+import {
+  fetchListings,
+  fetchLocalities,
+  fetchLocalityDescription
+} from "../api/listingsApi"
 import MobileFilters from "../components/mobile/MobileFilters"
+import LocalityDescription from "../components/listingsDetails/LocalityDescription"
 
 export default function ListingsPage() {
-
   const categoryToSlug = {
-  6: "banquet-hall",
-  7: "party-hall",
-  8: "marriage-hall",
-  9: "banquet-with-room",
-  10: "party-lawn",
-  11: "5-star-wedding-hotel",
-  12: "destination-wedding",
-  13: "wedding-farmhouse",
-  14: "small-function-hall",
-  15: "corporate-event",
-  16: "engagement-venue",
-  17: "ring-ceremony",
-  18: "baby-shower",
-  19: "retirement-party",
-  20: "sikh-wedding",
-  21: "mehendi-ceremony"
-};
+    6: "banquet-hall",
+    7: "party-hall",
+    8: "marriage-hall",
+    9: "banquet-with-room",
+    10: "party-lawn",
+    11: "5-star-wedding-hotel",
+    12: "destination-wedding",
+    13: "wedding-farmhouse",
+    14: "small-function-hall",
+    15: "corporate-event",
+    16: "engagement-venue",
+    17: "ring-ceremony",
+    18: "baby-shower",
+    19: "retirement-party",
+    20: "sikh-wedding",
+    21: "mehendi-ceremony"
+  }
 
+  const slugToServiceName = {
+    "banquet-hall": "Banquet Halls",
+    "party-hall": "Party Halls",
+    "marriage-hall": "Marriage Halls",
+    "banquet-with-room": "Banquet With Room",
+    "party-lawn": "Party Lawn",
+    "5-star-wedding-hotel": "5-Star Wedding Hotel",
+    "destination-wedding": "Destination Wedding",
+    "wedding-farmhouse": "Wedding Farmhouse",
+    "small-function-hall": "Small Function Hall",
+    "corporate-event": "Corporate Event",
+    "engagement-venue": "Engagement Venue",
+    "ring-ceremony": "Ring Ceremony",
+    "baby-shower": "Baby Shower",
+    "retirement-party": "Retirement Party",
+    "sikh-wedding": "Sikh Wedding",
+    "mehendi-ceremony": "Mehendi Ceremony"
+  }
 
   const { citySlug } = useParams()
   const navigate = useNavigate()
@@ -95,17 +122,21 @@ export default function ListingsPage() {
   const showingTo = Math.min(filters.skip + filters.take, totalCount)
 
   useEffect(() => {
-  setFilters((prev) => ({
-    ...prev,
-    category: searchParams.get("category")
-      ? Number(searchParams.get("category"))
-      : undefined,
-    skip: searchParams.get("skip")
-      ? Number(searchParams.get("skip"))
-      : 0
-  }))
-}, [searchParams])
+    const categoryFromUrl = searchParams.get("category")
+    const searchFromUrl = searchParams.get("search")
 
+    setFilters((prev) => ({
+      ...prev,
+      category: categoryFromUrl ? Number(categoryFromUrl) : undefined,
+
+      // keep search if it exists in URL (home page search)
+      // clear search only when category exists AND no search param
+      search:
+        categoryFromUrl && !searchFromUrl ? "" : searchFromUrl ?? prev.search,
+
+      skip: searchParams.get("skip") ? Number(searchParams.get("skip")) : 0
+    }))
+  }, [searchParams])
 
   useEffect(() => {
     if (filters.skip === undefined) return
@@ -137,17 +168,15 @@ export default function ListingsPage() {
       })
     )
 
-
-
     cleanedFilters.minGuests = cleanedFilters.minGuests ?? 0
     cleanedFilters.maxGuests = cleanedFilters.maxGuests ?? 1200
 
-//  If category is selected, search must NOT filter listings
-if (cleanedFilters.category) {
-  delete cleanedFilters.search
-}
+    //  If category is selected, search must NOT filter listings
+    if (cleanedFilters.category) {
+      delete cleanedFilters.search
+    }
 
-if (
+    if (
       cleanedFilters.search &&
       ["banquet hall", "banquet halls"].includes(
         cleanedFilters.search.toLowerCase().trim()
@@ -155,7 +184,6 @@ if (
     ) {
       delete cleanedFilters.search
     }
-    
 
     if (cleanedFilters.locality) {
       // numeric locality (ID) from sidebar → ignore
@@ -195,9 +223,6 @@ if (
     // both checked or none checked → no filtering
     delete cleanedFilters.vegetarian
     delete cleanedFilters.nonVegetarian
-
-    console.log("Fetching listings with filters:", cleanedFilters);
-
 
     fetchListings(cleanedFilters)
       .then((res) => {
@@ -253,14 +278,12 @@ if (
         ? locality.replace(/\s+/g, "-").toLowerCase()
         : ""
 
-const serviceSlug =
-  filters.category && categoryToSlug[filters.category]
-    ? categoryToSlug[filters.category]
-    : "banquet-hall";
+    const serviceSlug =
+      filters.category && categoryToSlug[filters.category]
+        ? categoryToSlug[filters.category]
+        : "banquet-hall"
 
-
-  const path = slug ? `/${serviceSlug}-in/${slug}`: `/${serviceSlug}-in`;
-
+    const path = slug ? `/${serviceSlug}-in/${slug}` : `/${serviceSlug}-in`
 
     // Update URL and filters
     navigate(`${path}?${qs.toString()}`, { replace: false })
@@ -298,10 +321,25 @@ const serviceSlug =
         <main className="flex-1 space">
           {/* SCROLL TARGET */}
 
+          {/*TOP HEADERS*/}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
-            <h1 className="text-2xl font-bold">
-              Listings{filters.city ? ` — ${filters.city}` : ""}
-            </h1>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
+              <h1 className="text-2xl font-bold">
+                {filters.category
+                  ? `${
+                      slugToServiceName[categoryToSlug[filters.category]] ||
+                      "Service"
+                    }${
+                      filters.locality
+                        ? ` in ${filters.locality.replace(/-/g, " ")}`
+                        : ""
+                    }`
+                  : filters.locality
+                  ? `Listings in ${filters.locality.replace(/-/g, " ")}`
+                  : "Listings"}
+              </h1>
+            </div>
+
             <div className="text-sm text-gray-600">{totalCount} results</div>
           </div>
 
@@ -310,8 +348,9 @@ const serviceSlug =
               Loading…
             </div>
           ) : listings.length === 0 ? (
-            <div className="p-6 bg-white rounded shadow text-center">
-              No listings found
+            <div className="p-8 bg-white rounded shadow text-center">
+              No venues match your criteria- Try different{" "}
+              <span className="text-red-600 font-semibold">locations.</span>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
@@ -374,6 +413,8 @@ const serviceSlug =
           )}
         </main>
       </div>
+
+      <LocalityDescription />
 
       <MobileFilters
         open={mobilePanel}

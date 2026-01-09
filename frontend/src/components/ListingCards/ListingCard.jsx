@@ -19,9 +19,12 @@ export default function ListingCard({ item }) {
 
   const rating = item.rating || 5
   const reviewsCount = item.reviews_count || 1
+
+  // split tags
   const tags = item.display_tags || item.keywords?.split(",") || []
   const visibleTags = tags.slice(0, 3)
   const hiddenTags = tags.slice(3)
+
 
   // click outside closed
   useEffect(() => {
