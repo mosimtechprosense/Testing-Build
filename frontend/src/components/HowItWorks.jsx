@@ -1,4 +1,5 @@
 import { FaSearch, FaHeart, FaLock } from "react-icons/fa";
+import howItWorksVideo from "../assets/videos/howitworks.webm";
 
 const steps = [
   {
@@ -54,7 +55,7 @@ const HowItWorks = () => {
         <div className="w-full max-w-3xl rounded-xl overflow-hidden border-4 border-black shadow-[0_0_30px_5px_rgba(0,0,0,0.5)]">
           <video
             className="w-full h-auto object-cover"
-            src="https://www.bookmybanquets.in/cached-asset?path=assets%2Fvideo%2Fhowitworks.webm"
+            src={howItWorksVideo}
             autoPlay
             loop
             muted
