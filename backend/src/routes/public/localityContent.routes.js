@@ -6,7 +6,7 @@ import {
   updateLocalityContent,
   deleteLocalityContent,
   getLocalitySeoBySlug,
-} from "../controllers/localityContent.controller.js"
+} from "../../controllers/public/localityContent.controller.js"
 
 const router = express.Router()
 

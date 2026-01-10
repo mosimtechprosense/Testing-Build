@@ -1,6 +1,6 @@
-import prisma from "../config/db.js"
+import prisma from "../../config/db.js"
 import slugify from "slugify"
-import slugToName from "../utils/slugToName.js"
+import slugToName from "../../utils/slugToName.js"
 
 // CREATE
 export const createLocalityContentDB = async (data) => {

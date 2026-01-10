@@ -1,6 +1,6 @@
-import prisma from "../config/db.js"
+import prisma from "../../config/db.js"
 import slugify from "slugify"
-import { mapFoodPrices } from "../utils/foodPriceMapper.js"
+import { mapFoodPrices } from "../../utils/foodPriceMapper.js"
 
 // venue images url builder fuction
 const BASE_URL = process.env.BASE_URL || "http://localhost:5000"

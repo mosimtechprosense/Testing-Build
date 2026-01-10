@@ -5,7 +5,7 @@ import {
   getMessageById,
   updateMessage,
   deleteMessage,
-} from "../controllers/contact.controller.js";
+} from "../../controllers/public/contact.controller.js";
 
 const router = express.Router();
 

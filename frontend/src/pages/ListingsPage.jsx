@@ -335,7 +335,7 @@ export default function ListingsPage() {
                         : ""
                     }`
                   : filters.locality
-                  ? `Listings in ${filters.locality.replace(/-/g, " ")}`
+                  ? `Venues in ${filters.locality.replace(/-/g, " ")}`
                   : "Listings"}
               </h1>
             </div>

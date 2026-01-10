@@ -11,11 +11,49 @@ model admins {
   id                BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   name              String
   email             String    @unique(map: "admins_email_unique")
+  password          String?   @db.VarChar(255)
+  role              AdminRole
+  full_access       Boolean   @default(false)
+  is_active         Boolean   @default(true)
   email_verified_at DateTime? @db.Timestamp(0)
   remember_token    String?   @db.VarChar(100)
-  created_at        DateTime? @db.Timestamp(0)
-  updated_at        DateTime? @db.Timestamp(0)
+
+  verificationCodes auth_verification_codes[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
+
+
+model auth_verification_codes {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  admin_id   BigInt
+  code_hash  String   @db.VarChar(255)
+  purpose    AuthCodePurpose @default(ADMIN_LOGIN)
+  expires_at DateTime
+  used       Boolean  @default(false)
+
+  admin      admins   @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+
+  @@index([admin_id])
+}
+
+enum AuthCodePurpose {
+  ADMIN_LOGIN
+  PASSWORD_RESET
+  FIRST_TIME_SETUP
+}
+
+
+enum AdminRole {
+  ADMIN
+  LEAD_USER
+  DATA_ENTRY_USER
+}
+
+
 
 model banquet_inquiries {
   id                 BigInt          @id @default(autoincrement()) @db.UnsignedBigInt

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllLocations, createLocation, updateLocation, deleteLocation } from "../controllers/location.controller.js";
+import { getAllLocations, createLocation, updateLocation, deleteLocation } from "../../controllers/public/location.controller.js";
 
 
 

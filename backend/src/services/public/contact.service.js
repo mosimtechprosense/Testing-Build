@@ -1,5 +1,5 @@
-import prisma from "../config/db.js"
-import { transporter } from "../config/email.js"
+import prisma from "../../config/db.js"
+import { transporter } from "../../config/email.js"
 
 
 //* Create contact message + send email

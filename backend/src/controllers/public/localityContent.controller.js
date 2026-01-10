@@ -5,7 +5,7 @@ import {
   getLocalityContentBySlugDB,
   updateLocalityContentDB,
   deleteLocalityContentDB
-} from "../services/localityContent.service.js"
+} from "../../services/public/localityContent.service.js"
 
 // CREATE
 export const createLocalityContent = async (req, res) => {

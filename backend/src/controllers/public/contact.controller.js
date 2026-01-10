@@ -1,4 +1,4 @@
-import * as contactService from "../services/contact.service.js";
+import * as contactService from "../../services/public/contact.service.js";
 
 
 //* Create a new contact message

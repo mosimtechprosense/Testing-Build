@@ -1,4 +1,4 @@
-import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB, getSimilarListingsDB } from "../services/listing.service.js";
+import { createListingDB, getAllListingDB, getListingByIdDB, updateListingDB, deleteListingDB, getRecommendedListingsDB, getHighDemandListingsDB, getSimilarListingsDB } from "../../services/public/listing.service.js";
 
 
  //todo: CREATE LISTING
