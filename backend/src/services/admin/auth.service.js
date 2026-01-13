@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import { sendOtpEmail } from "../../utils/sendOtpEmail.js";
 
 const prisma = new PrismaClient();
 const SALT_ROUNDS = 10;
@@ -16,8 +17,11 @@ const otpExpiry = () => {
 
 // --- Email placeholder ---
 const sendOTPEmail = async (email, otp, purpose) => {
-  console.log(`Sending OTP ${otp} to ${email} for ${purpose}`);
-  // Replace with real email service
+  await sendOtpEmail({
+    to: email,
+    otp,
+    purpose,
+  });
 };
 
 
@@ -121,4 +125,3 @@ export const resetPassword = async (email, otp, newPassword) => {
 
   return true;
 };
-
