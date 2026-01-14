@@ -36,7 +36,7 @@ export default function Sidebar() {
               <div key={idx}>
                 <button
                   onClick={() => setOpen(open === idx ? null : idx)}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between"
+                  className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between cursor-pointer"
                 >
                   {item.name}
                   <span>{open === idx ? "▲" : "▼"}</span>
@@ -70,7 +70,7 @@ export default function Sidebar() {
 
       <button
         onClick={logout}
-        className="m-4 px-4 py-2 bg-red-600 rounded hover:bg-red-700"
+        className="m-4 px-4 py-2 bg-red-600 rounded hover:bg-red-700 cursor-pointer"
       >
         Logout
       </button>

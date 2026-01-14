@@ -127,13 +127,13 @@ export default function UserFormModal({ editingUser, onClose, onSaved }) {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border rounded-md hover:bg-gray-50 cursor-pointer transition"
+            className="px-4 py-1.5 border rounded-md hover:bg-gray-50 cursor-pointer transition"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition"
+            className="px-6 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition"
           >
             Save
           </button>
