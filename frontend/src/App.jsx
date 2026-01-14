@@ -1,5 +1,5 @@
 import "./App.css"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
 import ScrollToTop from "./ScrollToTop"
 import Navbar from "./components/Navbar"
 import Services from "./pages/Services"
@@ -17,15 +17,37 @@ import UIProvider from "./store/UIContext"
 import ListingsPage from "./pages/ListingsPage"
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import ListingDetailsDynamic from "./pages/ListingDetailsDynamic"
+import AdminRoutes from "./routes/AdminRoutes"
+import { AdminAuthProvider } from "./store/AdminAuthContext"
+
+
+function ConditionalAdminUI({ children }) {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
+
+  return (
+    <>
+      {!isAdmin && <Navbar />}
+      {!isAdmin && <DiscountPopup />}
+
+      {children}
+
+      {!isAdmin && <FloatingWhatsApp />}
+      {!isAdmin && <RecentSearches />}
+      {!isAdmin && <Footer />}
+    </>
+  );
+}
+
 
 function App() {
   return (
     <>
       <BrowserRouter>
+          <AdminAuthProvider>
         <UIProvider>
           <ScrollToTop />
-          <Navbar />
-          <DiscountPopup />
+          <ConditionalAdminUI>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
@@ -42,11 +64,11 @@ function App() {
             <Route path="/banquet-hall-in/:localitySlug?" element={<ListingsPage />} />
             <Route path="/:serviceSlug-in/:localitySlug?" element={<ListingsPage />} />
             <Route path="/banquet-hall-in/:localitySlug/:id" element={<ListingDetailsDynamic/>}/>
+            <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>
-          <FloatingWhatsApp />
-          <RecentSearches />
-          <Footer />
+          </ConditionalAdminUI>
         </UIProvider>
+        </AdminAuthProvider>
       </BrowserRouter>
     </>
   )

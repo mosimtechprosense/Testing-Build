@@ -21,7 +21,7 @@ const sendOTPEmail = async (email, otp, purpose) => {
     to: email,
     otp,
     purpose,
-  });
+  }); 
 };
 
 

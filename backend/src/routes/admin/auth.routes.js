@@ -4,12 +4,14 @@ import {
   verifyLoginOTPController,
   requestPasswordResetController,
   resetPasswordController,
+  loginWithPassword,
 } from "../../controllers/admin/auth.controller.js";
 
 const router = express.Router();
 
 // --- LOGIN FLOW ---
-router.post("/login", loginRequestOTP);
+router.post("/login-password", loginWithPassword);  // NEW: password login
+router.post("/login", loginRequestOTP);            // Admin OTP request
 router.post("/verify-otp", verifyLoginOTPController);
 
 // --- PASSWORD RESET FLOW ---
