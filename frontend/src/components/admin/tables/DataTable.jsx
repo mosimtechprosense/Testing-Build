@@ -1,4 +1,3 @@
-// src/components/admin/tables/DataTable.jsx
 export default function DataTable({ columns, data, actions }) {
   return (
     <div className="overflow-x-auto bg-white shadow rounded">
@@ -27,12 +26,12 @@ export default function DataTable({ columns, data, actions }) {
             <tr key={idx} className="border-t">
               {columns.map((col) => (
                 <td key={col.key} className="p-3 text-sm">
-                  {row[col.key] ?? "-"}
+                  {col.render ? col.render(row) : row[col.key] ?? "-"}
                 </td>
               ))}
               {actions && (
-                <td className="p-3 space-x-2">
-                  {actions(row)}
+                <td className="p-3">
+                  <div className="flex items-center justify-center gap-2">{actions(row)}</div>
                 </td>
               )}
             </tr>

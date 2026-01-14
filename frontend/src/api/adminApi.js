@@ -58,6 +58,12 @@ export const updateUser = (id, data) =>
 export const deleteUser = (id) =>
   adminApi.delete(`/users/${id}`);
 
+export const adminResetPassword = (id, password) =>
+  adminApi.put(`/users/${id}/reset-password`, { password });
+
+
+
+
 /* ================= LISTINGS ================= */
 
 export const getListings = (params) =>
@@ -79,3 +85,15 @@ export const getLocations = () =>
 export default adminApi;
 
 
+
+ // 401 redirect loop
+adminApi.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("admin_token");
+      window.location.href = "/admin/login";
+    }
+    return Promise.reject(err);
+  }
+);

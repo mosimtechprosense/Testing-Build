@@ -13,7 +13,7 @@ const otpExpiry = () => {
   const expiry = new Date();
   expiry.setMinutes(expiry.getMinutes() + 10); // 10 min
   return expiry;
-};
+};  
 
 // --- Email placeholder ---
 const sendOTPEmail = async (email, otp, purpose) => {

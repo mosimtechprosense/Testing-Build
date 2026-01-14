@@ -12,10 +12,32 @@ import Leads from "../pages/admin/Leads";
 import Bookings from "../pages/admin/Bookings";
 import Locations from "../pages/admin/Locations";
 
+
+
 const Protected = ({ children }) => {
   const token = localStorage.getItem("admin_token");
-  return token ? children : <Navigate to="/admin/login" />;
+
+  if (!token) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
+    
+    if (payload.role !== "ADMIN") {
+      localStorage.removeItem("admin_token");
+      return <Navigate to="/admin/login" replace />;
+    }
+
+    return children;
+  } catch (err) {
+    localStorage.removeItem("admin_token");
+    console.error(err);
+    return <Navigate to="/admin/login" replace />;
+  }
 };
+
 
 export default function AdminRoutes() {
   return (
