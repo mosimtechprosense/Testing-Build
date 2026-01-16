@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useEffect, useState, useContext } from "react"
 import { fetchListingById, fetchSimilarListings } from "../api/listingsApi"
 import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu"
@@ -19,8 +19,10 @@ export default function ListingDetailsDynamic() {
   const [similarListings, setSimilarListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [showAllKeywords, setShowAllKeywords] = useState(false)
-  const [showFullDesc, setShowFullDesc] = useState(false)
   const { setPopupOpen } = useContext(UIContext)
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const categoryFromUrl = searchParams.get("category")
 
   // Image modal
   const [activeImageIndex, setActiveImageIndex] = useState(null)
@@ -62,8 +64,136 @@ export default function ListingDetailsDynamic() {
     ? listing.hall_capacities
     : []
 
+  // breadcrumb logic (inline) //* seprate this as a component in future
+  const categoryToVenuePath = {
+    6: { path: "/venues/banquet-halls", label: "Banquet Halls" },
+    7: { path: "/venues/party-halls", label: "Party Halls" },
+    8: { path: "/venues/marriage-halls", label: "Marriage Halls" },
+    9: { path: "/venues/banquet-with-room", label: "Banquet with Hotel Room" },
+    10: { path: "/venues/party-lawn", label: "Party Lawn" },
+    11: {
+      path: "/venues/5-star-wedding-hotels",
+      label: "5 Star Wedding Hotels"
+    },
+    12: { path: "/venues/destination-weddings", label: "Destination Weddings" },
+    13: { path: "/venues/wedding-farmhouse", label: "Wedding Farmhouse" },
+    14: { path: "/venues/small-function-halls", label: "Small Function Halls" },
+    15: { path: "/venues/corporate-events", label: "Corporate Events" },
+    16: { path: "/venues/engagement-venue", label: "Engagement Venue" },
+    17: { path: "/venues/ring-ceremony", label: "Ring Ceremony" },
+    18: { path: "/venues/baby-shower", label: "Baby Shower" },
+    19: { path: "/venues/retirement-party", label: "Retirement Party" },
+    20: { path: "/venues/sikh-wedding", label: "Sikh Wedding" },
+    21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
+  }
+
+  const categoryToSlug = {
+    6: "banquet-hall",
+    7: "party-hall",
+    8: "marriage-hall",
+    9: "banquet-with-room",
+    10: "party-lawn",
+    11: "5-star-wedding-hotel",
+    12: "destination-wedding",
+    13: "wedding-farmhouse",
+    14: "small-function-hall",
+    15: "corporate-event",
+    16: "engagement-venue",
+    17: "ring-ceremony",
+    18: "baby-shower",
+    19: "retirement-party",
+    20: "sikh-wedding",
+    21: "mehendi-ceremony"
+  }
+
+  const categoryId =
+    Number(categoryFromUrl) ||
+    listing.category_id ||
+    listing.category?.id ||
+    listing.categoryId ||
+    listing.categories?.[0]?.id ||
+    6
+  const serviceSlug = categoryToSlug[Number(categoryId)] || "banquet-hall"
+  const venueMeta = categoryToVenuePath[categoryId]
+
+  const breadcrumbItems = [
+    { label: "Home", type: "home", path: "/" },
+    {
+      label: venueMeta?.label || "Banquet Halls",
+      type: "service",
+      path: `/${serviceSlug}-in?category=${categoryId}`
+    }
+  ]
+
+  if (listing.locality) {
+    const localitySlug = listing.locality.replace(/\s+/g, "-").toLowerCase()
+    breadcrumbItems.push({
+      label: `${venueMeta?.label || "Banquet Halls"} in ${listing.locality}`,
+      type: "locality",
+      path: `/${serviceSlug}-in/${localitySlug}?category=${categoryId}&locality=${localitySlug}`
+    })
+  }
+
+  // Current listing (not clickable)
+  breadcrumbItems.push({
+    label: listing.title,
+    type: "current"
+  })
+
+  const pushUrl = ({ category, citySlug }) => {
+    const qs = new URLSearchParams()
+    if (category) qs.set("category", category)
+    if (citySlug) qs.set("locality", citySlug)
+
+    const slug = citySlug ? citySlug.replace(/\s+/g, "-").toLowerCase() : ""
+    const serviceSlug = categoryToSlug[Number(category)] || "banquet-hall"
+    const path = slug ? `/${serviceSlug}-in/${slug}` : `/${serviceSlug}-in`
+
+    navigate(`${path}?${qs.toString()}`)
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 select-none">
+    <div className="container mx-auto px-4 py-8 ">
+      {/* Breadcrumb */}
+      <nav
+        aria-label="Breadcrumb"
+        className="py-3 px-4 mb-3 text-sm text-red-600"
+      >
+        <ol className="flex flex-wrap items-center gap-1">
+          {breadcrumbItems.map((item, idx) => {
+            const isLast = item.type === "current"
+            return (
+              <li key={idx} className="flex items-center gap-1 truncate">
+                {!isLast ? (
+                  <>
+                    <span
+                      className="cursor-pointer font-medium hover:text-gray-800 whitespace-nowrap"
+                      onClick={() => {
+                        if (!item.path) return
+                        const url = new URL(item.path, window.location.origin)
+                        const params = Object.fromEntries(
+                          url.searchParams.entries()
+                        )
+                        pushUrl({
+                          category: params.category,
+                          citySlug: params.locality
+                        })
+                      }}
+                    >
+                      {item.label}
+                    </span>
+
+                    <span className="mx-1">/</span>
+                  </>
+                ) : (
+                  <span className="text-gray-600 truncate">{item.label}</span>
+                )}
+              </li>
+            )
+          })}
+        </ol>
+      </nav>
+
       {/* ================= IMAGE GALLERY (RECOMMENDED STYLE) ================= */}
       <div key={id} className="relative mb-12">
         {Array.isArray(images) && images.length > 3 && (

@@ -1,17 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
-import {
-  useParams,
-  useSearchParams,
-  useNavigate,
-  useLocation
-} from "react-router-dom"
+import { useParams, useSearchParams, useNavigate } from "react-router-dom"
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/ListingCards/ListingCard"
-import {
-  fetchListings,
-  fetchLocalities,
-  fetchLocalityDescription
-} from "../api/listingsApi"
+import { fetchListings, fetchLocalities } from "../api/listingsApi"
 import MobileFilters from "../components/mobile/MobileFilters"
 import LocalityDescription from "../components/listingsDetails/LocalityDescription"
 
@@ -54,6 +45,7 @@ export default function ListingsPage() {
     "mehendi-ceremony": "Mehendi Ceremony"
   }
 
+  // for breadcrumb
   const categoryToVenuePath = {
     6: { path: "/venues/banquet-halls", label: "Banquet Halls" },
     7: { path: "/venues/party-halls", label: "Party Halls" },
@@ -330,7 +322,7 @@ export default function ListingsPage() {
     (_, i) => startPage + i
   )
 
-  // breadcrumb Logic (Inline)
+  // breadcrumb logic (inline) //* seprate this as a component in future
   const venueMeta = filters.category
     ? categoryToVenuePath[filters.category]
     : null
@@ -367,33 +359,41 @@ export default function ListingsPage() {
       >
         <ol className="flex flex-wrap items-center gap-1">
           {breadcrumbItems.map((item, idx) => {
-            const isLast = item.type === "current"
+            const isLast = idx === breadcrumbItems.length - 1 // last item in array
+
+            // Determine if breadcrumb item should be clickable
+            const isClickable = () => {
+              if (item.type === "home") return true
+              if (item.type === "service") return !!filters.locality
+              return !isLast
+            }
 
             return (
               <li key={idx} className="flex items-center gap-1 truncate">
-                {!isLast ? (
-                  <>
-                    <span
-                      onClick={() => {
-                        if (item.type === "home") navigate("/")
-                        if (item.type === "service") {
-                          pushUrl({
-                            category: filters.category,
-                            locality: undefined,
-                            search: "",
-                            skip: 0
-                          })
-                        }
-                      }}
-                      className="cursor-pointer font-medium hover:text-gray-800 whitespace-nowrap"
-                    >
-                      {item.label}
-                    </span>
-                    <span className="mx-1">/</span>
-                  </>
-                ) : (
-                  <span className="text-gray-600 truncate">{item.label}</span>
-                )}
+                <span
+                  onClick={() => {
+                    if (!isClickable()) return
+                    if (item.type === "home") navigate("/")
+                    if (item.type === "service") {
+                      pushUrl({
+                        category: filters.category,
+                        locality: undefined,
+                        search: "",
+                        skip: 0
+                      })
+                    }
+                  }}
+                  className={`${
+                    isClickable()
+                      ? "cursor-pointer font-medium text-red-600 hover:text-gray-800"
+                      : "text-gray-600 cursor-default"
+                  } whitespace-nowrap`}
+                >
+                  {item.label}
+                </span>
+
+                {/* Render slash only if not the last item */}
+                {!isLast && <span className="mx-1">/</span>}
               </li>
             )
           })}
