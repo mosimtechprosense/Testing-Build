@@ -28,15 +28,15 @@ const About = () => {
   return (
     <div className="w-full bg-[#ffffff] py-8 px-6 md:px-16 lg:px-24">
       {/* breadcrumb navigation */}
-      <div className="flex items-center gap-x-1 mb-10">
+      <div className="flex items-center gap-x-2 mb-10">
         <h3
-          className="text-[#dc2626] font-normal cursor-pointer"
+          className="text-red-600 font-medium cursor-pointer hover:text-gray-800"
           onClick={() => navigate("/")}
         >
           Home
         </h3>
         <span>/</span>
-        <span className="text-gray-500 font-normal">About</span>
+        <span className="text-gray-600 font-normal">About</span>
       </div>
 
       {/* first About Section */}

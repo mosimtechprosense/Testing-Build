@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { verifyLoginOTP } from "../../../api/adminApi";
+import { useAdminAuth } from "../../../store/AdminAuthContext";
 
 export default function VerifyOtp() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAdminAuth(); 
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
   const email = location.state?.email;
 
-  // Redirect safely if email is missing
   useEffect(() => {
-    if (!email) {
-      navigate("/admin/login");
-    }
+    if (!email) navigate("/admin/login");
   }, [email, navigate]);
 
   const verify = async () => {
@@ -29,12 +28,10 @@ export default function VerifyOtp() {
 
       const { data } = await verifyLoginOTP(email, otp);
 
-      if (!data?.token) {
-        throw new Error("Token not received");
-      }
+      if (!data?.token) throw new Error("Token not received");
 
-      localStorage.setItem("admin_token", data.token);
-      navigate("/admin/dashboard");
+      // ✅ Update context + localStorage + redirect
+      login(data);
     } catch (err) {
       alert(err.response?.data?.message || err.message || "Invalid OTP");
     } finally {

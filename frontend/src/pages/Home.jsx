@@ -70,6 +70,7 @@ const categoryToSlug = {
   // Fetch locations once on mount
   useEffect(() => {
     fetch("http://localhost:5000/api/locations")
+    
       .then((res) => res.json())
       .then((data) => {
         setLocations(data.data || [])

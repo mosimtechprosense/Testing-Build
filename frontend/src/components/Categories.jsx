@@ -21,7 +21,7 @@ const Categories = () => {
       colour: "bg-[#eac1b2]",
     },
     {
-      title: "Planning & Décor",
+      title: "Planning & Decor",
       des: "Wedding Planners, Decorators",
       img: decor,
       colour: "bg-[#f7b58c]",

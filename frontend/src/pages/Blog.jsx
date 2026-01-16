@@ -149,16 +149,14 @@ const Blog = () => {
 
   return (
     <section className="bg-gray-50 select-none">
-      <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Breadcrumb */}
-        <nav className="text-sm text-gray-400 mb-6 flex flex-wrap gap-1">
-          <Link to="/" className="text-black font-medium hover:text-red-600">
+        <nav className="text-gray-400 mb-6 flex flex-wrap gap-2">
+          <Link to="/" className="text-red-600 font-medium hover:text-gray-800">
             Home
           </Link>{" "}
           /
-          <Link to="/blogs" className="hover:text-red-600">
-            Blogs
-          </Link>
+         <span className="text-gray-600 font-normal">Blog</span>
           {categoryName && <span>/ {categoryName}</span>}
           {slug && post && <span>/ {post.title.rendered}</span>}
         </nav>

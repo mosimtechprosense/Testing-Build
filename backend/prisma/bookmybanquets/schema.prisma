@@ -12,7 +12,7 @@ model admins {
   name              String
   email             String    @unique(map: "admins_email_unique")
   password          String?   @db.VarChar(255)
-  role              AdminRole
+  role              AdminRole 
   full_access       Boolean   @default(false)
   is_active         Boolean   @default(true)
   email_verified_at DateTime? @db.Timestamp(0)
@@ -48,10 +48,13 @@ enum AuthCodePurpose {
 
 
 enum AdminRole {
+  SUPER_ADMIN
   ADMIN
+  VENUE_MANAGER
   LEAD_USER
   DATA_ENTRY_USER
 }
+
 
 
 

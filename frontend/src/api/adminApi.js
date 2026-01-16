@@ -90,10 +90,19 @@ export default adminApi;
 adminApi.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const status = err.response?.status;
+    const url = err.config?.url || "";
+
+    if (
+      status === 401 &&
+      !url.includes("/auth/login") &&
+      !url.includes("/auth/verify-otp") &&
+      !url.includes("/auth/login-password")
+    ) {
       localStorage.removeItem("admin_token");
       window.location.href = "/admin/login";
     }
+
     return Promise.reject(err);
   }
 );

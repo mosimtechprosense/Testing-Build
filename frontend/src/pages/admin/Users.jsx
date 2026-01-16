@@ -59,7 +59,7 @@ export default function Users() {
             setEditingUser(null)
             setShowForm(true)
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
+          className="px-4 py-1.5 bg-blue-500 text-white rounded-xl cursor-pointer hover:bg-blue-600"
         >
           Add New User
         </button>

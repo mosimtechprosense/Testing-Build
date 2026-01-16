@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
 
 // --- User CRUD ---
 export const createUser = async ({ name, email, password, role, is_active }) => {
-  if (!["LEAD_USER", "DATA_ENTRY_USER"].includes(role)) throw new Error("Invalid role");
+  if (!["LEAD_USER", "DATA_ENTRY_USER", "VENUE_MANAGER"].includes(role)) throw new Error("Invalid role");
 
   if (!password || password.length < 6) {
     throw new Error("Password must be at least 6 characters");

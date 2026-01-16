@@ -16,27 +16,11 @@ import Locations from "../pages/admin/Locations";
 
 const Protected = ({ children }) => {
   const token = localStorage.getItem("admin_token");
+  if (!token) return <Navigate to="/admin/login" replace />;
 
-  if (!token) {
-    return <Navigate to="/admin/login" replace />;
-  }
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-
-    
-    if (payload.role !== "ADMIN") {
-      localStorage.removeItem("admin_token");
-      return <Navigate to="/admin/login" replace />;
-    }
-
-    return children;
-  } catch (err) {
-    localStorage.removeItem("admin_token");
-    console.error(err);
-    return <Navigate to="/admin/login" replace />;
-  }
+  return children;
 };
+
 
 
 export default function AdminRoutes() {

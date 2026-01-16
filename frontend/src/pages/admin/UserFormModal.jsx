@@ -55,7 +55,7 @@ export default function UserFormModal({ editingUser, onClose, onSaved }) {
 
         {/* Name */}
         <div className="relative">
-          <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
+          <label className="absolute top-0.5 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
             Name
           </label>
           <input
@@ -68,7 +68,7 @@ export default function UserFormModal({ editingUser, onClose, onSaved }) {
 
         {/* Email */}
         <div className="relative">
-          <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
+          <label className="absolute top-0.5 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
             Email
           </label>
           <input
@@ -83,7 +83,7 @@ export default function UserFormModal({ editingUser, onClose, onSaved }) {
         {/* Password only on create */}
         {!editingUser && (
           <div className="relative">
-            <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
+            <label className="absolute top-0.5 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
               Initial Password
             </label>
             <input
@@ -98,7 +98,7 @@ export default function UserFormModal({ editingUser, onClose, onSaved }) {
 
         {/* Role */}
         <div className="relative">
-          <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
+          <label className="absolute top-0.5 left-3 bg-white px-1 text-sm text-gray-500 font-semibold">
             Role
           </label>
           <select
@@ -127,13 +127,13 @@ export default function UserFormModal({ editingUser, onClose, onSaved }) {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 border rounded-md hover:bg-gray-50 cursor-pointer transition"
+            className="px-4 py-1.5 border border-gray-400 rounded-xl hover:bg-gray-50 cursor-pointer transition"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition"
+            className="px-6 py-1.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition"
           >
             Save
           </button>

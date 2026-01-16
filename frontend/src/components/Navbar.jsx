@@ -22,16 +22,16 @@ const Navbar = () => {
         <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2.5">
           {/* Social Icons */}
           <div className="flex items-center gap-3">
-            <a href="#" aria-label="Facebook">
+            <a href="https://www.facebook.com/bookmybanquets06/" aria-label="Facebook">
               <IoLogoFacebook className="text-[#dc2626] text-xl hover:text-black transition duration-200" />
             </a>
-            <a href="#" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/in/bookmy-banquet-210784336/" aria-label="LinkedIn">
               <FaLinkedin className="text-[#dc2626] text-xl hover:text-black transition duration-200" />
             </a>
-            <a href="#" aria-label="Instagram">
+            <a href="https://www.instagram.com/book_my_banquets/" aria-label="Instagram">
               <RiInstagramLine className="text-[#dc2626] text-xl hover:text-black transition duration-200" />
             </a>
-            <a href="#" aria-label="YouTube">
+            <a href="https://www.youtube.com/@Bookmybanquets" aria-label="YouTube">
               <FaYoutube className="text-[#dc2626] text-xl hover:text-black transition duration-200" />
             </a>
           </div>

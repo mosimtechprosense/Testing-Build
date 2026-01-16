@@ -9,12 +9,15 @@ const seed = async () => {
 
   await prisma.admins.upsert({
     where: { email: "mosimraza.techprosense@gmail.com" },
-    update: {},
+    update: {
+      role: "SUPER_ADMIN",   
+      name: "Mosim Raza",
+    },
     create: {
-      name: "Super Admin",
+      name: "Mosim Raza",
       email: "mosimraza.techprosense@gmail.com",
       password: hashedPassword,
-      role: "ADMIN",
+      role: "SUPER_ADMIN",   
       is_active: true,
     },
   });

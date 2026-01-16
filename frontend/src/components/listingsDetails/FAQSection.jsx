@@ -16,7 +16,7 @@ export default function FAQSection({ faqs }) {
   return (
     <section className="bg-white p-6 rounded-2xl shadow-md mb-6">
       <h2 className="text-2xl font-semibold mb-4">Frequently Asked Questions</h2>
-      <div className="space-y-3">
+      <div className="space-y-3 cursor-pointer">
         {faqs.map((faq, i) => (
           <div
             key={i}

@@ -54,6 +54,28 @@ export default function ListingsPage() {
     "mehendi-ceremony": "Mehendi Ceremony"
   }
 
+  const categoryToVenuePath = {
+    6: { path: "/venues/banquet-halls", label: "Banquet Halls" },
+    7: { path: "/venues/party-halls", label: "Party Halls" },
+    8: { path: "/venues/marriage-halls", label: "Marriage Halls" },
+    9: { path: "/venues/banquet-with-room", label: "Banquet with Hotel Room" },
+    10: { path: "/venues/party-lawn", label: "Party Lawn" },
+    11: {
+      path: "/venues/5-star-wedding-hotels",
+      label: "5 Star Wedding Hotels"
+    },
+    12: { path: "/venues/destination-weddings", label: "Destination Weddings" },
+    13: { path: "/venues/wedding-farmhouse", label: "Wedding Farmhouse" },
+    14: { path: "/venues/small-function-halls", label: "Small Function Halls" },
+    15: { path: "/venues/corporate-events", label: "Corporate Events" },
+    16: { path: "/venues/engagement-venue", label: "Engagement Venue" },
+    17: { path: "/venues/ring-ceremony", label: "Ring Ceremony" },
+    18: { path: "/venues/baby-shower", label: "Baby Shower" },
+    19: { path: "/venues/retirement-party", label: "Retirement Party" },
+    20: { path: "/venues/sikh-wedding", label: "Sikh Wedding" },
+    21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
+  }
+
   const { citySlug } = useParams()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -250,6 +272,8 @@ export default function ListingsPage() {
 
     // Build query string
     const qs = new URLSearchParams()
+
+    if (merged.category) qs.set("category", merged.category)
     if (merged.search) qs.set("search", merged.search)
     if (merged.skip !== undefined) qs.set("skip", merged.skip)
     qs.set("minGuests", merged.minGuests ?? 0)
@@ -270,8 +294,9 @@ export default function ListingsPage() {
     }
 
     // Determine the path slug
-    const locality =
-      obj.locality !== undefined ? obj.locality : filters.locality
+    const locality = Object.prototype.hasOwnProperty.call(obj, "locality")
+      ? obj.locality
+      : filters.locality
 
     const slug =
       locality && typeof locality === "string"
@@ -305,8 +330,76 @@ export default function ListingsPage() {
     (_, i) => startPage + i
   )
 
+  // breadcrumb Logic (Inline)
+  const venueMeta = filters.category
+    ? categoryToVenuePath[filters.category]
+    : null
+
+  const localityLabel = filters.locality
+    ? filters.locality.replace(/-/g, " ")
+    : null
+
+  const breadcrumbItems = [{ label: "Home", type: "home" }]
+
+  if (venueMeta) {
+    breadcrumbItems.push({
+      label: venueMeta.label,
+      type: "service",
+      path: `${venueMeta.path}?category=${
+        filters.category
+      }&serviceLabel=${encodeURIComponent(venueMeta.label)}`
+    })
+  }
+
+  if (venueMeta && localityLabel) {
+    breadcrumbItems.push({
+      label: `${venueMeta.label} in ${localityLabel}`,
+      type: "current"
+    })
+  }
+
   return (
-    <div className="min-h bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Breadcrumb */}
+      <nav
+        aria-label="Breadcrumb"
+        className="py-3 px-4 mb-3 text-sm text-red-600 "
+      >
+        <ol className="flex flex-wrap items-center gap-1">
+          {breadcrumbItems.map((item, idx) => {
+            const isLast = item.type === "current"
+
+            return (
+              <li key={idx} className="flex items-center gap-1 truncate">
+                {!isLast ? (
+                  <>
+                    <span
+                      onClick={() => {
+                        if (item.type === "home") navigate("/")
+                        if (item.type === "service") {
+                          pushUrl({
+                            category: filters.category,
+                            locality: undefined,
+                            search: "",
+                            skip: 0
+                          })
+                        }
+                      }}
+                      className="cursor-pointer font-medium hover:text-gray-800 whitespace-nowrap"
+                    >
+                      {item.label}
+                    </span>
+                    <span className="mx-1">/</span>
+                  </>
+                ) : (
+                  <span className="text-gray-600 truncate">{item.label}</span>
+                )}
+              </li>
+            )
+          })}
+        </ol>
+      </nav>
+
       <div className="max-w-7xl mx-auto md:flex md:space-x-6 gap-6">
         {/* DESKTOP SIDEBAR */}
         <aside className="hidden md:block w-72 shrink-0">
