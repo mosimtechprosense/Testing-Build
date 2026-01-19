@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef  } from "react"
 import { Range } from "react-range"
 
 export default function GuestRange({ onChange, value }) {
@@ -6,16 +6,22 @@ export default function GuestRange({ onChange, value }) {
   const max = 1200
 
   const [localValue, setLocalValue] = useState(value || [min, max])
+  const isSyncingFromProps = useRef(false)
 
-  // Sync internal state when external value changes
+
+// Sync internal state when external value changes
 useEffect(() => {
-  if (!value) return;
-  const [min, maxValue] = value;
+  if (!value) return
+
+  isSyncingFromProps.current = true
+
+  const [minVal, maxVal] = value
   setLocalValue([
-    Math.max(0, min),
-    Math.min(1200, maxValue ?? 1200)
-  ]);
-}, [value]);
+    Math.max(0, minVal),
+    Math.min(1200, maxVal ?? 1200)
+  ])
+}, [value])
+
 
 
   const handleChange = (values) => {
@@ -23,6 +29,33 @@ useEffect(() => {
     setLocalValue(sorted)
     onChange && onChange(sorted)
   }
+
+
+  // call filter when typing stops
+useEffect(() => {
+  if (isSyncingFromProps.current) {
+    isSyncingFromProps.current = false
+    return
+  }
+
+  if (
+    localValue[0] === "" ||
+    localValue[1] === ""
+  ) return
+
+  const t = setTimeout(() => {
+    const minVal = Math.max(min, Number(localValue[0]))
+    const maxVal = Math.min(max, Number(localValue[1]))
+
+    if (minVal <= maxVal) {
+      onChange([minVal, maxVal])
+    }
+  }, 1000)
+
+  return () => clearTimeout(t)
+}, [localValue])
+
+
 
   return (
     <div className="mt-4 w-full max-w-md mx-auto">
@@ -71,34 +104,56 @@ useEffect(() => {
       {/* Inputs */}
       <div className="flex items-center gap-2 mt-4 w-full min-w-0">
         {/* Min Input */}
-        <input
-          type="text"
-          className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
-          value={localValue[0].toString()}
-          onChange={(e) => {
-            let newMin = Number(e.target.value.replace(/\D/g, ""))
-            newMin = Math.max(min, Math.min(newMin, localValue[1]))
-            handleChange([newMin, localValue[1]])
-          }}
-        />
+<input
+  type="text"
+  className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm
+    focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
+  value={localValue[0]}
+  onChange={(e) => {
+    const raw = e.target.value.replace(/\D/g, "")
+    setLocalValue([
+      raw === "" ? "" : Number(raw),
+      localValue[1]
+    ])
+  }}
+  onBlur={() => {
+    let minVal = Number(localValue[0]) || 0
+    let maxVal = Number(localValue[1]) || max
+
+    minVal = Math.max(min, Math.min(minVal, maxVal))
+
+    setLocalValue([minVal, maxVal])
+    onChange([minVal, maxVal])
+  }}
+/>
+
 
         <span className="text-gray-600">—</span>
 
         {/* Max Input */}
-        <input
-          type="text"
-          className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
-          value={
-            localValue[1] === max
-              ? `${localValue[1]}+`
-              : `${localValue[1]}`
-          }
-          onChange={(e) => {
-            let newMax = Number(e.target.value.replace(/\D/g, ""))
-            newMax = Math.min(max, Math.max(newMax, localValue[0]))
-            handleChange([localValue[0], newMax])
-          }}
-        />
+<input
+  type="text"
+  className="flex-1 min-w-0 border border-gray-300 rounded px-1.5 py-1 text-sm
+    focus:border-white focus:outline-none focus:ring-2 focus:ring-red-400"
+  value={localValue[1] === max ? `${max}+` : localValue[1]}
+  onChange={(e) => {
+    const raw = e.target.value.replace(/\D/g, "")
+    setLocalValue([
+      localValue[0],
+      raw === "" ? "" : Number(raw)
+    ])
+  }}
+  onBlur={() => {
+    let minVal = Number(localValue[0]) || min
+    let maxVal = Number(localValue[1]) || max
+
+    maxVal = Math.min(max, Math.max(maxVal, minVal))
+
+    setLocalValue([minVal, maxVal])
+    onChange([minVal, maxVal])
+  }}
+/>
+
       </div>
     </div>
   )

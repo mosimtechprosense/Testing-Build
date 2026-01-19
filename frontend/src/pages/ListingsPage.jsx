@@ -182,13 +182,22 @@ export default function ListingsPage() {
       })
     )
 
-    cleanedFilters.minGuests = cleanedFilters.minGuests ?? 0
-    cleanedFilters.maxGuests = cleanedFilters.maxGuests ?? 1200
+if (cleanedFilters.minGuests === undefined) {
+  cleanedFilters.minGuests = 0
+}
 
-    //  If category is selected, search must NOT filter listings
-    if (cleanedFilters.category) {
-      delete cleanedFilters.search
-    }
+if (cleanedFilters.maxGuests === undefined) {
+  cleanedFilters.maxGuests = 1200
+}
+
+
+if (
+  cleanedFilters.category &&
+  !cleanedFilters.search?.trim()
+) {
+  delete cleanedFilters.search
+}
+
 
     if (
       cleanedFilters.search &&
@@ -266,8 +275,18 @@ const pushUrl = (obj) => {
   if (merged.category) qs.set("category", merged.category)
   if (merged.search) qs.set("search", merged.search)
   if (merged.skip !== undefined) qs.set("skip", merged.skip)
-  qs.set("minGuests", merged.minGuests ?? 0)
-  qs.set("maxGuests", merged.maxGuests ?? 1200)
+if (merged.minGuests !== undefined) {
+  qs.set("minGuests", merged.minGuests)
+} else {
+  qs.delete("minGuests")
+}
+
+if (merged.maxGuests !== undefined) {
+  qs.set("maxGuests", merged.maxGuests)
+} else {
+  qs.delete("maxGuests")
+}
+
   qs.set("take", merged.take || 10)
 
   if (merged.vegetarian) qs.set("vegetarian", "true")
