@@ -38,13 +38,14 @@ const Footer = () => {
           </Link>
           
           </li>
-          <li>
-           <Link to= {null} className="hover:text-red-600">
-             Venues
-          </Link>
-         </li>
+<li>
+  <Link to="/venues" className="hover:text-red-600">
+    Venues
+  </Link>
+</li>
+
          <li>
-          <Link to={null} className="hover:text-red-600">
+          <Link to="/blogs" className="hover:text-red-600">
             Blog
           </Link>
          </li>
@@ -76,11 +77,11 @@ const Footer = () => {
             Privacy Policy 
           </Link>
          </li>
-         <li>
+         {/* <li>
           <Link to={null} className="hover:text-red-600">
             Sitemap
           </Link>
-         </li>
+         </li> */}
          </ul>
        </div>
 
@@ -90,9 +91,9 @@ const Footer = () => {
           <ul className="space-y-2 text-base">
             <li>📧 info@bookmybanquets.in</li>
             <li>📞 +91 8920597474</li>
-            <li>📍 Unit No. 1369, Second floor,<br />
-                ILD Trade Centre, Sector 47,<br />
-                Sohna Road, Gurgaon Haryana</li>
+            <li>📍 40A/5, CHANDER NAGAR,<br />
+                Sector 15 Part 2, Sector 15,<br />
+                 Gurugram, Haryana 122001</li>
           </ul>
         </div>
       </div>

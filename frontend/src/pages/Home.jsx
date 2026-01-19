@@ -10,6 +10,7 @@ import Categories from "../components/Categories"
 import OfferBanner from "../components/OfferBanner"
 import RecommendedListings from "../components/ListingCards/RecommendedListings"
 import HighlyDemandedListings from "../components/ListingCards/HighlyDemandedListings"
+import HomeBlogSection from "../components/HomeBlogSection"
 
 const Home = () => {
 const services = [
@@ -298,6 +299,8 @@ const serviceSlug = categoryToSlug[selectedService.categoryId] || "banquet-hall"
 
       {/*How It Works Section*/}
       <HowItWorks />
+
+      <HomeBlogSection />
 
 
     </div>

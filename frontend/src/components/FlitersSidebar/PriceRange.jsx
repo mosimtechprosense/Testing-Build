@@ -59,6 +59,8 @@ export default function PriceRange({ onChange }) {
         }}
       />
 
+      <p className="mt-3 text-[11px] font-medium text-gray-800">Type / Drag</p>
+      
       <div className="flex items-center gap-2 mt-4 w-full min-w-0">
         {/* Min Input */}
         <input

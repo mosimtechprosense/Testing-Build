@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { caterers, decor, makeup, mehendi, photographers, venues } from "../assets/index.js";
 
 const Categories = () => {
@@ -5,6 +6,8 @@ const Categories = () => {
     {
       title: "Venues",
       des: "Banquet Halls, Marriage Gardens, Lawns...",
+       path: "/venues/banquet-halls",
+       categoryId: 6,
       img: venues,
       colour: "bg-[#d7e1ff]",
     },
@@ -40,6 +43,23 @@ const Categories = () => {
     },
   ];
 
+    const navigate = useNavigate();
+  
+
+const handleCategory = (cat) => {
+  // VENUES → show ALL venue listings
+  if (cat.title === "Venues") {
+    navigate("/venues")
+    return
+  }
+
+  // other categories (future use)
+  if (cat.path && cat.categoryId) {
+    navigate(`${cat.path}?category=${cat.categoryId}`)
+  }
+}
+
+
   return (
     <div className="w-full bg-white py-10 px-4 sm:px-8 md:px-12 lg:px-24">
       {/* Header */}
@@ -53,6 +73,7 @@ const Categories = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {category.map((cat, index) => (
           <div
+          onClick={() => handleCategory(cat)}
             key={index}
             className={`flex items-center justify-between rounded-lg overflow-hidden ${cat.colour} shadow hover:shadow-lg transition-all duration-300 h-[100px] cursor-pointer`} // 👈 fixed height
           >

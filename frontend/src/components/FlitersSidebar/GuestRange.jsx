@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef  } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Range } from "react-range"
 
 export default function GuestRange({ onChange, value }) {
@@ -8,54 +8,43 @@ export default function GuestRange({ onChange, value }) {
   const [localValue, setLocalValue] = useState(value || [min, max])
   const isSyncingFromProps = useRef(false)
 
+  // Sync internal state when external value changes
+  useEffect(() => {
+    if (!value) return
 
-// Sync internal state when external value changes
-useEffect(() => {
-  if (!value) return
+    isSyncingFromProps.current = true
 
-  isSyncingFromProps.current = true
+    const [minVal, maxVal] = value
+    setLocalValue([Math.max(0, minVal), Math.min(1200, maxVal ?? 1200)])
+  }, [value])
 
-  const [minVal, maxVal] = value
-  setLocalValue([
-    Math.max(0, minVal),
-    Math.min(1200, maxVal ?? 1200)
-  ])
-}, [value])
-
-
-
-  const handleChange = (values) => {
-    const sorted = [...values].sort((a, b) => a - b)
-    setLocalValue(sorted)
-    onChange && onChange(sorted)
-  }
+const handleChange = (values) => {
+  const sorted = [...values].sort((a, b) => a - b)
+  setLocalValue(sorted)
+  onChange?.(sorted)
+}
 
 
   // call filter when typing stops
-useEffect(() => {
-  if (isSyncingFromProps.current) {
-    isSyncingFromProps.current = false
-    return
-  }
-
-  if (
-    localValue[0] === "" ||
-    localValue[1] === ""
-  ) return
-
-  const t = setTimeout(() => {
-    const minVal = Math.max(min, Number(localValue[0]))
-    const maxVal = Math.min(max, Number(localValue[1]))
-
-    if (minVal <= maxVal) {
-      onChange([minVal, maxVal])
+  useEffect(() => {
+    if (isSyncingFromProps.current) {
+      isSyncingFromProps.current = false
+      return
     }
-  }, 1000)
 
-  return () => clearTimeout(t)
-}, [localValue])
+    if (localValue[0] === "" || localValue[1] === "") return
 
+    const t = setTimeout(() => {
+      const minVal = Math.max(min, Number(localValue[0]))
+      const maxVal = Math.min(max, Number(localValue[1]))
 
+      if (minVal <= maxVal) {
+        onChange([minVal, maxVal])
+      }
+    }, 1000)
+
+    return () => clearTimeout(t)
+  }, [localValue])
 
   return (
     <div className="mt-4 w-full max-w-md mx-auto">
@@ -81,7 +70,7 @@ useEffect(() => {
                 className="absolute h-2 rounded bg-red-500"
                 style={{
                   left: `${(localValue[0] / max) * 100}%`,
-                  right: `${100 - (localValue[1] / max) * 100}%`,
+                  right: `${100 - (localValue[1] / max) * 100}%`
                 }}
               />
               {children}
@@ -102,7 +91,9 @@ useEffect(() => {
       />
 
       {/* Inputs */}
-      <div className="flex items-center gap-2 mt-4 w-full min-w-0">
+      <p className="mt-3 text-[11px] font-medium text-gray-800">Type / Drag</p>
+
+      <div className="flex items-center gap-2 mt-2 w-full min-w-0">
         {/* Min Input */}
 <input
   type="text"
@@ -111,19 +102,15 @@ useEffect(() => {
   value={localValue[0]}
   onChange={(e) => {
     const raw = e.target.value.replace(/\D/g, "")
-    setLocalValue([
-      raw === "" ? "" : Number(raw),
-      localValue[1]
-    ])
+    const num = raw === "" ? "" : Math.min(Number(raw), max)
+    setLocalValue([num, localValue[1]])
   }}
   onBlur={() => {
-    let minVal = Number(localValue[0]) || 0
+    let minVal = Number(localValue[0]) || min
     let maxVal = Number(localValue[1]) || max
 
     minVal = Math.max(min, Math.min(minVal, maxVal))
-
     setLocalValue([minVal, maxVal])
-    onChange([minVal, maxVal])
   }}
 />
 
@@ -138,19 +125,15 @@ useEffect(() => {
   value={localValue[1] === max ? `${max}+` : localValue[1]}
   onChange={(e) => {
     const raw = e.target.value.replace(/\D/g, "")
-    setLocalValue([
-      localValue[0],
-      raw === "" ? "" : Number(raw)
-    ])
+    const num = raw === "" ? "" : Math.min(Number(raw), max)
+    setLocalValue([localValue[0], num])
   }}
   onBlur={() => {
     let minVal = Number(localValue[0]) || min
     let maxVal = Number(localValue[1]) || max
 
     maxVal = Math.min(max, Math.max(maxVal, minVal))
-
     setLocalValue([minVal, maxVal])
-    onChange([minVal, maxVal])
   }}
 />
 

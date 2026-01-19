@@ -4,11 +4,13 @@ import { RiInstagramLine } from "react-icons/ri";
 import HeroSection from "./HeroSection";
 import { useContext } from "react";
 import { UIContext } from "../store/UIContext";
+import { useNavigate } from "react-router-dom";
 
 
 const Navbar = () => {
 
     const { setPopupOpen } = useContext(UIContext);
+      const navigate = useNavigate();
 
     const quoteHandler = () => {
        setPopupOpen(true)
@@ -54,17 +56,30 @@ const Navbar = () => {
           </button>
 
 
-          {/* temprerory hide */}
-          {/* <select
-            className="px-5 py-2.5 rounded border text-[#212121] text-[0.8rem] font-medium cursor-pointer border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#dc2626]"
-            defaultValue="Select"
-          >
-            <option disabled value="Select">
-              Select City
-            </option>
-            <option>Delhi</option>
-            <option>Gurgaon</option>
-          </select> */}
+          {/* city filter */}
+<select
+  className="px-5 py-2.5 rounded border text-[#212121] text-[0.8rem] font-medium cursor-pointer border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#dc2626]"
+  defaultValue="Select"
+  onChange={(e) => {
+    const city = e.target.value;
+    if (!city) return;
+
+    const citySlug = city.toLowerCase() === "gurgaon" ? "gurgaon" : city.toLowerCase();
+
+    // Update filters in ListingsPage via navigate + state
+    navigate(`/listings/${citySlug}`, {
+      state: { resetFilters: true } // optional flag
+    });
+  }}
+>
+  <option disabled value="Select">Select City</option>
+  <option>Delhi</option>
+  <option>Gurgaon</option>
+</select>
+
+
+
+
 
 
         </div>
