@@ -21,9 +21,9 @@ export default function SimilarListingsSection({ listings }) {
   }
 
   return (
-    <section className="pt-10 relative">
+    <section className="w-full pt-10 relative">
       {/* Header */}
-      <div className="flex justify-between items-center px-4 md:px-8">
+      <div className="flex justify-between items-center md:px-8">
         <h2 className="text-3xl font-bold text-gray-900">
           Similar Banquet Halls
         </h2>
@@ -35,7 +35,7 @@ export default function SimilarListingsSection({ listings }) {
         className="
           absolute left-6 top-1/2 -translate-y-1/2
           bg-white shadow rounded-full px-5 py-5 z-20
-          hover:scale-110 transition
+          hover:scale-110 transition cursor-pointer
         "
       >
         <LuArrowLeft className="h-6 w-6" />

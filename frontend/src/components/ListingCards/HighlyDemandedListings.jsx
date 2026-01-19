@@ -74,7 +74,11 @@ const HighlyDemandedListings = () => {
         {listings.map((item) => (
           <div
             key={item.id}
-            className="min-w-[330px] max-w-[330px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group"
+            className="min-w-[330px] max-w-[330px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden group cursor-pointer"
+            onClick={() => {
+              const localitySlug = slugifyLocality(item.locality)
+              navigate(`/banquet-hall-in/${localitySlug}/${item.id}`)
+            }}
           >
             {/* Image */}
             <div className="h-42 w-full rounded-md overflow-hidden">
@@ -110,13 +114,7 @@ const HighlyDemandedListings = () => {
                 />
               </div>
               {/* Button */}
-              <button
-                className="mt-4 w-full text-sm bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all"
-                onClick={() => {
-                  const localitySlug = slugifyLocality(item.locality)
-                  navigate(`/banquet-hall-in/${localitySlug}/${item.id}`)
-                }}
-              >
+              <button className="mt-4 w-full text-sm bg-red-600 text-white py-2 rounded-lg cursor-pointer hover:bg-red-700 transition-all">
                 View Detail
               </button>
             </div>

@@ -68,7 +68,7 @@ export default function ListingsPage() {
     21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
   }
 
-  const { citySlug } = useParams()
+  const { citySlug, serviceSlug } = useParams()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [mobilePanel, setMobilePanel] = useState(null)
@@ -252,60 +252,49 @@ export default function ListingsPage() {
 
     return () => (mounted = false)
   }, [filters])
+const pushUrl = (obj) => {
+  // Merge new values into existing filters
+  const merged = { ...filters, ...obj }
 
-  const pushUrl = (obj) => {
-    // Merge new values into existing filters
-    const merged = { ...filters, ...obj }
-
-    // Reset pagination if any filter changes (not skip itself)
-    if (Object.keys(obj).some((key) => key !== "skip")) {
-      merged.skip = 0
-    }
-
-    // Build query string
-    const qs = new URLSearchParams()
-
-    if (merged.category) qs.set("category", merged.category)
-    if (merged.search) qs.set("search", merged.search)
-    if (merged.skip !== undefined) qs.set("skip", merged.skip)
-    qs.set("minGuests", merged.minGuests ?? 0)
-    qs.set("maxGuests", merged.maxGuests ?? 1200)
-    qs.set("take", merged.take || 10)
-
-    // VEG / NON-VEG URL LOGIC — PUT IT HERE
-    if (merged.vegetarian) {
-      qs.set("vegetarian", "true")
-    } else {
-      qs.delete("vegetarian")
-    }
-
-    if (merged.nonVegetarian) {
-      qs.set("nonVegetarian", "true")
-    } else {
-      qs.delete("nonVegetarian")
-    }
-
-    // Determine the path slug
-    const locality = Object.prototype.hasOwnProperty.call(obj, "locality")
-      ? obj.locality
-      : filters.locality
-
-    const slug =
-      locality && typeof locality === "string"
-        ? locality.replace(/\s+/g, "-").toLowerCase()
-        : ""
-
-    const serviceSlug =
-      filters.category && categoryToSlug[filters.category]
-        ? categoryToSlug[filters.category]
-        : "banquet-hall"
-
-    const path = slug ? `/${serviceSlug}-in/${slug}` : `/${serviceSlug}-in`
-
-    // Update URL and filters
-    navigate(`${path}?${qs.toString()}`, { replace: false })
-    setFilters(merged)
+  // Reset pagination if any filter changes (not skip itself)
+  if (Object.keys(obj).some((key) => key !== "skip")) {
+    merged.skip = 0
   }
+
+  // Build query string for other filters (skip, budget, vegetarian/non-veg)
+  const qs = new URLSearchParams()
+  if (merged.category) qs.set("category", merged.category)
+  if (merged.search) qs.set("search", merged.search)
+  if (merged.skip !== undefined) qs.set("skip", merged.skip)
+  qs.set("minGuests", merged.minGuests ?? 0)
+  qs.set("maxGuests", merged.maxGuests ?? 1200)
+  qs.set("take", merged.take || 10)
+
+  if (merged.vegetarian) qs.set("vegetarian", "true")
+  else qs.delete("vegetarian")
+
+  if (merged.nonVegetarian) qs.set("nonVegetarian", "true")
+  else qs.delete("nonVegetarian")
+
+  // Determine serviceSlug & localitySlug
+  const categoryId = merged.category || 6
+  const serviceSlug = categoryToSlug[categoryId] || "banquet-hall"
+
+  const localitySlug =
+    merged.locality && typeof merged.locality === "string"
+      ? merged.locality.replace(/\s+/g, "-").toLowerCase()
+      : ""
+
+  // Build path dynamically like ListingCard
+  const path = localitySlug
+    ? `/${serviceSlug}-in/${localitySlug}`
+    : `/${serviceSlug}-in`
+
+  // Navigate
+  navigate(`${path}?${qs.toString()}`, { replace: false })
+  setFilters(merged)
+}
+
 
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1
   const totalPages = Math.ceil((totalCount || 0) / (filters.take || 10)) || 1
@@ -448,7 +437,7 @@ export default function ListingsPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {listings.map((l) => (
-                <ListingCard key={String(l.id)} item={l} />
+                <ListingCard key={String(l.id)} item={l} serviceSlug={serviceSlug}/>
               ))}
             </div>
           )}

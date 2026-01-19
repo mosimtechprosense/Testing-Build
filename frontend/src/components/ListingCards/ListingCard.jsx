@@ -6,7 +6,7 @@ import Badge from "../listingsDetails/Badge"
 import { FaPhoneAlt } from "react-icons/fa"
 import FoodPrice from "../listingsDetails/FoodPrice"
 
-export default function ListingCard({ item }) {
+export default function ListingCard({ item, serviceSlug }) {
   const { setPopupOpen } = useContext(UIContext)
   const [showTags, setShowTags] = useState(false)
   const tooltipRef = useRef(null)
@@ -54,10 +54,10 @@ export default function ListingCard({ item }) {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [showTags])
 
-  const localitySlug =
-    item.locality_slug || item.locality?.replace(/\s+/g, "-").toLowerCase()
+const localitySlug = item.locality_slug || item.locality?.replace(/\s+/g, "-").toLowerCase()
+const listingUrl = `/${serviceSlug}-in/${localitySlug}/${item.id}`
 
-  const listingUrl = `/banquet-hall-in/${localitySlug}/${item.id}`
+
 
   return (
     <article

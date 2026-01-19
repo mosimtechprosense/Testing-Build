@@ -1,8 +1,15 @@
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
-export const fetchListings = async (filters = {}) => {
-  const params = new URLSearchParams();
+let listingsController
 
+export const fetchListings = async (filters = {}) => {
+  if (listingsController) {
+    listingsController.abort()
+  }
+
+  listingsController = new AbortController()
+
+  const params = new URLSearchParams()
   Object.entries(filters).forEach(([key, value]) => {
     if (
       value !== undefined &&
@@ -15,16 +22,20 @@ export const fetchListings = async (filters = {}) => {
         key === "locality"
           ? String(value).replace(/-/g, " ")
           : String(value)
-      );
+      )
     }
-  });
+  })
 
-  const url = `${API_BASE}/api/listings?${params.toString()}`;
+  const url = `${API_BASE}/api/listings?${params.toString()}`
 
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Failed to fetch listings");
-  return res.json();
-};
+  const res = await fetch(url, {
+    signal: listingsController.signal
+  })
+
+  if (!res.ok) throw new Error("Failed to fetch listings")
+  return res.json()
+}
+
 
 
 export const fetchListingById = async (id) => {

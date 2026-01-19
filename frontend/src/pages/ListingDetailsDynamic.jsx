@@ -3,7 +3,6 @@ import { useEffect, useState, useContext } from "react"
 import { fetchListingById, fetchSimilarListings } from "../api/listingsApi"
 import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu"
 import { HiUserGroup } from "react-icons/hi2"
-import FoodPrice from "../components/listingsDetails/FoodPrice"
 import { UIContext } from "../store/UIContext"
 import SimilarListingsSection from "../components/ListingCards/SimilarListing"
 import HallCapacities from "../components/listingsDetails/HallCapacities"
@@ -11,9 +10,12 @@ import AboutSection from "../components/listingsDetails/AboutSection"
 import FeaturesSection from "../components/listingsDetails/FeaturesSection"
 import PoliciesSection from "../components/listingsDetails/PoliciesSection"
 import FaqSection from "../components/ListingCards/FaqSection"
+import CheckDiscountPrice from "../components/listingsDetails/CheckDiscountPrice"
+import ScheduleVisit from "../components/listingsDetails/ScheduleVisit"
+import ListingDetailsSidebar from "../components/listingsDetails/ListingDetailsSidebar"
 
 export default function ListingDetailsDynamic() {
-  const { id } = useParams()
+  const { id, serviceSlug } = useParams()
 
   const [listing, setListing] = useState(null)
   const [similarListings, setSimilarListings] = useState([])
@@ -106,14 +108,16 @@ export default function ListingDetailsDynamic() {
     21: "mehendi-ceremony"
   }
 
+  const slugToCategory = Object.fromEntries(
+    Object.entries(categoryToSlug).map(([id, slug]) => [slug, Number(id)])
+  )
+
   const categoryId =
-    Number(categoryFromUrl) ||
+    slugToCategory[serviceSlug] ||
     listing.category_id ||
     listing.category?.id ||
-    listing.categoryId ||
-    listing.categories?.[0]?.id ||
     6
-  const serviceSlug = categoryToSlug[Number(categoryId)] || "banquet-hall"
+
   const venueMeta = categoryToVenuePath[categoryId]
 
   const breadcrumbItems = [
@@ -312,6 +316,11 @@ export default function ListingDetailsDynamic() {
         )}
       </div>
 
+      {/* ===== SIDEBAR (MOBILE ONLY) ===== */}
+      <div className="block lg:hidden mb-10">
+        <ListingDetailsSidebar listing={listing} setPopupOpen={setPopupOpen} />
+      </div>
+
       {/* ================= MAIN CONTENT ================= */}
       <div className="grid lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-10">
@@ -321,14 +330,17 @@ export default function ListingDetailsDynamic() {
           {/* HALL CAPACITY */}
           <HallCapacities hallCapacities={hallCapacities} />
 
+          {/* CHECK DISCOUNT PRICES */}
+          <CheckDiscountPrice />
+
           {/* FEATURES */}
           <FeaturesSection features={listing.features} />
 
           {/* POLICIES */}
           <PoliciesSection policies={listing.policies} />
 
-          {/* FAQ */}
-          <FaqSection faqs={faqs} />
+          {/* POLICIES */}
+          <ScheduleVisit policies={listing.policies} />
 
           {/* MAP */}
           <section>
@@ -342,50 +354,21 @@ export default function ListingDetailsDynamic() {
               src={`https://www.google.com/maps?q=${listing.lat},${listing.long}&output=embed`}
             />
           </section>
+
+          {/* FAQ */}
+          <FaqSection faqs={faqs} />
         </div>
 
-        {/* ================= SIDEBAR ================= */}
-        <div className="space-y-6">
-          <div className="bg-white p-4 rounded drop-shadow-xl">
-            <h3 className="text-xl font-semibold mb-2">Event Details</h3>
-            {/* Guests & Food Price */}
-            <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-700">
-              <span className="flex items-center gap-1">
-                <HiUserGroup className="h-4 w-4 text-red-600" />
-                {listing.min_guest} – {listing.max_guest} guests
-              </span>
-
-              <FoodPrice
-                vegPrice={listing.vegPrice}
-                nonVegPrice={listing.nonVegPrice}
-                iconSize={14}
-                gap="gap-4"
-              />
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded drop-shadow-xl">
-            <h3 className="text-xl font-semibold mb-2">Contact</h3>
-            <p>Phone: {listing.phone}</p>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setPopupOpen(true)
-              }}
-              className="mt-4 w-full
-          bg-red-600 text-white py-2 rounded
-            cursor-pointer
-            transition-all duration-200
-          hover:bg-red-700 hover:shadow-md
-            active:scale-[0.98]"
-            >
-              Enquiry Now
-            </button>
-          </div>
+        {/* RIGHT SIDEBAR (DESKTOP ONLY) */}
+        <div className="hidden lg:block">
+          <ListingDetailsSidebar
+            listing={listing}
+            setPopupOpen={setPopupOpen}
+          />
         </div>
       </div>
-      {/* SIMILAR LISTINGS */}
 
+      {/* SIMILAR LISTINGS */}
       <SimilarListingsSection listings={similarListings} />
     </div>
   )
