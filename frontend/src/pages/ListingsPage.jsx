@@ -68,12 +68,11 @@ export default function ListingsPage() {
     21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
   }
 
-  const { citySlug, localitySlug , serviceSlug } = useParams()
+  const { citySlug , serviceSlug } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [mobilePanel, setMobilePanel] = useState(null)
 
-  const cityFromQuery = searchParams.get("city");
 
   
 
@@ -131,20 +130,17 @@ city: citySlug
   }
 
 useEffect(() => {
-  const citySource = cityFromQuery || citySlug;
-  if (!citySource) return;
-
-  const cityName = decodeURIComponent(citySource)
-    .replace(/-/g, " ")
-    .toLowerCase();
+  const categoryFromUrl = searchParams.get("category")
+  const searchFromUrl = searchParams.get("search")
 
   setFilters((prev) => ({
     ...prev,
-    city: cityName,
-    locality: undefined,
-    skip: 0
-  }));
-}, [citySlug, cityFromQuery]);
+    category: categoryFromUrl ? Number(categoryFromUrl) : undefined,
+    search: categoryFromUrl && !searchFromUrl ? "" : searchFromUrl ?? prev.search,
+    skip: searchParams.get("skip") ? Number(searchParams.get("skip")) : 0
+  }))
+}, [searchParams])
+
 
 
 

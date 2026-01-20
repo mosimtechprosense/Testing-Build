@@ -59,15 +59,8 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            {/* CATEGORY LANDING */}
 <Route path="/venues/:categorySlug" element={<ListingsPage />} />
-
-{/* LOCALITY LISTING */}
 <Route path="/:serviceSlug-in/:localitySlug" element={<ListingsPage />} />
-
-
-
-{/* DETAILS */}
 <Route path="/:serviceSlug-in/:localitySlug/:id" element={<ListingDetailsDynamic />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>

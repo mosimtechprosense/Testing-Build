@@ -112,31 +112,33 @@ export default function ListingDetailsDynamic() {
     Object.entries(categoryToSlug).map(([id, slug]) => [slug, Number(id)])
   )
 
-  const categoryId =
-    slugToCategory[serviceSlug] ||
-    listing.category_id ||
-    listing.category?.id ||
-    6
+const serviceSlugResolved = serviceSlug || categoryToSlug[listing.category_id] || "banquet-hall"
+const categoryId = listing.category_id || 6
+const venueMeta = categoryToVenuePath[categoryId]
 
-  const venueMeta = categoryToVenuePath[categoryId]
-
-  const breadcrumbItems = [
-    { label: "Home", type: "home", path: "/" },
-    {
-      label: venueMeta?.label || "Banquet Halls",
-      type: "service",
-      path: `/${serviceSlug}-in?category=${categoryId}`
-    }
-  ]
-
-  if (listing.locality) {
-    const localitySlug = listing.locality.replace(/\s+/g, "-").toLowerCase()
-    breadcrumbItems.push({
-      label: `${venueMeta?.label || "Banquet Halls"} in ${listing.locality}`,
-      type: "locality",
-      path: `/${serviceSlug}-in/${localitySlug}?category=${categoryId}&locality=${localitySlug}`
-    })
+// Breadcrumbs
+const breadcrumbItems = [
+  { label: "Home", type: "home", path: "/" },
+  {
+    label: venueMeta?.label || "Banquet Halls",
+    type: "service",
+    path: `/${serviceSlugResolved}-in?category=${categoryId}`
   }
+]
+
+if (listing.locality) {
+  const localitySlug = listing.locality.replace(/\s+/g, "-").toLowerCase()
+  breadcrumbItems.push({
+    label: `${venueMeta?.label || "Banquet Halls"} in ${listing.locality}`,
+    type: "locality",
+    path: `/${serviceSlugResolved}-in/${localitySlug}?category=${categoryId}&locality=${localitySlug}`
+  })
+}
+
+breadcrumbItems.push({
+  label: listing.title,
+  type: "current"
+})
 
   // Current listing (not clickable)
   breadcrumbItems.push({

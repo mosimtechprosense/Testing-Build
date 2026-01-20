@@ -13,26 +13,34 @@ const DiscountPopup = () => {
   const { menuOpen, popupOpen, setPopupOpen } = useContext(UIContext);
 
 
+
+
+
+
   //* Handle reopen logic
 useEffect(() => {
   let timer;
 
+  const alreadySubmitted =
+    sessionStorage.getItem("discountPopupSubmitted") === "true";
+
+  if (alreadySubmitted) return; //  never reopen in this session
+
   const startTimer = () => {
-    timer = setTimeout(() => setPopupOpen(true), 100000);
+    timer = setTimeout(() => setPopupOpen(true), 30000);
   };
 
-  // Debounce start when venuesOpen switches from true → false
-  if (!popupOpen && name === "" && phone === ""  && !menuOpen) {
-    const debounce = setTimeout(startTimer, 500); // wait 0.5s
+  if (!popupOpen && name === "" && phone === "" && !menuOpen) {
+    const debounce = setTimeout(startTimer, 500);
     return () => {
       clearTimeout(timer);
       clearTimeout(debounce);
-      
     };
   }
 
   return () => clearTimeout(timer);
 }, [popupOpen, setPopupOpen, name, phone, menuOpen]);
+
 
 
 
@@ -113,19 +121,19 @@ const handleSubmit = async (e) => {
 
   Toastify({
     text: "✅ Success! Our team will contact you shortly!",
-    duration: 4000, 
+    duration: 4000,
     gravity: "top",
     position: window.innerWidth <= 768 ? "center" : "right",
     className: "custom-toast text-white text-sm rounded-xl py-0 shadow-lg",
     style: {
-        background: "#141414",
-        width: "clamp(260px, 90%, 380px)", // Responsive width with min & max limit
-        whiteSpace: "pre-line", // Keeps wrapping natural without breaking mid-word
-        wordBreak: "keep-all", // Prevents unwanted word splits
-        textAlign: "center",
-        borderRadius: "10px",
-        margin: "0 auto",
-        boxSizing: "border-box", 
+      background: "#141414",
+      width: "clamp(260px, 90%, 380px)",
+      whiteSpace: "pre-line",
+      wordBreak: "keep-all",
+      textAlign: "center",
+      borderRadius: "10px",
+      margin: "0 auto",
+      boxSizing: "border-box",
     },
     close: true
   }).showToast();
@@ -135,18 +143,19 @@ const handleSubmit = async (e) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: name,
-        phone: phone,
+        name,
+        phone,
         email: "",
         message: "Discount request form"
       })
     });
 
-      setIsSubmitting(false);
-      setPopupOpen(false);
-      setName("");
-      setPhone("");
+    // ✅ mark submitted for THIS session
+    sessionStorage.setItem("discountPopupSubmitted", "true");
 
+    setPopupOpen(false);
+    setName("");
+    setPhone("");
   } catch (error) {
     console.error(error);
     Toastify({
@@ -160,6 +169,10 @@ const handleSubmit = async (e) => {
     setIsSubmitting(false);
   }
 };
+
+
+
+
 
 
   if (!popupOpen) return null
