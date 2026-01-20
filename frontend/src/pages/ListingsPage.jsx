@@ -70,8 +70,12 @@ export default function ListingsPage() {
 
   const { citySlug, localitySlug , serviceSlug } = useParams()
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [mobilePanel, setMobilePanel] = useState(null)
+
+  const cityFromQuery = searchParams.get("city");
+
+  
 
   const paramsFromUrl = useMemo(() => {
     const obj = Object.fromEntries([...searchParams.entries()])
@@ -94,9 +98,9 @@ export default function ListingsPage() {
   }, [searchParams])
 
   const initial = {
-    city: citySlug
-      ? decodeURIComponent(citySlug)
-      : paramsFromUrl.city || undefined,
+city: citySlug
+  ? decodeURIComponent(citySlug).replace(/-/g, " ").toLowerCase()
+  : undefined,
     category: paramsFromUrl.category
       ? Number(paramsFromUrl.category)
       : undefined,
@@ -126,7 +130,24 @@ export default function ListingsPage() {
     pushUrl({ skip: newSkip })
   }
 
-  const city = localitySlug;
+useEffect(() => {
+  const citySource = cityFromQuery || citySlug;
+  if (!citySource) return;
+
+  const cityName = decodeURIComponent(citySource)
+    .replace(/-/g, " ")
+    .toLowerCase();
+
+  setFilters((prev) => ({
+    ...prev,
+    city: cityName,
+    locality: undefined,
+    skip: 0
+  }));
+}, [citySlug, cityFromQuery]);
+
+
+
 
 
   const [filters, setFilters] = useState(initial)
@@ -211,6 +232,13 @@ if (
       delete cleanedFilters.search
     }
 
+    if (cleanedFilters.city) {
+  cleanedFilters.city = cleanedFilters.city
+    .replace(/-/g, " ")
+    .toLowerCase();
+}
+
+
     if (cleanedFilters.locality) {
       // numeric locality (ID) from sidebar → ignore
       if (typeof cleanedFilters.locality === "number") {
@@ -268,6 +296,9 @@ const pushUrl = (obj) => {
   // Merge new values into existing filters
   const merged = { ...filters, ...obj }
 
+  const isVenuesPage = location.pathname.startsWith("/venues");
+
+
   // Reset pagination if any filter changes (not skip itself)
   if (Object.keys(obj).some((key) => key !== "skip")) {
     merged.skip = 0
@@ -298,6 +329,7 @@ if (merged.maxGuests !== undefined) {
   if (merged.nonVegetarian) qs.set("nonVegetarian", "true")
   else qs.delete("nonVegetarian")
 
+
   // Determine serviceSlug & localitySlug
   const categoryId = merged.category || 6
   const serviceSlug = categoryToSlug[categoryId] || "banquet-hall"
@@ -307,10 +339,17 @@ if (merged.maxGuests !== undefined) {
       ? merged.locality.replace(/\s+/g, "-").toLowerCase()
       : ""
 
-  // Build path dynamically like ListingCard
-  const path = localitySlug
-    ? `/${serviceSlug}-in/${localitySlug}`
-    : `/${serviceSlug}-in`
+// Build base path with CITY
+let path = `/${serviceSlug}-in/${filters.city
+  ?.replace(/\s+/g, "-")
+  .toLowerCase() || citySlug}`;
+
+//  ONLY override when locality is selected
+if (!isVenuesPage && localitySlug) {
+  path = `/${serviceSlug}-in/${localitySlug}`;
+}
+
+
 
   // Navigate
   navigate(`${path}?${qs.toString()}`, { replace: false })
@@ -385,15 +424,21 @@ if (merged.maxGuests !== undefined) {
                   onClick={() => {
                     if (!isClickable()) return
                     if (item.type === "home") navigate("/")
-                    if (item.type === "service") {
-                      pushUrl({
-                        category: filters.category,
-                        city,
-                        locality: undefined,
-                        search: "",
-                        skip: 0
-                      })
-                    }
+if (item.type === "service") {
+  navigate(
+    `${venueMeta.path}?category=${filters.category}&serviceLabel=${encodeURIComponent(
+      venueMeta.label
+    )}`
+  )
+
+  // 🔑 reset locality-related state
+  setFilters((prev) => ({
+    ...prev,
+    locality: undefined,
+    skip: 0
+  }))
+}
+
                   }}
                   className={`${
                     isClickable()
@@ -444,7 +489,6 @@ if (merged.maxGuests !== undefined) {
                   : "Banquet Halls"}
               </h1>
             </div>
-
             <div className="text-sm text-gray-600">{totalCount} results</div>
           </div>
 

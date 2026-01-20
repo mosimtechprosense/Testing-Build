@@ -51,6 +51,39 @@ return {
 }
 }
 
+
+
+const getCityVariants = (city) => {
+  if (!city) return [];
+
+  const normalized = city.toLowerCase();
+
+  const cityMap = {
+    delhi: [
+      "delhi",
+      "north delhi",
+      "south delhi",
+      "east delhi",
+      "west delhi",
+      "new delhi",
+      "West Delhi",
+      "South West Delhi",
+      "North Delhi",
+      "New Delhi",
+      "Central Delhi",
+      "South Delhi",
+      "East Delhi",
+      "North East Delhi"
+    ],
+    gurgaon: ["gurgaon", "gurugram"],
+    gurugram: ["gurgaon", "gurugram"]
+  };
+
+  return cityMap[normalized] || [normalized];
+};
+
+
+
 //* READ — Get all listings (with filters)
 export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
   const {
@@ -76,6 +109,10 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
   const highDemandBool = highDemand === "true" || highDemand === true
   const normalizedCity = normalize(city)
   const normalizedLocality = normalize(locality)
+  const cityVariants = getCityVariants(city);
+
+
+
 
   const where = {
     status: true,
@@ -103,9 +140,19 @@ export const getAllListingDB = async (filters = {}, skip = 0, take = 999) => {
     }
   : {}),
 
+  
 
     // City / Locality filters
-    ...(city ? { city: { equals: normalizedCity } } : {}),
+...(cityVariants.length
+  ? {
+      OR: cityVariants.map((c) => ({
+        city: {
+          contains: c,
+        }
+      }))
+    }
+  : {}),
+
 
     ...(locality
       ? {

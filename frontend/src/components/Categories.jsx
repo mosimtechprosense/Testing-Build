@@ -49,7 +49,7 @@ const Categories = () => {
 const handleCategory = (cat) => {
   // VENUES → show ALL venue listings
   if (cat.title === "Venues") {
-    navigate("/venues")
+    navigate("/venues/banquet-halls")
     return
   }
 

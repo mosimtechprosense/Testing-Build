@@ -59,12 +59,16 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/venues" element={<ListingsPage />} />
-            <Route path="/venues/:categorySlug" element={<ListingsPage />} />
-            <Route path="/banquet-hall-in/:localitySlug?" element={<ListingsPage />} />
-            <Route path="/banquet-hall-in/:citySlug" element={<ListingsPage />} />
-            <Route path="/:serviceSlug-in/:localitySlug/:id" element={<ListingDetailsDynamic />} />
-            <Route path="/:serviceSlug-in/:localitySlug?" element={<ListingsPage />} /> 
+            {/* CATEGORY LANDING */}
+<Route path="/venues/:categorySlug" element={<ListingsPage />} />
+
+{/* LOCALITY LISTING */}
+<Route path="/:serviceSlug-in/:localitySlug" element={<ListingsPage />} />
+
+
+
+{/* DETAILS */}
+<Route path="/:serviceSlug-in/:localitySlug/:id" element={<ListingDetailsDynamic />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>
           </ConditionalAdminUI>
