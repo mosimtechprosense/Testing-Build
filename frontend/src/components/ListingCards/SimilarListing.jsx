@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react"
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu"
 import { HiUserGroup } from "react-icons/hi2"
 import { useNavigate } from "react-router-dom"
@@ -5,19 +6,65 @@ import FoodPrice from "../listingsDetails/FoodPrice"
 
 export default function SimilarListingsSection({ listings }) {
   const navigate = useNavigate()
+  const scrollRef = useRef(null)
+  const animationRef = useRef(null)
+  const isInteracting = useRef(false)
+
+  const isDragging = useRef(false)
+  const startX = useRef(0)
+  const scrollStart = useRef(0)
 
   if (!Array.isArray(listings) || listings.length === 0) return null
 
-  const scrollLeft = () => {
-    document
-      .getElementById("similarScroll")
-      ?.scrollBy({ left: -300, behavior: "smooth" })
+  const infiniteListings = [...listings, ...listings, ...listings]
+
+  // AUTO SCROLL
+  useEffect(() => {
+    const container = scrollRef.current
+    if (!container) return
+
+    const speed = 0.5
+    const animate = () => {
+      if (!isInteracting.current && !isDragging.current) {
+        container.scrollLeft += speed
+        if (container.scrollLeft >= container.scrollWidth / 3) {
+          container.scrollLeft = 0
+        }
+      }
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    animationRef.current = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(animationRef.current)
+  }, [listings])
+
+  // MOUSE DRAG
+  const onMouseDown = (e) => {
+    isDragging.current = true
+    isInteracting.current = true
+    startX.current = e.pageX
+    scrollStart.current = scrollRef.current.scrollLeft
   }
 
-  const scrollRight = () => {
-    document
-      .getElementById("similarScroll")
-      ?.scrollBy({ left: 300, behavior: "smooth" })
+  const onMouseMove = (e) => {
+    if (!isDragging.current) return
+    const walk = (e.pageX - startX.current) * 1.2
+    scrollRef.current.scrollLeft = scrollStart.current - walk
+  }
+
+  const stopDragging = () => {
+    isDragging.current = false
+    setTimeout(() => (isInteracting.current = false), 800)
+  }
+
+  // ARROW SCROLL
+  const handleArrow = (direction) => {
+    isInteracting.current = true
+    scrollRef.current.scrollBy({
+      left: direction * 300,
+      behavior: "smooth"
+    })
+    setTimeout(() => (isInteracting.current = false), 800)
   }
 
   return (
@@ -29,41 +76,33 @@ export default function SimilarListingsSection({ listings }) {
         </h2>
       </div>
 
-      {/* Left Arrow */}
+      {/* LEFT ARROW */}
       <button
-        onClick={scrollLeft}
-        className="
-          absolute left-6 top-1/2 -translate-y-1/2
-          bg-white shadow rounded-full px-5 py-5 z-20
-          hover:scale-110 transition cursor-pointer
-        "
+        onClick={() => handleArrow(-1)}
+        className="hidden sm:block absolute left-6 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 hover:scale-110 transition cursor-pointer"
       >
         <LuArrowLeft className="h-6 w-6" />
       </button>
 
-      {/* Scroll Container */}
+      {/* SCROLL CONTAINER */}
       <div
-        id="similarScroll"
-        className="
-          flex gap-6
-          overflow-x-hidden scroll-smooth no-scrollbar
-          px-16 md:px-8 py-10
-        "
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={stopDragging}
+        onMouseLeave={stopDragging}
+        onTouchStart={() => (isInteracting.current = true)}
+        onTouchEnd={() => (isInteracting.current = false)}
+        className="flex gap-6 overflow-x-auto no-scrollbar select-none px-16 md:px-8 py-10 cursor-grab active:cursor-grabbing"
       >
-        {listings.map((item) => (
+        {infiniteListings.map((item, index) => (
           <div
-            key={item.id}
-            className="
-              min-w-[330px] max-w-[330px]
-              p-4 bg-white rounded-xl
-              shadow-[0_8px_24px_rgba(0,0,0,0.1)]
-              hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)]
-              transition-all duration-300
-              overflow-hidden cursor-pointer
-            "
-            onClick={() =>
+            onClick={(e) => {
+              e.stopPropagation()
               navigate(`/banquet-hall-in/${item.locality}/${item.id}`)
-            }
+            }}
+            key={`${item.id}-${index}`}
+            className="min-w-[105%] sm:min-w-[330px] max-w-full sm:max-w-[330px] p-4 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:shadow-[0px_6px_12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden cursor-pointer"
           >
             {/* Image */}
             <div className="h-42 w-full rounded-md overflow-hidden">
@@ -79,18 +118,13 @@ export default function SimilarListingsSection({ listings }) {
               <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
                 {item.title}
               </h3>
-
               <p className="text-sm text-gray-600 line-clamp-2">
                 {item.excerpt || "Beautiful banquet venue"}
               </p>
-
-              {/* Guests */}
               <div className="flex items-center gap-1 text-sm font-medium text-gray-800">
                 <HiUserGroup className="h-4 w-4 text-red-600" />
                 {item.min_guest} – {item.max_guest} guests
               </div>
-
-              {/* Prices */}
               <FoodPrice
                 vegPrice={item.vegPrice}
                 nonVegPrice={item.nonVegPrice}
@@ -98,19 +132,13 @@ export default function SimilarListingsSection({ listings }) {
                 gap="gap-3"
               />
 
-              {/* CTA */}
+              {/* VIEW DETAIL BUTTON */}
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  navigate(
-                    `/banquet-hall-in/${item.locality}/${item.id}`
-                  )
+                  navigate(`/banquet-hall-in/${item.locality}/${item.id}`)
                 }}
-                className="
-                  mt-2 w-full cursor-pointer
-                  bg-red-600 text-white py-2 rounded-lg
-                  hover:bg-red-700 transition
-                "
+                className="mt-2 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition"
               >
                 View Detail
               </button>
@@ -119,14 +147,10 @@ export default function SimilarListingsSection({ listings }) {
         ))}
       </div>
 
-      {/* Right Arrow */}
+      {/* RIGHT ARROW */}
       <button
-        onClick={scrollRight}
-        className="
-          absolute right-6 top-1/2 -translate-y-1/2
-          bg-white shadow rounded-full px-5 py-5 z-20
-          hover:scale-110 transition
-        "
+        onClick={() => handleArrow(1)}
+        className="hidden sm:block absolute right-6 top-1/2 -translate-y-1/2 bg-white shadow rounded-full px-5 py-5 z-20 hover:scale-110 transition cursor-pointer"
       >
         <LuArrowRight className="h-6 w-6" />
       </button>

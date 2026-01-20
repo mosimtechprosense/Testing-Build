@@ -68,7 +68,7 @@ export default function ListingsPage() {
     21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
   }
 
-  const { citySlug, serviceSlug } = useParams()
+  const { citySlug, localitySlug , serviceSlug } = useParams()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [mobilePanel, setMobilePanel] = useState(null)
@@ -125,6 +125,9 @@ export default function ListingsPage() {
     const newSkip = (pageNumber - 1) * (filters.take || 10)
     pushUrl({ skip: newSkip })
   }
+
+  const city = localitySlug;
+
 
   const [filters, setFilters] = useState(initial)
   const [listings, setListings] = useState([])
@@ -385,6 +388,7 @@ if (merged.maxGuests !== undefined) {
                     if (item.type === "service") {
                       pushUrl({
                         category: filters.category,
+                        city,
                         locality: undefined,
                         search: "",
                         skip: 0
@@ -437,7 +441,7 @@ if (merged.maxGuests !== undefined) {
                     }`
                   : filters.locality
                   ? `Venues in ${filters.locality.replace(/-/g, " ")}`
-                  : "Listings"}
+                  : "Banquet Halls"}
               </h1>
             </div>
 

@@ -40,13 +40,13 @@ const FoodPrice = ({ vegPrice, nonVegPrice }) => {
   const isPureVeg = vegPrice && !nonVegPrice;
 
   return (
-    <div className="mt-2 flex items-center gap-3 text-sm text-gray-800 flex-wrap">
+    <div className="md:mt-0 lg:mt-2 mt-2 flex items-center gap-3 text-sm text-gray-800 flex-wrap">
       {/* Veg / Pure Veg */}
       {vegPrice && (
-        <div className="flex items-center gap-1 whitespace-nowrap">
+        <div className="flex items-center justify-center gap-1 md:ml-2 lg:ml-0 sm:ml-2 ml-0  whitespace-nowrap">
           <VegIcon />
           <span className={isPureVeg ? `font-medium text-[#2a8f51]` : `font-medium`}>
-            {isPureVeg ? "Pure Veg" : "Veg"}
+            {isPureVeg ? "Veg" : "Veg"}
           </span>
           <span className="font-medium">
             <span className="line-through">₹{vegPrice}</span>
@@ -56,18 +56,22 @@ const FoodPrice = ({ vegPrice, nonVegPrice }) => {
       )}
 
       {/* Non-Veg */}
-      {nonVegPrice && (
-        <div className="flex items-center gap-1 whitespace-nowrap">
-          <NonVegIcon />
-          <span className="font-medium text-red-700">
-            Non-Veg
-          </span>
-          <span className="font-medium">
-            <span className="line-through">₹{nonVegPrice}</span>
-            <span className="ml-0.5 text-sm text-gray-600">/Plate</span>
-          </span>
-        </div>
-      )}
+{nonVegPrice ? (
+  <div className="flex items-center gap-1 whitespace-nowrap">
+    <NonVegIcon />
+    <span className="font-medium text-red-700">Non-Veg</span>
+    <span className="font-medium">
+      <span className="line-through">₹{nonVegPrice}</span>
+      <span className="ml-0.5 text-sm text-gray-600">/Plate</span>
+    </span>
+  </div>
+) : (
+<div className="flex items-center gap-1 text-sm font-medium text-green-700">
+  @Pure Veg Only
+</div>
+
+)}
+
     </div>
   );
 };

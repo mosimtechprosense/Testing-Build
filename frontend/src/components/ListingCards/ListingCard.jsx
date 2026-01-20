@@ -124,7 +124,7 @@ const listingUrl = `/${serviceSlug}-in/${localitySlug}/${item.id}`
         <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <span className="flex items-center ">
             <HiLocationMarker className="h-4 w-4 text-red-600 translate-x-[-1px]" />
-            {item.city}, {item.locality}
+            {item.locality}, {item.city}
           </span>
           <span className="flex items-center gap-1">
             <HiUserGroup className="h-4 w-4 text-red-600" />

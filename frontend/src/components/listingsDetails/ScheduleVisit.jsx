@@ -11,6 +11,7 @@ export default function ScheduleVisit() {
   const [scheduleTime, setScheduleTime] = useState("")
   const [name, setName] = useState("")
   const [number, setNumber] = useState("")
+  const [error, setError] = useState("")
 
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const wrapperRef = useRef(null)
@@ -30,6 +31,24 @@ export default function ScheduleVisit() {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  // error handling
+  const handleErrors = () => {
+    if (!name || !number || !selectedDate || !scheduleTime) {
+      setError("Please fill in all details before scheduling your visit")
+      return
+    }
+
+    setPopupOpen(true)
+
+    // clear form
+    setName("")
+    setNumber("")
+    setSelectedDate("")
+    setScheduleTime("")
+    setError("")
+    setShowCalendar(false)
+  }
 
   return (
     <div
@@ -89,16 +108,22 @@ export default function ScheduleVisit() {
             </div>
 
             {showCalendar && (
-              <div className="absolute top-[110%] left-0 z-[99] w-full
+              <div
+                className="absolute top-[110%] left-0 z-[99] w-full
                               rounded-xl border border-gray-300 bg-white
-                              shadow-xl p-4">
+                              shadow-xl p-4"
+              >
                 {/* Calendar Header */}
                 <div className="mb-3 flex items-center justify-between">
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
                       setCurrentMonth(
-                        new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+                        new Date(
+                          currentMonth.getFullYear(),
+                          currentMonth.getMonth() - 1,
+                          1
+                        )
                       )
                     }}
                     className="text-2xl font-semibold text-gray-400 cursor-pointer hover:text-red-600"
@@ -106,13 +131,20 @@ export default function ScheduleVisit() {
                     ‹
                   </button>
                   <h4 className="text-sm font-semibold">
-                    {currentMonth.toLocaleString("default", { month: "long", year: "numeric" })}
+                    {currentMonth.toLocaleString("default", {
+                      month: "long",
+                      year: "numeric"
+                    })}
                   </h4>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
                       setCurrentMonth(
-                        new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+                        new Date(
+                          currentMonth.getFullYear(),
+                          currentMonth.getMonth() + 1,
+                          1
+                        )
                       )
                     }}
                     className="text-2xl font-semibold text-gray-400 cursor-pointer hover:text-red-600"
@@ -123,31 +155,48 @@ export default function ScheduleVisit() {
 
                 {/* Weekdays */}
                 <div className="grid grid-cols-7 text-xs text-gray-400 mb-2">
-                  {["Mo","Tu","We","Th","Fr","Sa","Su"].map((d)=>(<div key={d} className="text-center">{d}</div>))}
+                  {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((d) => (
+                    <div key={d} className="text-center">
+                      {d}
+                    </div>
+                  ))}
                 </div>
 
                 {/* Dates */}
                 <div className="grid grid-cols-7 gap-1">
                   {Array.from({
-                    length: getStartDay(currentMonth.getFullYear(), currentMonth.getMonth()) +
-                            getDaysInMonth(currentMonth.getFullYear(), currentMonth.getMonth())
+                    length:
+                      getStartDay(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth()
+                      ) +
+                      getDaysInMonth(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth()
+                      )
                   }).map((_, i) => {
-                    const day = i - getStartDay(currentMonth.getFullYear(), currentMonth.getMonth()) + 1
+                    const day =
+                      i -
+                      getStartDay(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth()
+                      ) +
+                      1
                     return (
                       <div
                         key={i}
-                        onClick={(e)=>{
-                          if(day<1) return
+                        onClick={(e) => {
+                          if (day < 1) return
                           e.stopPropagation()
                           setSelectedDate(
-                            `${day} ${currentMonth.toLocaleString("default",{month:"short"})} ${currentMonth.getFullYear()}`
+                            `${day} ${currentMonth.toLocaleString("default", { month: "short" })} ${currentMonth.getFullYear()}`
                           )
                           setShowCalendar(false)
                         }}
                         className={`h-9 flex items-center justify-center rounded text-sm
-                          ${day<1?"": "cursor-pointer hover:bg-red-50"}`}
+                          ${day < 1 ? "" : "cursor-pointer hover:bg-red-50"}`}
                       >
-                        {day>0?day:""}
+                        {day > 0 ? day : ""}
                       </div>
                     )
                   })}
@@ -155,52 +204,64 @@ export default function ScheduleVisit() {
               </div>
             )}
           </div>
+{/* Schedule Time */}
+<div className="relative flex-1">
+  <div
+    onClick={() => {
+      document.getElementById("schedule-time-input")?.showPicker?.() ||
+      document.getElementById("schedule-time-input")?.focus()
+    }}
+    className="flex w-full items-center gap-3 cursor-pointer
+               rounded-xl border border-gray-300 px-4 py-3
+               hover:border-red-600 transition h-[52px]"
+  >
+    <FaClock className="text-gray-400 shrink-0 cursor-pointer" />
 
-          {/* Schedule Time */}
-          <div className="relative flex-1">
-            <div
-              onClick={(e) => e.currentTarget.querySelector("input")?.focus()}
-              className="flex w-full items-center gap-3 cursor-pointer
-                         rounded-xl border border-gray-300 px-4 py-3
-                         hover:border-red-600 transition h-[52px]"
-            >
-              <FaClock className="text-gray-400 shrink-0" />
-              <input
-                type="time"
-                value={scheduleTime}
-                onChange={(e)=>setScheduleTime(e.target.value)}
-                className="w-full text-sm focus:outline-none cursor-pointer"
-              />
-            </div>
-          </div>
+    <input
+      id="schedule-time-input"
+      type="time"
+      value={scheduleTime}
+      onChange={(e) => setScheduleTime(e.target.value)}
+      onClick={(e) => e.currentTarget.showPicker?.()}
+      className="w-full text-sm focus:outline-none cursor-pointer bg-transparent"
+    />
+  </div>
+</div>
+
         </div>
       </div>
 
       {/* Schedule Visit Button */}
-<div className="flex flex-col md:flex-row items-center justify-between mt-4 px-1 gap-2 select-none">
-  {/* Text on the left (stacked on mobile) */}
-<p className="hidden md:block text-sm text-gray-500 max-w-xl text-left">
-  Want to book a food tasting experience? Click on{" "}
-  <span
-    onClick={() => setPopupOpen(true)}
-    className="text-red-600 font-medium cursor-pointer hover:underline hover:text-gray-800"
-  >
-    Schedule Visit
-  </span>{" "}
-  to proceed now
-</p>
+      <div className="flex flex-col md:flex-row items-center justify-between mt-4 px-1 gap-2 select-none">
+        {/* Text on the left (stacked on mobile) */}
+        <p className="hidden md:block text-sm text-gray-500 max-w-xl text-left">
+          Want to book a food tasting experience? Click on{" "}
+          <span
+            onClick={() => setPopupOpen(true)}
+            className="text-red-600 font-medium cursor-pointer hover:underline hover:text-gray-800"
+          >
+            Schedule Visit
+          </span>{" "}
+          to proceed now
+        </p>
 
-
-  {/* Button on the right (full width on mobile) */}
-  <button
-    onClick={() => setPopupOpen(true)}
-    className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-xl shadow whitespace-nowrap transition w-full md:w-auto cursor-pointer"
-  >
-    Schedule Visit
-  </button>
-</div>
-
-
+        {/* Schedule Visit Button */}
+        <button
+          onClick={handleErrors}
+          className={`text-white font-semibold px-6 py-2 rounded-xl shadow
+              whitespace-nowrap transition w-full md:w-auto cursor-pointer
+              ${
+                !name || !number || !selectedDate || !scheduleTime
+                  ? "bg-red-600 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-700"
+              }`}
+        >
+          Schedule Visit
+        </button>
+      </div>
+      {error && (
+        <p className="mt-3 text-sm font-medium text-red-600">{error}</p>
+      )}
     </div>
   )
 }
