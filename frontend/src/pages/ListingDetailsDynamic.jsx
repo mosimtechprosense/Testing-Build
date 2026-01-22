@@ -1,8 +1,7 @@
-import { useNavigate, useParams, useSearchParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState, useContext } from "react"
 import { fetchListingById, fetchSimilarListings } from "../api/listingsApi"
 import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu"
-import { HiUserGroup } from "react-icons/hi2"
 import { UIContext } from "../store/UIContext"
 import SimilarListingsSection from "../components/ListingCards/SimilarListing"
 import HallCapacities from "../components/listingsDetails/HallCapacities"
@@ -13,6 +12,7 @@ import FaqSection from "../components/ListingCards/FaqSection"
 import CheckDiscountPrice from "../components/listingsDetails/CheckDiscountPrice"
 import ScheduleVisit from "../components/listingsDetails/ScheduleVisit"
 import ListingDetailsSidebar from "../components/listingsDetails/ListingDetailsSidebar"
+import { categoryToSlug, categoryToVenuePath } from "../utils/slugMaps"
 
 export default function ListingDetailsDynamic() {
   const { id, serviceSlug } = useParams()
@@ -23,8 +23,6 @@ export default function ListingDetailsDynamic() {
   const [showAllKeywords, setShowAllKeywords] = useState(false)
   const { setPopupOpen } = useContext(UIContext)
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const categoryFromUrl = searchParams.get("category")
 
   // Image modal
   const [activeImageIndex, setActiveImageIndex] = useState(null)
@@ -67,80 +65,32 @@ export default function ListingDetailsDynamic() {
     : []
 
   // breadcrumb logic (inline) //* seprate this as a component in future
-  const categoryToVenuePath = {
-    6: { path: "/venues/banquet-halls", label: "Banquet Halls" },
-    7: { path: "/venues/party-halls", label: "Party Halls" },
-    8: { path: "/venues/marriage-halls", label: "Marriage Halls" },
-    9: { path: "/venues/banquet-with-room", label: "Banquet with Hotel Room" },
-    10: { path: "/venues/party-lawn", label: "Party Lawn" },
-    11: {
-      path: "/venues/5-star-wedding-hotels",
-      label: "5 Star Wedding Hotels"
-    },
-    12: { path: "/venues/destination-weddings", label: "Destination Weddings" },
-    13: { path: "/venues/wedding-farmhouse", label: "Wedding Farmhouse" },
-    14: { path: "/venues/small-function-halls", label: "Small Function Halls" },
-    15: { path: "/venues/corporate-events", label: "Corporate Events" },
-    16: { path: "/venues/engagement-venue", label: "Engagement Venue" },
-    17: { path: "/venues/ring-ceremony", label: "Ring Ceremony" },
-    18: { path: "/venues/baby-shower", label: "Baby Shower" },
-    19: { path: "/venues/retirement-party", label: "Retirement Party" },
-    20: { path: "/venues/sikh-wedding", label: "Sikh Wedding" },
-    21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
+  const serviceSlugResolved =
+    serviceSlug || categoryToSlug[listing.category_id] || "banquet-hall"
+  const categoryId = listing.category_id || 6
+  const venueMeta = categoryToVenuePath[categoryId]
+
+  // Breadcrumbs
+  const breadcrumbItems = [
+    { label: "Home", type: "home", path: "/" },
+    {
+      label: venueMeta?.label || "Banquet Halls",
+      type: "service",
+      path: `/venues/banquet-halls?category=${categoryId}&serviceLabel=${encodeURIComponent(
+        venueMeta?.label || "Banquet Halls"
+      )}`
+    }
+  ]
+
+  if (listing.locality) {
+    const localitySlug = listing.locality.replace(/\s+/g, "-").toLowerCase()
+    breadcrumbItems.push({
+      label: `${venueMeta?.label || "Banquet Halls"} in ${listing.locality}`,
+      type: "locality",
+      path: `/${serviceSlugResolved}-in/${localitySlug}?category=${categoryId}&locality=${localitySlug}`
+    })
   }
 
-  const categoryToSlug = {
-    6: "banquet-hall",
-    7: "party-hall",
-    8: "marriage-hall",
-    9: "banquet-with-room",
-    10: "party-lawn",
-    11: "5-star-wedding-hotel",
-    12: "destination-wedding",
-    13: "wedding-farmhouse",
-    14: "small-function-hall",
-    15: "corporate-event",
-    16: "engagement-venue",
-    17: "ring-ceremony",
-    18: "baby-shower",
-    19: "retirement-party",
-    20: "sikh-wedding",
-    21: "mehendi-ceremony"
-  }
-
-  const slugToCategory = Object.fromEntries(
-    Object.entries(categoryToSlug).map(([id, slug]) => [slug, Number(id)])
-  )
-
-const serviceSlugResolved = serviceSlug || categoryToSlug[listing.category_id] || "banquet-hall"
-const categoryId = listing.category_id || 6
-const venueMeta = categoryToVenuePath[categoryId]
-
-// Breadcrumbs
-const breadcrumbItems = [
-  { label: "Home", type: "home", path: "/" },
-  {
-    label: venueMeta?.label || "Banquet Halls",
-    type: "service",
-    path: `/${serviceSlugResolved}-in?category=${categoryId}`
-  }
-]
-
-if (listing.locality) {
-  const localitySlug = listing.locality.replace(/\s+/g, "-").toLowerCase()
-  breadcrumbItems.push({
-    label: `${venueMeta?.label || "Banquet Halls"} in ${listing.locality}`,
-    type: "locality",
-    path: `/${serviceSlugResolved}-in/${localitySlug}?category=${categoryId}&locality=${localitySlug}`
-  })
-}
-
-breadcrumbItems.push({
-  label: listing.title,
-  type: "current"
-})
-
-  // Current listing (not clickable)
   breadcrumbItems.push({
     label: listing.title,
     type: "current"
@@ -176,10 +126,25 @@ breadcrumbItems.push({
                       className="cursor-pointer font-medium hover:text-gray-800 whitespace-nowrap"
                       onClick={() => {
                         if (!item.path) return
+
+                        //  HOME breadcrumb
+                        if (item.type === "home") {
+                          navigate("/")
+                          return
+                        }
+
+                        //  SERVICE breadcrumb (/venues/banquet-halls)
+                        if (item.type === "service") {
+                          navigate(item.path)
+                          return
+                        }
+
+                        //  LOCALITY breadcrumb
                         const url = new URL(item.path, window.location.origin)
                         const params = Object.fromEntries(
                           url.searchParams.entries()
                         )
+
                         pushUrl({
                           category: params.category,
                           citySlug: params.locality

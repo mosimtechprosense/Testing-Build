@@ -39,7 +39,7 @@ const CityFilter = () => {
     setOpen(false)
 
     const citySlug = city.toLowerCase().replace(/\s+/g, "-")
-    navigate(`/banquet-hall-in/${citySlug}?city=${citySlug}`)
+    navigate(`/banquet-hall-in/${citySlug}`)
   }
 
   return (

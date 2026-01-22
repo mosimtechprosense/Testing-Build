@@ -1,80 +1,20 @@
 import { useEffect, useMemo, useState } from "react"
-import { useParams, useSearchParams, useNavigate } from "react-router-dom"
+import { useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom"
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/ListingCards/ListingCard"
 import { fetchListings, fetchLocalities } from "../api/listingsApi"
 import MobileFilters from "../components/mobile/MobileFilters"
 import LocalityDescription from "../components/listingsDetails/LocalityDescription"
+import { categoryToSlug, slugToServiceName, categoryToVenuePath } from "../utils/slugMaps"
 
 export default function ListingsPage() {
-  const categoryToSlug = {
-    6: "banquet-hall",
-    7: "party-hall",
-    8: "marriage-hall",
-    9: "banquet-with-room",
-    10: "party-lawn",
-    11: "5-star-wedding-hotel",
-    12: "destination-wedding",
-    13: "wedding-farmhouse",
-    14: "small-function-hall",
-    15: "corporate-event",
-    16: "engagement-venue",
-    17: "ring-ceremony",
-    18: "baby-shower",
-    19: "retirement-party",
-    20: "sikh-wedding",
-    21: "mehendi-ceremony"
-  }
-
-  const slugToServiceName = {
-    "banquet-hall": "Banquet Halls",
-    "party-hall": "Party Halls",
-    "marriage-hall": "Marriage Halls",
-    "banquet-with-room": "Banquet With Room",
-    "party-lawn": "Party Lawn",
-    "5-star-wedding-hotel": "5-Star Wedding Hotel",
-    "destination-wedding": "Destination Wedding",
-    "wedding-farmhouse": "Wedding Farmhouse",
-    "small-function-hall": "Small Function Hall",
-    "corporate-event": "Corporate Event",
-    "engagement-venue": "Engagement Venue",
-    "ring-ceremony": "Ring Ceremony",
-    "baby-shower": "Baby Shower",
-    "retirement-party": "Retirement Party",
-    "sikh-wedding": "Sikh Wedding",
-    "mehendi-ceremony": "Mehendi Ceremony"
-  }
-
-  // for breadcrumb
-  const categoryToVenuePath = {
-    6: { path: "/venues/banquet-halls", label: "Banquet Halls" },
-    7: { path: "/venues/party-halls", label: "Party Halls" },
-    8: { path: "/venues/marriage-halls", label: "Marriage Halls" },
-    9: { path: "/venues/banquet-with-room", label: "Banquet with Hotel Room" },
-    10: { path: "/venues/party-lawn", label: "Party Lawn" },
-    11: {
-      path: "/venues/5-star-wedding-hotels",
-      label: "5 Star Wedding Hotels"
-    },
-    12: { path: "/venues/destination-weddings", label: "Destination Weddings" },
-    13: { path: "/venues/wedding-farmhouse", label: "Wedding Farmhouse" },
-    14: { path: "/venues/small-function-halls", label: "Small Function Halls" },
-    15: { path: "/venues/corporate-events", label: "Corporate Events" },
-    16: { path: "/venues/engagement-venue", label: "Engagement Venue" },
-    17: { path: "/venues/ring-ceremony", label: "Ring Ceremony" },
-    18: { path: "/venues/baby-shower", label: "Baby Shower" },
-    19: { path: "/venues/retirement-party", label: "Retirement Party" },
-    20: { path: "/venues/sikh-wedding", label: "Sikh Wedding" },
-    21: { path: "/venues/mehendi-ceremony", label: "Mehendi Ceremony" }
-  }
+  
 
   const { citySlug , serviceSlug } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
-  const [mobilePanel, setMobilePanel] = useState(null)
-
-
-  
+  const [mobilePanel, setMobilePanel] = useState(null)  
 
   const paramsFromUrl = useMemo(() => {
     const obj = Object.fromEntries([...searchParams.entries()])
@@ -129,22 +69,6 @@ city: citySlug
     pushUrl({ skip: newSkip })
   }
 
-useEffect(() => {
-  const categoryFromUrl = searchParams.get("category")
-  const searchFromUrl = searchParams.get("search")
-
-  setFilters((prev) => ({
-    ...prev,
-    category: categoryFromUrl ? Number(categoryFromUrl) : undefined,
-    search: categoryFromUrl && !searchFromUrl ? "" : searchFromUrl ?? prev.search,
-    skip: searchParams.get("skip") ? Number(searchParams.get("skip")) : 0
-  }))
-}, [searchParams])
-
-
-
-
-
 
   const [filters, setFilters] = useState(initial)
   const [listings, setListings] = useState([])
@@ -155,22 +79,54 @@ useEffect(() => {
   const showingFrom = totalCount === 0 ? 0 : filters.skip + 1
   const showingTo = Math.min(filters.skip + filters.take, totalCount)
 
-  useEffect(() => {
-    const categoryFromUrl = searchParams.get("category")
-    const searchFromUrl = searchParams.get("search")
+useEffect(() => {
+  const nextFilters = {
+    city: citySlug
+      ? decodeURIComponent(citySlug).replace(/-/g, " ").toLowerCase()
+      : undefined,
+    category: searchParams.get("category")
+     ? Number(searchParams.get("category"))
+    : categoryToVenuePath
+         ? Object.keys(categoryToSlug).find(
+             (id) => categoryToSlug[id] === serviceSlug
+           )
+         : undefined,
 
-    setFilters((prev) => ({
-      ...prev,
-      category: categoryFromUrl ? Number(categoryFromUrl) : undefined,
+    search: searchParams.get("search") || "",
 
-      // keep search if it exists in URL (home page search)
-      // clear search only when category exists AND no search param
-      search:
-        categoryFromUrl && !searchFromUrl ? "" : searchFromUrl ?? prev.search,
+    locality: searchParams.get("locality") || undefined,
 
-      skip: searchParams.get("skip") ? Number(searchParams.get("skip")) : 0
-    }))
-  }, [searchParams])
+    minBudget: searchParams.get("minBudget")
+      ? Number(searchParams.get("minBudget"))
+      : undefined,
+
+    maxBudget: searchParams.get("maxBudget")
+      ? Number(searchParams.get("maxBudget"))
+      : undefined,
+
+    minGuests: searchParams.get("minGuests")
+      ? Number(searchParams.get("minGuests"))
+      : undefined,
+
+    maxGuests: searchParams.get("maxGuests")
+      ? Number(searchParams.get("maxGuests"))
+      : 1200,
+
+    vegetarian: searchParams.get("vegetarian") === "true",
+    nonVegetarian: searchParams.get("nonVegetarian") === "true",
+
+    skip: searchParams.get("skip")
+      ? Number(searchParams.get("skip"))
+      : 0,
+
+    take: 10,
+    sortBy: "created_at",
+    order: "desc"
+  }
+
+  setFilters(nextFilters)
+}, [searchParams, citySlug, serviceSlug, location.pathname])
+
 
   useEffect(() => {
     if (filters.skip === undefined) return
@@ -181,11 +137,12 @@ useEffect(() => {
     })
   }, [filters.skip])
 
-  useEffect(() => {
-    fetchLocalities()
-      .then((data) => setLocalities(data.data || []))
-      .catch(() => setLocalities([]))
-  }, [])
+useEffect(() => {
+  fetchLocalities()
+    .then((data) => setLocalities(data.data || []))
+    .catch(() => setLocalities([]))
+}, [])
+
 
   useEffect(() => {
     let mounted = true
@@ -290,7 +247,11 @@ if (
   }, [filters])
 const pushUrl = (obj) => {
   // Merge new values into existing filters
-  const merged = { ...filters, ...obj }
+  const merged = {
+  ...paramsFromUrl, // ← URL is source of truth
+  ...obj
+}
+
 
   const isVenuesPage = location.pathname.startsWith("/venues");
 
@@ -344,6 +305,18 @@ let path = `/${serviceSlug}-in/${filters.city
 if (!isVenuesPage && localitySlug) {
   path = `/${serviceSlug}-in/${localitySlug}`;
 }
+
+
+ if (merged.locality) {
+   qs.set(
+     "locality",
+     typeof merged.locality === "string"
+       ? merged.locality.replace(/\s+/g, "-").toLowerCase()
+       : merged.locality
+  )
+ } else {
+   qs.delete("locality")
+ }
 
 
 
@@ -426,13 +399,6 @@ if (item.type === "service") {
       venueMeta.label
     )}`
   )
-
-  // 🔑 reset locality-related state
-  setFilters((prev) => ({
-    ...prev,
-    locality: undefined,
-    skip: 0
-  }))
 }
 
                   }}
@@ -570,4 +536,4 @@ if (item.type === "service") {
       />
     </div>
   )
-}
+} 

@@ -59,7 +59,7 @@ const VenuesDropdown = ({ isOpen = true, onSelect, renderAs = "link", filter }) 
         // Default: render as Link and also call onSelect(item) before navigating
         return (
           <Link
-            key={item.id}
+            key={item.categoryId}
             to={`${item.path}?category=${item.categoryId}&serviceLabel=${encodeURIComponent(item.label)}`}
             onClick={() => onSelect && onSelect(item)}
             className="text-[#09122C] text-sm py-2 px-2 hover:bg-[#f3f3f3] hover:text-[#dc2626] transition-all duration-300 rounded w-full md:w-1/2"

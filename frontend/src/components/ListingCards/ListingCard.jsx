@@ -5,6 +5,8 @@ import { UIContext } from "../../store/UIContext"
 import Badge from "../listingsDetails/Badge"
 import { FaPhoneAlt } from "react-icons/fa"
 import FoodPrice from "../listingsDetails/FoodPrice"
+import { categoryToSlug } from "../../utils/slugMaps"
+
 
 export default function ListingCard({ item, serviceSlug }) {
   const { setPopupOpen } = useContext(UIContext)
@@ -17,24 +19,7 @@ export default function ListingCard({ item, serviceSlug }) {
     images?.[0]?.image_url || "/placeholder.jpg"
   )
 
-    const categoryToSlug = {
-    6: "banquet-hall",
-    7: "party-hall",
-    8: "marriage-hall",
-    9: "banquet-with-room",
-    10: "party-lawn",
-    11: "5-star-wedding-hotel",
-    12: "destination-wedding",
-    13: "wedding-farmhouse",
-    14: "small-function-hall",
-    15: "corporate-event",
-    16: "engagement-venue",
-    17: "ring-ceremony",
-    18: "baby-shower",
-    19: "retirement-party",
-    20: "sikh-wedding",
-    21: "mehendi-ceremony"
-  }
+
 
   const rating = item.rating || 5
   const reviewsCount = item.reviews_count || 1

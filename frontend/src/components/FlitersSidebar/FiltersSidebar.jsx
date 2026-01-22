@@ -2,7 +2,6 @@ import SearchFilter from "./SearchFilter"
 import LocationFilter from "./LocationFilter"
 import PriceRange from "./PriceRange"
 import GuestRange from "./GuestRange"
-import VenueTypeFilter from "./VenueTypeFilter"
 import MealTypeFilter from "./MealTypeFilter"
 import SortFilter from "./SortFilter"
 

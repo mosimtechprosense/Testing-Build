@@ -16,7 +16,6 @@ adminApi.interceptors.request.use((config) => {
 });
 
 /* ================= AUTH ================= */
-
 export const requestLoginOTP = (email) =>
   adminApi.post("/auth/login", { email });
 
