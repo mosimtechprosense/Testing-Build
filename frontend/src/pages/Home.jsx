@@ -144,8 +144,6 @@ const handleSearchClick = () => {
 
   // extract service slug from path
 const serviceSlug = categoryToSlug[selectedService.categoryId] || "banquet-hall";
-
-
   const params = new URLSearchParams();
   params.set("search", selectedService.label);
   params.set("locality", locationQuery);

@@ -155,18 +155,47 @@ const Blog = () => {
   }, [slug, categoryId, page])
 
   return (
-    <section className="bg-gray-50 ">
+    <section className="bg-gray-50 select-none">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Breadcrumb */}
-        <nav className="text-gray-400 mb-6 flex flex-wrap gap-2">
+        <nav className="text-gray-400 mb-6 flex flex-wrap gap-2 items-center">
+          {/* Home */}
           <Link to="/" className="text-red-600 font-medium hover:text-gray-800">
             Home
-          </Link>{" "}
-          /<span className="text-gray-600 font-normal">Blog</span>
-          {categoryName && <span>/ {categoryName}</span>}
-          {slug && post && <span>/ {decodeHTML(post.title.rendered)}</span>}
-        </nav>
+          </Link>
 
+          <span>/</span>
+
+          {/* Blog */}
+          {slug || categorySlug ? (
+            <Link
+              to="/blogs"
+              className="text-red-600 font-medium hover:text-gray-800"
+            >
+              Blog
+            </Link>
+          ) : (
+            <span className="text-gray-400 font-normal">Blog</span>
+          )}
+
+          {/* Category */}
+          {categoryName && (
+            <>
+              <span>/</span>
+              <span className="text-gray-400">{categoryName}</span>
+            </>
+          )}
+
+          {/* Post Title */}
+          {slug && post && (
+            <>
+              <span>/</span>
+              <span className="text-gray-600 font-normal">
+                {decodeHTML(post.title.rendered)}
+              </span>
+            </>
+          )}
+        </nav>
         {!slug && (
           <h1 className="text-3xl md:text-4xl font-extrabold mb-10">
             {categoryName || "Blog List"}

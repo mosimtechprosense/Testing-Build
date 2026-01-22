@@ -78,10 +78,9 @@ const Footer = () => {
           </Link>
          </li>
          <li>
-<a href="/sitemap.xml" target="_blank" rel="noopener noreferrer">
+<a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="cursor-pointer hover:text-red-600">
   Sitemap
 </a>
-
          </li>
          </ul>
        </div>
