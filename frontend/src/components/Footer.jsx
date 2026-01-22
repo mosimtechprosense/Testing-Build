@@ -77,11 +77,12 @@ const Footer = () => {
             Privacy Policy 
           </Link>
          </li>
-         {/* <li>
-          <Link to={null} className="hover:text-red-600">
-            Sitemap
-          </Link>
-         </li> */}
+         <li>
+<a href="/sitemap.xml" target="_blank" rel="noopener noreferrer">
+  Sitemap
+</a>
+
+         </li>
          </ul>
        </div>
 

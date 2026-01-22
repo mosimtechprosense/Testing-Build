@@ -54,6 +54,13 @@ const Blog = () => {
     )
   }
 
+  const decodeHTML = (html) => {
+    if (!html) return ""
+    const txt = document.createElement("textarea")
+    txt.innerHTML = html
+    return txt.value
+  }
+
   // Sidebar
   useEffect(() => {
     fetch(`${BASE_URL}/posts?per_page=5&_embed`)
@@ -148,17 +155,16 @@ const Blog = () => {
   }, [slug, categoryId, page])
 
   return (
-    <section className="bg-gray-50 select-none">
+    <section className="bg-gray-50 ">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Breadcrumb */}
         <nav className="text-gray-400 mb-6 flex flex-wrap gap-2">
           <Link to="/" className="text-red-600 font-medium hover:text-gray-800">
             Home
           </Link>{" "}
-          /
-         <span className="text-gray-600 font-normal">Blog</span>
+          /<span className="text-gray-600 font-normal">Blog</span>
           {categoryName && <span>/ {categoryName}</span>}
-          {slug && post && <span>/ {post.title.rendered}</span>}
+          {slug && post && <span>/ {decodeHTML(post.title.rendered)}</span>}
         </nav>
 
         {!slug && (
@@ -193,13 +199,16 @@ const Blog = () => {
 
                   {/* TITLE */}
                   <h1 className="text-3xl md:text-4xl font-extrabold mb-6">
-                    {post.title.rendered}
+                    {decodeHTML(post.title.rendered)}
                   </h1>
 
                   {/* AUTHOR + DATE */}
                   <p className="text-gray-500 mb-12">
-                    By <span className="text-red-600">{post._embedded?.author?.[0]?.name || "BookMyBanquets"}</span> /{" "}
-                    {new Date(post.date).toDateString()}
+                    By{" "}
+                    <span className="text-red-600">
+                      {post._embedded?.author?.[0]?.name || "BookMyBanquets"}
+                    </span>{" "}
+                    / {new Date(post.date).toDateString()}
                   </p>
                 </div>
 
@@ -251,10 +260,9 @@ const Blog = () => {
                           to={`/blogs/${p.slug}`}
                           className="hover:text-red-600"
                         >
-                          {p.title.rendered}
+                          {decodeHTML(p.title.rendered)}
                         </Link>
                       </h2>
-
                       <div
                         className="text-gray-600 mb-5 line-clamp-3"
                         dangerouslySetInnerHTML={{
@@ -345,12 +353,14 @@ const Blog = () => {
               <ul className="space-y-3">
                 {recentPosts.map((rp) => (
                   <li key={rp.id}>
-                    <Link
-                      to={`/blogs/${rp.slug}`}
-                      className="hover:text-red-600"
-                    >
-                      {rp.title.rendered}
-                    </Link>
+                    <li key={rp.id}>
+                      <Link
+                        to={`/blogs/${rp.slug}`}
+                        className="hover:text-red-600"
+                      >
+                        {decodeHTML(rp.title.rendered)}
+                      </Link>
+                    </li>
                   </li>
                 ))}
               </ul>

@@ -5,44 +5,42 @@ import ListingCard from "../components/ListingCards/ListingCard"
 import { fetchListings, fetchLocalities } from "../api/listingsApi"
 import MobileFilters from "../components/mobile/MobileFilters"
 import LocalityDescription from "../components/listingsDetails/LocalityDescription"
-import { categoryToSlug, slugToServiceName, categoryToVenuePath } from "../utils/slugMaps"
+import {
+  categoryToSlug,
+  slugToServiceName,
+  categoryToVenuePath
+} from "../utils/slugMaps"
 
 export default function ListingsPage() {
-  
+  const { serviceSlug, placeSlug } = useParams()
 
-const { serviceSlug, placeSlug } = useParams()
+  // Decide whether placeSlug is a city or a locality
+  const CITY_LIST = [
+    "delhi",
+    "new-delhi",
+    "gurgaon",
+    "gurugram",
+    "noida",
+    "faridabad",
+    "ghaziabad"
+  ]
 
-// Decide whether placeSlug is a city or a locality
-const CITY_LIST = [
-  "delhi",
-  "new-delhi",
-  "gurgaon",
-  "gurugram",
-  "noida",
-  "faridabad",
-  "ghaziabad"
-];
+  const normalizedPlace = placeSlug
+    ? decodeURIComponent(placeSlug).toLowerCase()
+    : undefined
 
-const normalizedPlace = placeSlug
-  ? decodeURIComponent(placeSlug).toLowerCase()
-  : undefined;
+  const isCity = CITY_LIST.includes(normalizedPlace)
 
-const isCity = CITY_LIST.includes(normalizedPlace);
+  const cityFromRoute = isCity ? normalizedPlace.replace(/-/g, " ") : undefined
 
-const cityFromRoute = isCity
-  ? normalizedPlace.replace(/-/g, " ")
-  : undefined;
-
-const localityFromRoute = !isCity && normalizedPlace
-  ? normalizedPlace.replace(/-/g, " ")
-  : undefined;
+  const localityFromRoute =
+    !isCity && normalizedPlace ? normalizedPlace.replace(/-/g, " ") : undefined
 
 
-
-
+    
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [mobilePanel, setMobilePanel] = useState(null)  
+  const [mobilePanel, setMobilePanel] = useState(null)
 
   const paramsFromUrl = useMemo(() => {
     const obj = Object.fromEntries([...searchParams.entries()])
@@ -64,13 +62,9 @@ const localityFromRoute = !isCity && normalizedPlace
     return obj
   }, [searchParams])
 
-
-
-  
-
   const initial = {
-city: cityFromRoute,
-locality: searchParams.get("locality") || localityFromRoute,
+    city: cityFromRoute,
+    locality: searchParams.get("locality") || localityFromRoute,
 
     category: paramsFromUrl.category
       ? Number(paramsFromUrl.category)
@@ -100,7 +94,6 @@ locality: searchParams.get("locality") || localityFromRoute,
     pushUrl({ skip: newSkip })
   }
 
-
   const [filters, setFilters] = useState(initial)
   const [listings, setListings] = useState([])
   const [localities, setLocalities] = useState([])
@@ -110,65 +103,60 @@ locality: searchParams.get("locality") || localityFromRoute,
   const showingFrom = totalCount === 0 ? 0 : filters.skip + 1
   const showingTo = Math.min(filters.skip + filters.take, totalCount)
 
+  const serviceFromRoute = useMemo(() => {
+    if (serviceSlug) return serviceSlug
 
-      const serviceFromRoute = useMemo(() => {
-  if (serviceSlug) return serviceSlug;
+    // fallback if route momentarily loses params
+    if (filters?.category) {
+      return categoryToSlug[filters.category]
+    }
 
-  // fallback if route momentarily loses params
-  if (filters?.category) {
-    return categoryToSlug[filters.category];
-  }
+    return "banquet-halls" // final safety net
+  }, [serviceSlug, filters?.category])
 
-  return "banquet-halls"; // final safety net
-}, [serviceSlug, filters?.category]);
+  useEffect(() => {
+    const nextFilters = {
+      city: cityFromRoute,
+      locality: searchParams.get("locality") || localityFromRoute,
 
-useEffect(() => {
-  const nextFilters = {
-city: cityFromRoute,
-locality: searchParams.get("locality") || localityFromRoute,
+      category: searchParams.get("category")
+        ? Number(searchParams.get("category"))
+        : categoryToVenuePath
+          ? Object.keys(categoryToSlug).find(
+              (id) => categoryToSlug[id] === serviceSlug
+            )
+          : undefined,
 
-    category: searchParams.get("category")
-     ? Number(searchParams.get("category"))
-    : categoryToVenuePath
-         ? Object.keys(categoryToSlug).find(
-             (id) => categoryToSlug[id] === serviceSlug
-           )
-         : undefined,
+      search: searchParams.get("search") || "",
 
-    search: searchParams.get("search") || "",
+      minBudget: searchParams.get("minBudget")
+        ? Number(searchParams.get("minBudget"))
+        : undefined,
 
+      maxBudget: searchParams.get("maxBudget")
+        ? Number(searchParams.get("maxBudget"))
+        : undefined,
 
-    minBudget: searchParams.get("minBudget")
-      ? Number(searchParams.get("minBudget"))
-      : undefined,
+      minGuests: searchParams.get("minGuests")
+        ? Number(searchParams.get("minGuests"))
+        : undefined,
 
-    maxBudget: searchParams.get("maxBudget")
-      ? Number(searchParams.get("maxBudget"))
-      : undefined,
+      maxGuests: searchParams.get("maxGuests")
+        ? Number(searchParams.get("maxGuests"))
+        : 1200,
 
-    minGuests: searchParams.get("minGuests")
-      ? Number(searchParams.get("minGuests"))
-      : undefined,
+      vegetarian: searchParams.get("vegetarian") === "true",
+      nonVegetarian: searchParams.get("nonVegetarian") === "true",
 
-    maxGuests: searchParams.get("maxGuests")
-      ? Number(searchParams.get("maxGuests"))
-      : 1200,
+      skip: searchParams.get("skip") ? Number(searchParams.get("skip")) : 0,
 
-    vegetarian: searchParams.get("vegetarian") === "true",
-    nonVegetarian: searchParams.get("nonVegetarian") === "true",
+      take: 10,
+      sortBy: "created_at",
+      order: "desc"
+    }
 
-    skip: searchParams.get("skip")
-      ? Number(searchParams.get("skip"))
-      : 0,
-
-    take: 10,
-    sortBy: "created_at",
-    order: "desc"
-  }
-
-  setFilters(nextFilters)
-}, [searchParams, placeSlug, serviceSlug])
-
+    setFilters(nextFilters)
+  }, [searchParams, serviceSlug, cityFromRoute, localityFromRoute])
 
   useEffect(() => {
     if (filters.skip === undefined) return
@@ -179,12 +167,11 @@ locality: searchParams.get("locality") || localityFromRoute,
     })
   }, [filters.skip])
 
-useEffect(() => {
-  fetchLocalities()
-    .then((data) => setLocalities(data.data || []))
-    .catch(() => setLocalities([]))
-}, [])
-
+  useEffect(() => {
+    fetchLocalities()
+      .then((data) => setLocalities(data.data || []))
+      .catch(() => setLocalities([]))
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -201,22 +188,17 @@ useEffect(() => {
       })
     )
 
-if (cleanedFilters.minGuests === undefined) {
-  cleanedFilters.minGuests = 0
-}
+    if (cleanedFilters.minGuests === undefined) {
+      cleanedFilters.minGuests = 0
+    }
 
-if (cleanedFilters.maxGuests === undefined) {
-  cleanedFilters.maxGuests = 1200
-}
+    if (cleanedFilters.maxGuests === undefined) {
+      cleanedFilters.maxGuests = 1200
+    }
 
-
-if (
-  cleanedFilters.category &&
-  !cleanedFilters.search?.trim()
-) {
-  delete cleanedFilters.search
-}
-
+    if (cleanedFilters.category && !cleanedFilters.search?.trim()) {
+      delete cleanedFilters.search
+    }
 
     if (
       cleanedFilters.search &&
@@ -228,11 +210,8 @@ if (
     }
 
     if (cleanedFilters.city) {
-  cleanedFilters.city = cleanedFilters.city
-    .replace(/-/g, " ")
-    .toLowerCase();
-}
-
+      cleanedFilters.city = cleanedFilters.city.replace(/-/g, " ").toLowerCase()
+    }
 
     if (cleanedFilters.locality) {
       // numeric locality (ID) from sidebar → ignore
@@ -287,107 +266,83 @@ if (
 
     return () => (mounted = false)
   }, [filters])
-const pushUrl = (obj) => {
+  const pushUrl = (obj) => {
+    const cityFromPath = cityFromRoute || filters.city
 
-  
-const cityFromPath = cityFromRoute || filters.city;
+    const merged = {
+      ...paramsFromUrl,
+      ...obj,
+      city: cityFromPath
+    }
 
+    // Only update locality if explicitly provided
+    if (Object.prototype.hasOwnProperty.call(obj, "locality")) {
+      if (!obj.locality) {
+        delete merged.locality // explicit clear
+      }
+    } else {
+      // preserve existing locality
+      merged.locality = filters.locality
+    }
 
-const merged = {
-  ...paramsFromUrl,
-  ...obj,
-  city: cityFromPath
-};
+    // Reset pagination if any filter changes (not skip itself)
+    if (Object.keys(obj).some((key) => key !== "skip")) {
+      merged.skip = 0
+    }
 
+    // Build query string for other filters (skip, budget, vegetarian/non-veg)
+    const qs = new URLSearchParams()
+    if (merged.category) qs.set("category", merged.category)
+    if (merged.search) qs.set("search", merged.search)
+    if (merged.skip !== undefined) qs.set("skip", merged.skip)
+    if (merged.minGuests !== undefined) {
+      qs.set("minGuests", merged.minGuests)
+    } else {
+      qs.delete("minGuests")
+    }
 
-// Only update locality if explicitly provided
-if (Object.prototype.hasOwnProperty.call(obj, "locality")) {
-  if (!obj.locality) {
-    delete merged.locality; // explicit clear
+    if (merged.maxGuests !== undefined) {
+      qs.set("maxGuests", merged.maxGuests)
+    } else {
+      qs.delete("maxGuests")
+    }
+
+    qs.set("take", merged.take || 10)
+
+    if (merged.vegetarian) qs.set("vegetarian", "true")
+    else qs.delete("vegetarian")
+
+    if (merged.nonVegetarian) qs.set("nonVegetarian", "true")
+    else qs.delete("nonVegetarian")
+
+    // Determine serviceSlug & localitySlug
+
+    const categoryId = merged.category
+    const resolvedServiceSlug = categoryId
+      ? categoryToSlug[categoryId]
+      : serviceFromRoute
+
+    if (!resolvedServiceSlug) {
+      console.warn("Missing serviceSlug, falling back to banquet-halls")
+    }
+
+    // Build base path with CITY
+    const placeForPath = merged.locality || cityFromPath || "delhi"
+
+    const path = `/${resolvedServiceSlug}-in/${placeForPath
+      .replace(/\s+/g, "-")
+      .toLowerCase()}`
+
+    if (merged.locality && typeof merged.locality === "string") {
+      qs.set("locality", merged.locality.replace(/\s+/g, "-").toLowerCase())
+    } else {
+      qs.delete("locality")
+    }
+
+    // Navigate
+    navigate(`${path}?${qs.toString()}`, { replace: false })
+    setFilters(merged)
   }
-} else {
-  // preserve existing locality
-  merged.locality = filters.locality;
-}
-
-
-
-
-  // Reset pagination if any filter changes (not skip itself)
-  if (Object.keys(obj).some((key) => key !== "skip")) {
-    merged.skip = 0
-  }
-
-  // Build query string for other filters (skip, budget, vegetarian/non-veg)
-  const qs = new URLSearchParams()
-  if (merged.category) qs.set("category", merged.category)
-  if (merged.search) qs.set("search", merged.search)
-  if (merged.skip !== undefined) qs.set("skip", merged.skip)
-if (merged.minGuests !== undefined) {
-  qs.set("minGuests", merged.minGuests)
-} else {
-  qs.delete("minGuests")
-}
-
-if (merged.maxGuests !== undefined) {
-  qs.set("maxGuests", merged.maxGuests)
-} else {
-  qs.delete("maxGuests")
-}
-
-  qs.set("take", merged.take || 10)
-
-  if (merged.vegetarian) qs.set("vegetarian", "true")
-  else qs.delete("vegetarian")
-
-  if (merged.nonVegetarian) qs.set("nonVegetarian", "true")
-  else qs.delete("nonVegetarian")
-
-
-  // Determine serviceSlug & localitySlug
-  
-  const categoryId = merged.category
-const resolvedServiceSlug =
-  categoryId
-    ? categoryToSlug[categoryId]
-    : serviceFromRoute;
-
-
-
-if (!resolvedServiceSlug) {
-  console.warn("Missing serviceSlug, falling back to banquet-halls");
-}
-
-
-
-
-// Build base path with CITY
-const placeForPath = merged.locality || cityFromPath || "delhi";
-
-const path = `/${resolvedServiceSlug}-in/${placeForPath
-  .replace(/\s+/g, "-")
-  .toLowerCase()}`;
-
-
-
-
-if (merged.locality && typeof merged.locality === "string") {
-  qs.set(
-    "locality",
-    merged.locality.replace(/\s+/g, "-").toLowerCase()
-  );
-} else {
-  qs.delete("locality");
-}
-
-
-
-
-  // Navigate
-  navigate(`${path}?${qs.toString()}`, { replace: false })
-  setFilters(merged)
-}
-
 
   const currentPage = Math.floor((filters.skip || 0) / (filters.take || 10)) + 1
   const totalPages = Math.ceil((totalCount || 0) / (filters.take || 10)) || 1
@@ -456,14 +411,13 @@ if (merged.locality && typeof merged.locality === "string") {
                   onClick={() => {
                     if (!isClickable()) return
                     if (item.type === "home") navigate("/")
-if (item.type === "service") {
-  navigate(
-    `${venueMeta.path}?category=${filters.category}&serviceLabel=${encodeURIComponent(
-      venueMeta.label
-    )}`
-  )
-}
-
+                    if (item.type === "service") {
+                      navigate(
+                        `${venueMeta.path}?category=${filters.category}&serviceLabel=${encodeURIComponent(
+                          venueMeta.label
+                        )}`
+                      )
+                    }
                   }}
                   className={`${
                     isClickable()
@@ -510,8 +464,8 @@ if (item.type === "service") {
                         : ""
                     }`
                   : filters.locality
-                  ? `Banquet Halls in ${filters.locality.replace(/-/g, " ")}`
-                  : "Banquet Halls"}
+                    ? `Banquet Halls in ${filters.locality.replace(/-/g, " ")}`
+                    : "Banquet Halls"}
               </h1>
             </div>
             <div className="text-sm text-gray-600">{totalCount} results</div>
@@ -529,7 +483,11 @@ if (item.type === "service") {
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {listings.map((l) => (
-                <ListingCard key={String(l.id)} item={l} serviceSlug={serviceSlug}/>
+                <ListingCard
+                  key={String(l.id)}
+                  item={l}
+                  serviceSlug={serviceSlug}
+                />
               ))}
             </div>
           )}
@@ -599,4 +557,4 @@ if (item.type === "service") {
       />
     </div>
   )
-} 
+}
