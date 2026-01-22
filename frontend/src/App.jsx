@@ -60,7 +60,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
 <Route path="/venues/:categorySlug" element={<ListingsPage />} />
-<Route path="/:serviceSlug-in/:localitySlug" element={<ListingsPage />} />
+<Route path="/:serviceSlug-in/:placeSlug" element={<ListingsPage />} />
 <Route path="/:serviceSlug-in/:localitySlug/:id" element={<ListingDetailsDynamic />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>

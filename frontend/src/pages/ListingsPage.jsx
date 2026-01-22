@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom"
+import { useParams, useSearchParams, useNavigate } from "react-router-dom"
 import FiltersSidebar from "../components/FlitersSidebar/FiltersSidebar"
 import ListingCard from "../components/ListingCards/ListingCard"
 import { fetchListings, fetchLocalities } from "../api/listingsApi"
@@ -10,9 +10,37 @@ import { categoryToSlug, slugToServiceName, categoryToVenuePath } from "../utils
 export default function ListingsPage() {
   
 
-  const { citySlug , serviceSlug } = useParams()
+const { serviceSlug, placeSlug } = useParams()
+
+// Decide whether placeSlug is a city or a locality
+const CITY_LIST = [
+  "delhi",
+  "new-delhi",
+  "gurgaon",
+  "gurugram",
+  "noida",
+  "faridabad",
+  "ghaziabad"
+];
+
+const normalizedPlace = placeSlug
+  ? decodeURIComponent(placeSlug).toLowerCase()
+  : undefined;
+
+const isCity = CITY_LIST.includes(normalizedPlace);
+
+const cityFromRoute = isCity
+  ? normalizedPlace.replace(/-/g, " ")
+  : undefined;
+
+const localityFromRoute = !isCity && normalizedPlace
+  ? normalizedPlace.replace(/-/g, " ")
+  : undefined;
+
+
+
+
   const navigate = useNavigate()
-  const location = useLocation()
   const [searchParams] = useSearchParams()
   const [mobilePanel, setMobilePanel] = useState(null)  
 
@@ -36,15 +64,18 @@ export default function ListingsPage() {
     return obj
   }, [searchParams])
 
+
+
+  
+
   const initial = {
-city: citySlug
-  ? decodeURIComponent(citySlug).replace(/-/g, " ").toLowerCase()
-  : undefined,
+city: cityFromRoute,
+locality: searchParams.get("locality") || localityFromRoute,
+
     category: paramsFromUrl.category
       ? Number(paramsFromUrl.category)
       : undefined,
     search: paramsFromUrl.search || "",
-    locality: paramsFromUrl.locality || undefined,
     venueType: paramsFromUrl.venueType || undefined,
     minBudget: paramsFromUrl.minBudget || undefined,
     maxBudget: paramsFromUrl.maxBudget || undefined,
@@ -79,11 +110,23 @@ city: citySlug
   const showingFrom = totalCount === 0 ? 0 : filters.skip + 1
   const showingTo = Math.min(filters.skip + filters.take, totalCount)
 
+
+      const serviceFromRoute = useMemo(() => {
+  if (serviceSlug) return serviceSlug;
+
+  // fallback if route momentarily loses params
+  if (filters?.category) {
+    return categoryToSlug[filters.category];
+  }
+
+  return "banquet-halls"; // final safety net
+}, [serviceSlug, filters?.category]);
+
 useEffect(() => {
   const nextFilters = {
-    city: citySlug
-      ? decodeURIComponent(citySlug).replace(/-/g, " ").toLowerCase()
-      : undefined,
+city: cityFromRoute,
+locality: searchParams.get("locality") || localityFromRoute,
+
     category: searchParams.get("category")
      ? Number(searchParams.get("category"))
     : categoryToVenuePath
@@ -94,7 +137,6 @@ useEffect(() => {
 
     search: searchParams.get("search") || "",
 
-    locality: searchParams.get("locality") || undefined,
 
     minBudget: searchParams.get("minBudget")
       ? Number(searchParams.get("minBudget"))
@@ -125,7 +167,7 @@ useEffect(() => {
   }
 
   setFilters(nextFilters)
-}, [searchParams, citySlug, serviceSlug, location.pathname])
+}, [searchParams, placeSlug, serviceSlug])
 
 
   useEffect(() => {
@@ -246,14 +288,29 @@ if (
     return () => (mounted = false)
   }, [filters])
 const pushUrl = (obj) => {
-  // Merge new values into existing filters
-  const merged = {
-  ...paramsFromUrl, // ← URL is source of truth
-  ...obj
+
+  
+const cityFromPath = cityFromRoute || filters.city;
+
+
+const merged = {
+  ...paramsFromUrl,
+  ...obj,
+  city: cityFromPath
+};
+
+
+// Only update locality if explicitly provided
+if (Object.prototype.hasOwnProperty.call(obj, "locality")) {
+  if (!obj.locality) {
+    delete merged.locality; // explicit clear
+  }
+} else {
+  // preserve existing locality
+  merged.locality = filters.locality;
 }
 
 
-  const isVenuesPage = location.pathname.startsWith("/venues");
 
 
   // Reset pagination if any filter changes (not skip itself)
@@ -288,35 +345,41 @@ if (merged.maxGuests !== undefined) {
 
 
   // Determine serviceSlug & localitySlug
-  const categoryId = merged.category || 6
-  const serviceSlug = categoryToSlug[categoryId] || "banquet-hall"
+  
+  const categoryId = merged.category
+const resolvedServiceSlug =
+  categoryId
+    ? categoryToSlug[categoryId]
+    : serviceFromRoute;
 
-  const localitySlug =
-    merged.locality && typeof merged.locality === "string"
-      ? merged.locality.replace(/\s+/g, "-").toLowerCase()
-      : ""
 
-// Build base path with CITY
-let path = `/${serviceSlug}-in/${filters.city
-  ?.replace(/\s+/g, "-")
-  .toLowerCase() || citySlug}`;
 
-//  ONLY override when locality is selected
-if (!isVenuesPage && localitySlug) {
-  path = `/${serviceSlug}-in/${localitySlug}`;
+if (!resolvedServiceSlug) {
+  console.warn("Missing serviceSlug, falling back to banquet-halls");
 }
 
 
- if (merged.locality) {
-   qs.set(
-     "locality",
-     typeof merged.locality === "string"
-       ? merged.locality.replace(/\s+/g, "-").toLowerCase()
-       : merged.locality
-  )
- } else {
-   qs.delete("locality")
- }
+
+
+// Build base path with CITY
+const placeForPath = merged.locality || cityFromPath || "delhi";
+
+const path = `/${resolvedServiceSlug}-in/${placeForPath
+  .replace(/\s+/g, "-")
+  .toLowerCase()}`;
+
+
+
+
+if (merged.locality && typeof merged.locality === "string") {
+  qs.set(
+    "locality",
+    merged.locality.replace(/\s+/g, "-").toLowerCase()
+  );
+} else {
+  qs.delete("locality");
+}
+
 
 
 
@@ -447,7 +510,7 @@ if (item.type === "service") {
                         : ""
                     }`
                   : filters.locality
-                  ? `Venues in ${filters.locality.replace(/-/g, " ")}`
+                  ? `Banquet Halls in ${filters.locality.replace(/-/g, " ")}`
                   : "Banquet Halls"}
               </h1>
             </div>

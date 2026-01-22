@@ -27,7 +27,7 @@ export const getAllListing = async (req, res) => {
   try {
     const filters = req.query;
 
-    // 🔒 FRONTEND PAGINATION SUPPORT
+    //  FRONTEND PAGINATION SUPPORT
     const skip = Number(filters.skip) || 0;
     const take = Number(filters.take) || 10; // default 10 per page
 
