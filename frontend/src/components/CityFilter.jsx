@@ -81,7 +81,7 @@ const CityFilter = () => {
             <div
               key={city}
               onClick={() => handleSelect(city)}
-              className="px-4 py-3 text-sm cursor-pointer
+              className="px-4 py-3 text-sm cursor-pointer border-b border-gray-100
                          hover:bg-red-50 hover:text-red-600 transition"
             >
               {city}

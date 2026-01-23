@@ -14,12 +14,14 @@ export default function SimilarListingsSection({ listings }) {
   const startX = useRef(0)
   const scrollStart = useRef(0)
 
-  if (!Array.isArray(listings) || listings.length === 0) return null
+ 
 
   const infiniteListings = [...listings, ...listings, ...listings]
 
   // AUTO SCROLL
   useEffect(() => {
+     if (!Array.isArray(listings) || listings.length === 0) return null
+     
     const container = scrollRef.current
     if (!container) return
 
@@ -54,7 +56,6 @@ export default function SimilarListingsSection({ listings }) {
 
   const stopDragging = () => {
     isDragging.current = false
-    setTimeout(() => (isInteracting.current = false), 800)
   }
 
   // ARROW SCROLL
@@ -87,12 +88,25 @@ export default function SimilarListingsSection({ listings }) {
       {/* SCROLL CONTAINER */}
       <div
         ref={scrollRef}
+        onMouseEnter={() => {
+          isInteracting.current = true
+        }}
+        onMouseLeave={() => {
+          isInteracting.current = false
+          isDragging.current = false
+        }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}
-        onTouchStart={() => (isInteracting.current = true)}
-        onTouchEnd={() => (isInteracting.current = false)}
+        onTouchStart={() => {
+          isInteracting.current = true
+        }}
+        onTouchEnd={() => {
+          isInteracting.current = false
+        }}
+        onTouchCancel={() => {
+          isInteracting.current = false
+        }}
         className="flex gap-6 overflow-x-auto no-scrollbar select-none px-16 md:px-8 py-10 cursor-grab active:cursor-grabbing"
       >
         {infiniteListings.map((item, index) => (

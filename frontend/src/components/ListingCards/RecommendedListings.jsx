@@ -72,7 +72,6 @@ const RecommendedListings = () => {
 
   const stopDragging = () => {
     isDragging.current = false
-    setTimeout(() => (isInteracting.current = false), 800)
   }
 
   // ARROW SCROLL
@@ -124,12 +123,25 @@ const RecommendedListings = () => {
       {/* SCROLLER */}
       <div
         ref={scrollRef}
+        onMouseEnter={() => {
+          isInteracting.current = true
+        }}
+        onMouseLeave={() => {
+          isInteracting.current = false
+          isDragging.current = false
+        }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}
-        onTouchStart={() => (isInteracting.current = true)}
-        onTouchEnd={() => (isInteracting.current = false)}
+        onTouchStart={() => {
+          isInteracting.current = true
+        }}
+        onTouchEnd={() => {
+          isInteracting.current = false
+        }}
+        onTouchCancel={() => {
+          isInteracting.current = false
+        }}
         className="flex gap-6 overflow-x-auto no-scrollbar select-none px-16 md:px-8 py-10 cursor-grab active:cursor-grabbing"
       >
         {infiniteListings.map((item, index) => (
@@ -161,7 +173,10 @@ const RecommendedListings = () => {
                 {item.capacityFrom}-{item.capacityTo} Guests
               </div>
               <div className="mt-3">
-                <FoodPrice vegPrice={item.vegPrice} nonVegPrice={item.nonVegPrice} />
+                <FoodPrice
+                  vegPrice={item.vegPrice}
+                  nonVegPrice={item.nonVegPrice}
+                />
               </div>
               <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 cursor-pointer">
                 View Detail

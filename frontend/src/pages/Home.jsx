@@ -5,6 +5,8 @@ import { IoIosSearch } from "react-icons/io"
 import { useNavigate } from "react-router-dom"
 import homeWalpaper from "../assets/homeWalpaper.avif"
 import CustomerReview from "../components/CustomerReview"
+
+
 import HowItWorks from "../components/HowItWorks"
 import Categories from "../components/Categories"
 import OfferBanner from "../components/OfferBanner"

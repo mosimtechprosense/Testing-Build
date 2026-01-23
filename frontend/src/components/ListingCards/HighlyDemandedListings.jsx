@@ -74,9 +74,6 @@ const HighlyDemandedListings = () => {
 
   const stopDragging = () => {
     isDragging.current = false
-    setTimeout(() => {
-      isInteracting.current = false
-    }, 800)
   }
 
   // ARROW CLICK HANDLER
@@ -127,12 +124,25 @@ const HighlyDemandedListings = () => {
       {/* SCROLLER */}
       <div
         ref={scrollRef}
+        onMouseEnter={() => {
+          isInteracting.current = true
+        }}
+        onMouseLeave={() => {
+          isInteracting.current = false
+          isDragging.current = false
+        }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}
-        onTouchStart={() => (isInteracting.current = true)}
-        onTouchEnd={() => (isInteracting.current = false)}
+        onTouchStart={() => {
+          isInteracting.current = true
+        }}
+        onTouchEnd={() => {
+          isInteracting.current = false
+        }}
+        onTouchCancel={() => {
+          isInteracting.current = false
+        }}
         className="
           flex gap-6
           overflow-x-auto
