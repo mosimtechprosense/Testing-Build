@@ -376,7 +376,7 @@ const Blog = () => {
           </main>
 
           {/* SIDEBAR */}
-          <aside className="lg:col-span-4 space-y-8">
+          <aside className="lg:col-span-4 space-y-8 lg:mt-2 lg:sticky lg:top-2 self-start">
             <div className="bg-white rounded-3xl shadow-sm p-6">
               <h3 className="font-bold text-xl mb-4">Recent Posts</h3>
               <ul className="space-y-3">

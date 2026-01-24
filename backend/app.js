@@ -24,7 +24,7 @@ app.use(helmet());
 
 // CORS (Allowed Origins)
 app.use(cors({
-  origin: ["http://localhost:5173", "https://yourdomainExample.com"],
+  origin: ["http://localhost:5173", "https://yourdomainExample.com", "http://localhost:4173"],
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
@@ -35,7 +35,7 @@ app.use(
   "/api",
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1500, // limit each IP to 300 requests
+    max: 1500, // limit each IP to 1500 requests/15 minutes
     message: {
       success: false,
       message: "Too many requests, please try again later.",
