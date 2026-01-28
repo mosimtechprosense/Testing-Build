@@ -7,14 +7,14 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-     "postinstall": "prisma generate",
+    "postinstall": "prisma generate",
     "prisma:seed": "node prisma/seed.js",
     "prisma:studio": "npx prisma studio"
   },
   "engines": {
-  "node": "22.x",
-  "npm": "10.x"
-},
+    "node": "22.x",
+    "npm": "10.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -32,6 +32,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/node": "^25.0.10",
     "nodemon": "^3.1.10",
     "prisma": "^6.18.0"
   }

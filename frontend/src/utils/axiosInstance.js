@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "https://terrell-astrometrical-dreama.ngrok-free.dev",
+  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:5000",
   timeout: 8000,
 });
 

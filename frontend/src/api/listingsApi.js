@@ -1,63 +1,84 @@
-import axiosInstance from "../utils/axiosInstance.js"; // <-- new import
-let listingsController;
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
+
+let listingsController
 
 export const fetchListings = async (filters = {}) => {
   if (listingsController) {
-    listingsController.abort();
+    listingsController.abort()
   }
 
-  listingsController = new AbortController();
+  listingsController = new AbortController()
 
-  // Clean filters for axios
-  const cleanedFilters = Object.fromEntries(
-    Object.entries(filters).filter(([key, value]) => {
-      if (value === undefined || value === null || value === "") return false;
-      if (["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(key) && isNaN(Number(value))) return false;
-      return true;
-    })
-  );
+  const params = new URLSearchParams()
+  Object.entries(filters).forEach(([key, value]) => {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      !(["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(key) && isNaN(Number(value)))
+    ) {
+      params.set(
+        key,
+        key === "locality"
+          ? String(value).replace(/-/g, " ")
+          : String(value)
+      )
+    }
+  })
 
-  // For locality, replace dashes with spaces
-  if (cleanedFilters.locality) {
-    cleanedFilters.locality = String(cleanedFilters.locality).replace(/-/g, " ");
-  }
+  const url = `${API_BASE}/api/listings?${params.toString()}`
 
-  // Attach signal for cancellation
-  const res = await axiosInstance.get("/api/listings", {
-    params: cleanedFilters,
-    signal: listingsController.signal,
-  });
+  const res = await fetch(url, {
+    signal: listingsController.signal
+  })
 
-  return res.data;
-};
+  if (!res.ok) throw new Error("Failed to fetch listings")
+  return res.json()
+}
+
+
 
 export const fetchListingById = async (id) => {
-  if (!id) throw new Error("Listing ID is required");
+  if (!id) throw new Error("Listing ID is required")
 
-  const res = await axiosInstance.get(`/api/listings/${id}`);
-  return res.data;
-};
+  const res = await fetch(`${API_BASE}/api/listings/${id}`)
+
+  if (!res.ok) throw new Error("Failed to fetch listing")
+
+  return res.json()
+}
+
 
 export const fetchSimilarListings = async (id) => {
   if (!id) throw new Error("Listing ID is required for similar listings");
 
-  const res = await axiosInstance.get(`/api/listings/${id}/similar`);
-  return res.data; // returns { success, count, data: [...] }
+  const res = await fetch(`${API_BASE}/api/listings/${id}/similar`);
+  if (!res.ok) throw new Error("Failed to fetch similar listings");
+
+  return res.json(); // returns { success, count, data: [...] }
 };
+
 
 export const fetchHallsByListingId = async (id) => {
-  const res = await axiosInstance.get(`/api/listings/${id}`);
-  return res.data;
+  const res = await fetch(`${API_BASE}/api/listings/${id}`);
+  return res.json();
 };
+
 
 export const fetchLocalities = async (location = "") => {
-  const res = await axiosInstance.get("/api/locations", {
-    params: location ? { location } : {},
-  });
-  return res.data;
+  const url = `${API_BASE}/api/locations${location ? `?location=${encodeURIComponent(location)}` : ""}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch locations");
+  return res.json();
 };
 
+
 export const fetchLocalityDescription = async (slug) => {
-  const res = await axiosInstance.get(`/api/localities/seo/locality/${slug}`);
-  return res.data;
-};
+  const res = await fetch(`${API_BASE}/api/localities/seo/locality/${slug}`)
+
+  if (!res.ok) {
+    throw new Error("Locality SEO not found")
+  }
+
+  return res.json()
+}
