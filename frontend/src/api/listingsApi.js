@@ -1,28 +1,87 @@
-import axiosInstance from "../utils/axiosInstance.js";
+const API_BASE = import.meta.env.VITE_API_BASE || "https://terrell-astrometrical-dreama.ngrok-free.dev";
+
+let listingsController
 
 export const fetchListings = async (filters = {}) => {
-  const res = await axiosInstance.get("/api/listings", { params: filters });
-  return res.data;
-};
+  if (listingsController) {
+    listingsController.abort()
+  }
+
+  listingsController = new AbortController()
+
+  const params = new URLSearchParams()
+  Object.entries(filters).forEach(([key, value]) => {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      !(["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(key) && isNaN(Number(value)))
+    ) {
+      params.set(
+        key,
+        key === "locality"
+          ? String(value).replace(/-/g, " ")
+          : String(value)
+      )
+    }
+  })
+
+  const url = `${API_BASE}/api/listings?${params.toString()}`
+
+  const res = await fetch(url, {
+    signal: listingsController.signal
+  })
+
+  if (!res.ok) throw new Error("Failed to fetch listings")
+  return res.json()
+}
+
+
 
 export const fetchListingById = async (id) => {
-  const res = await axiosInstance.get(`/api/listings/${id}`);
-  return res.data;
-};
+  if (!id) throw new Error("Listing ID is required")
+
+  const res = await fetch(`${API_BASE}/api/listings/${id}`)
+
+  if (!res.ok) throw new Error("Failed to fetch listing")
+
+  return res.json()
+}
+
 
 export const fetchSimilarListings = async (id) => {
-  const res = await axiosInstance.get(`/api/listings/${id}/similar`);
-  return res.data;
+  if (!id) throw new Error("Listing ID is required for similar listings");
+
+  const res = await fetch(`${API_BASE}/api/listings/${id}/similar`);
+  if (!res.ok) throw new Error("Failed to fetch similar listings");
+
+  return res.json(); // returns { success, count, data: [...] }
 };
+
+
+export const fetchHallsByListingId = async (id) => {
+  const res = await fetch(`${API_BASE}/api/listings/${id}`);
+  return res.json();
+};
+
 
 export const fetchLocalities = async (location = "") => {
-  const res = await axiosInstance.get("/api/locations", {
-    params: location ? { location } : {}
-  });
-  return res.data;
+  const url = `${API_BASE}/api/locations${location ? `?location=${encodeURIComponent(location)}` : ""}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch locations");
+  return res.json();
 };
 
+
 export const fetchLocalityDescription = async (slug) => {
-  const res = await axiosInstance.get(`/api/localities/seo/locality/${slug}`);
-  return res.data;
-};
+  const res = await fetch(`${API_BASE}/api/localities/seo/locality/${slug}`)
+
+  if (!res.ok) {
+    throw new Error("Locality SEO not found")
+  }
+
+  return res.json()
+}
+
+
+
