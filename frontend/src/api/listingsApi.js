@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "../utils/axiosInstance.js";
 import { categoryToSlug } from "../utils/slugMaps";
 
 let listingsController;
