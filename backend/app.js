@@ -24,7 +24,8 @@ app.use(helmet());
 
 // CORS (Allowed Origins)
 app.use(cors({
-  origin: ["http://localhost:5173", "https://yourdomainExample.com", "http://localhost:4173"],
+  origin: ["http://localhost:5173", "https://yourdomainExample.com", "http://localhost:4173", "https://testbookmybanquets.vercel.app", "/\.ngrok-free\.dev$/"
+],
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
