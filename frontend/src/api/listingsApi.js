@@ -1,71 +1,87 @@
-import axiosInstance from "../utils/axiosInstance.js";
-import { categoryToSlug } from "../utils/slugMaps";
+const API_BASE = import.meta.env.VITE_API_BASE || "https://terrell-astrometrical-dreama.ngrok-free.dev";
 
-let listingsController;
+let listingsController
 
 export const fetchListings = async (filters = {}) => {
-  if (listingsController) listingsController.abort();
-  listingsController = new AbortController();
+  if (listingsController) {
+    listingsController.abort()
+  }
 
-  const { category, city, locality, minGuests, maxGuests, skip = 0, take = 10 } = filters;
+  listingsController = new AbortController()
 
-  // Determine service slug dynamically
-  const serviceSlug = category ? categoryToSlug[category] : "banquet-hall";
+  const params = new URLSearchParams()
+  Object.entries(filters).forEach(([key, value]) => {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      !(["minBudget", "maxBudget", "skip", "take", "vegetarian", "nonVegetarian"].includes(key) && isNaN(Number(value)))
+    ) {
+      params.set(
+        key,
+        key === "locality"
+          ? String(value).replace(/-/g, " ")
+          : String(value)
+      )
+    }
+  })
 
-  // Determine location: locality > city > fallback
-  const place = locality || city || "delhi";
+  const url = `${API_BASE}/api/listings?${params.toString()}`
 
-  const params = {
-    minGuests,
-    maxGuests,
-    skip,
-    take
-  };
+  const res = await fetch(url, {
+    signal: listingsController.signal
+  })
 
-  // Additional filters (mealType etc.)
-  if (filters.mealType) params.mealType = filters.mealType;
+  if (!res.ok) throw new Error("Failed to fetch listings")
+  return res.json()
+}
 
-  // Axios request with AbortController
-  const source = axiosInstance.CancelToken.source();
-  listingsController.signal.addEventListener("abort", () => {
-    source.cancel("Request aborted");
-  });
 
-  const res = await axiosInstance.get(`/api/listings/${serviceSlug}/${place}`, {
-    params,
-    cancelToken: source.token
-  });
-
-  return res.data;
-};
 
 export const fetchListingById = async (id) => {
-  if (!id) throw new Error("Listing ID is required");
-  const res = await axiosInstance.get(`/api/listings/${id}`);
-  return res.data;
-};
+  if (!id) throw new Error("Listing ID is required")
+
+  const res = await fetch(`${API_BASE}/api/listings/${id}`)
+
+  if (!res.ok) throw new Error("Failed to fetch listing")
+
+  return res.json()
+}
+
 
 export const fetchSimilarListings = async (id) => {
-  if (!id) throw new Error("Listing ID is required");
-  const res = await axiosInstance.get(`/api/listings/${id}/similar`);
-  return res.data;
+  if (!id) throw new Error("Listing ID is required for similar listings");
+
+  const res = await fetch(`${API_BASE}/api/listings/${id}/similar`);
+  if (!res.ok) throw new Error("Failed to fetch similar listings");
+
+  return res.json(); // returns { success, count, data: [...] }
 };
+
 
 export const fetchHallsByListingId = async (id) => {
-  if (!id) throw new Error("Listing ID is required");
-  const res = await axiosInstance.get(`/api/listings/${id}`);
-  return res.data;
+  const res = await fetch(`${API_BASE}/api/listings/${id}`);
+  return res.json();
 };
+
 
 export const fetchLocalities = async (location = "") => {
-  const res = await axiosInstance.get("/api/locations", {
-    params: location ? { location } : {}
-  });
-  return res.data;
+  const url = `${API_BASE}/api/locations${location ? `?location=${encodeURIComponent(location)}` : ""}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch locations");
+  return res.json();
 };
 
+
 export const fetchLocalityDescription = async (slug) => {
-  if (!slug) throw new Error("Locality slug is required");
-  const res = await axiosInstance.get(`/api/localities/seo/locality/${slug}`);
-  return res.data;
-};
+  const res = await fetch(`${API_BASE}/api/localities/seo/locality/${slug}`)
+
+  if (!res.ok) {
+    throw new Error("Locality SEO not found")
+  }
+
+  return res.json()
+}
+
+
+

@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "https://testbookmybanquets.vercel.app",
+  baseURL: import.meta.env.VITE_API_BASE || "https://terrell-astrometrical-dreama.ngrok-free.dev",
   timeout: 8000,
 });
 
